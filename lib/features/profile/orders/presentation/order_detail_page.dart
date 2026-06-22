@@ -1,0 +1,451 @@
+import 'package:alumni_association_app/app/theme/app_theme.dart';
+import 'package:alumni_association_app/core/localization/localization_extensions.dart';
+import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
+import 'package:alumni_association_app/features/profile/orders/presentation/my_orders_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
+class OrderDetailPage extends StatelessWidget {
+  const OrderDetailPage({this.order, super.key});
+  final ProfileOrderItem? order;
+
+  @override
+  Widget build(BuildContext context) {
+    final item = order ?? ProfileOrderItem.fallback();
+    return Scaffold(
+      appBar: AppBar(
+        leading: BackButton(onPressed: () => context.pop()),
+        title: Text(context.l10n.orderDetail, style: _titleStyle),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () => _toast(context, context.l10n.contactService),
+            icon: Icon(Icons.support_agent_rounded, size: 25.sp),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 28.h),
+        children: [
+          _StatusHero(order: item),
+          SizedBox(height: 12.h),
+          _PackageCard(order: item),
+          SizedBox(height: 12.h),
+          _InfoCard(
+            title: context.l10n.orderInfo,
+            rows: [
+              _InfoRow(
+                context.l10n.orderNo,
+                item.orderNo,
+                action: context.l10n.copy,
+              ),
+              _InfoRow(context.l10n.orderCreateTime, item.createTime),
+              _InfoRow(
+                context.l10n.orderStatus,
+                _statusText(context, item.status),
+              ),
+              _InfoRow(context.l10n.packageName, item.title),
+              _InfoRow(context.l10n.packageContent, item.packageContent),
+              _InfoRow(
+                context.l10n.quantity,
+                '${item.count}${context.l10n.portion}',
+              ),
+              _InfoRow(
+                context.l10n.paidAmount,
+                '¥${item.price.toStringAsFixed(2)}',
+                highlight: true,
+              ),
+              _InfoRow(context.l10n.paymentMethod, item.paymentMethod),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          _InfoCard(
+            title: context.l10n.useInfo,
+            rows: [
+              _InfoRow(context.l10n.useTime, item.useTime),
+              _InfoRow(context.l10n.useStore, '${item.merchantName}（静安店）'),
+              _InfoRow(context.l10n.useAddress, item.address),
+              _InfoRow(
+                context.l10n.user,
+                '${item.userName}（${item.userPhone}）',
+                link: true,
+              ),
+              _InfoRow(context.l10n.contactPhone, item.merchantPhone),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          _AmountCard(order: item),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusHero extends StatelessWidget {
+  const _StatusHero({required this.order});
+  final ProfileOrderItem order;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 108.h,
+      padding: EdgeInsets.all(18.r),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF126DFF), Color(0xFF3E7FF1)],
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24.r,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.schedule_rounded, color: AppColors.primary),
+          ),
+          SizedBox(width: 14.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _statusText(context, order.status),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25.sp,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  context.l10n.orderReservedHint,
+                  style: TextStyle(color: Colors.white, fontSize: 13.sp),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.apartment_rounded,
+            color: Colors.white.withValues(alpha: 0.22),
+            size: 78.sp,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PackageCard extends StatelessWidget {
+  const _PackageCard({required this.order});
+  final ProfileOrderItem order;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(14.r),
+      decoration: _cardDecoration,
+      child: Row(
+        children: [
+          _DetailFoodImage(seed: order.imageSeed, size: 110.w),
+          SizedBox(width: 14.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: Text(order.title, style: _itemTitleStyle)),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 6.w,
+                        vertical: 2.h,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFFF5A1F)),
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                      child: Text(
+                        context.l10n.memberOffer,
+                        style: TextStyle(
+                          color: const Color(0xFFFF5A1F),
+                          fontSize: 10.sp,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 7.h),
+                Text(order.merchantName, style: _metaStyle),
+                SizedBox(height: 5.h),
+                Text(
+                  '${context.l10n.useDate}:  ${order.useTime}',
+                  style: _metaStyle,
+                ),
+                SizedBox(height: 5.h),
+                Text(order.address, style: _metaStyle),
+                SizedBox(height: 10.h),
+                Row(
+                  children: [
+                    Text(
+                      '¥${order.price.toStringAsFixed(2)}',
+                      style: _priceStyle,
+                    ),
+                    SizedBox(width: 16.w),
+                    Text(
+                      '¥${order.originalPrice.toStringAsFixed(2)}',
+                      style: _originPriceStyle,
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${context.l10n.totalCountPrefix}${order.count}${context.l10n.portion}',
+                      style: _metaStyle,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  const _InfoCard({required this.title, required this.rows});
+  final String title;
+  final List<_InfoRow> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.r),
+      decoration: _cardDecoration,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: _sectionTitleStyle),
+          SizedBox(height: 14.h),
+          ...rows.map(
+            (row) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 100.w,
+                    child: Text(row.label, style: _metaStyle),
+                  ),
+                  Expanded(
+                    child: Text(
+                      row.value,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: row.highlight
+                            ? const Color(0xFFFF4B16)
+                            : row.link
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                        fontWeight: row.highlight
+                            ? FontWeight.w800
+                            : FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  if (row.action != null) ...[
+                    SizedBox(width: 8.w),
+                    Text(
+                      row.action!,
+                      style: const TextStyle(color: AppColors.primary),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailFoodImage extends StatelessWidget {
+  const _DetailFoodImage({required this.seed, required this.size});
+  final int seed;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final gradients = [
+      const [Color(0xFF402312), Color(0xFFC57A2E)],
+      const [Color(0xFF263B59), Color(0xFFE1A15B)],
+      const [Color(0xFF5A2418), Color(0xFFE57E33)],
+      const [Color(0xFF20140E), Color(0xFFA96836)],
+      const [Color(0xFF14446F), Color(0xFFB88E58)],
+    ];
+    final colors = gradients[seed % gradients.length];
+    return Container(
+      width: size,
+      height: size * 0.72,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.r),
+        gradient: LinearGradient(colors: colors),
+      ),
+      child: Icon(Icons.restaurant_rounded, color: Colors.white, size: 34.sp),
+    );
+  }
+}
+
+class _AmountCard extends StatelessWidget {
+  const _AmountCard({required this.order});
+  final ProfileOrderItem order;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.r),
+      decoration: _cardDecoration,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.l10n.orderAmountDetail, style: _sectionTitleStyle),
+          SizedBox(height: 12.h),
+          _AmountRow(
+            context.l10n.productAmount,
+            '¥${order.originalPrice.toStringAsFixed(2)}',
+          ),
+          _AmountRow(
+            context.l10n.memberDiscountAmount,
+            '-¥${order.discount.toStringAsFixed(2)}',
+            danger: true,
+          ),
+          const Divider(height: 24),
+          _AmountRow(
+            context.l10n.paidAmount,
+            '¥${order.price.toStringAsFixed(2)}',
+            danger: true,
+            bold: true,
+          ),
+          SizedBox(height: 18.h),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () =>
+                      _toast(context, context.l10n.contactMerchant),
+                  icon: const Icon(Icons.phone_outlined),
+                  label: Text(context.l10n.contactMerchant),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: FilledButton(
+                  onPressed: () {
+                    Get.find<MyOrdersController>().cancelOrder(order);
+                    _toast(context, context.l10n.orderCancelSuccess);
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF4B16),
+                  ),
+                  child: Text(context.l10n.cancelReservation),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow {
+  const _InfoRow(
+    this.label,
+    this.value, {
+    this.action,
+    this.highlight = false,
+    this.link = false,
+  });
+  final String label;
+  final String value;
+  final String? action;
+  final bool highlight;
+  final bool link;
+}
+
+class _AmountRow extends StatelessWidget {
+  const _AmountRow(
+    this.label,
+    this.value, {
+    this.danger = false,
+    this.bold = false,
+  });
+  final String label;
+  final String value;
+  final bool danger;
+  final bool bold;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.h),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: _metaStyle)),
+          Text(
+            value,
+            style: TextStyle(
+              color: danger ? const Color(0xFFFF4B16) : AppColors.textPrimary,
+              fontSize: bold ? 20.sp : 14.sp,
+              fontWeight: bold ? FontWeight.w900 : FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final _sectionTitleStyle = TextStyle(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w800,
+);
+final _titleStyle = TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w900);
+final _itemTitleStyle = TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w800);
+final _metaStyle = TextStyle(color: AppColors.textSecondary, fontSize: 13.sp);
+final _priceStyle = TextStyle(
+  color: const Color(0xFFFF4B16),
+  fontSize: 17.sp,
+  fontWeight: FontWeight.w800,
+);
+final _originPriceStyle = TextStyle(
+  color: AppColors.textSecondary,
+  fontSize: 13.sp,
+  decoration: TextDecoration.lineThrough,
+);
+final _cardDecoration = BoxDecoration(
+  color: Colors.white,
+  borderRadius: BorderRadius.circular(18.r),
+  boxShadow: [
+    BoxShadow(
+      color: const Color(0xFF1E5AA8).withValues(alpha: 0.06),
+      blurRadius: 20,
+      offset: const Offset(0, 8),
+    ),
+  ],
+);
+
+String _statusText(BuildContext context, ProfileOrderStatus status) {
+  return switch (status) {
+    ProfileOrderStatus.pending => context.l10n.pendingUse,
+    ProfileOrderStatus.used => context.l10n.used,
+    ProfileOrderStatus.cancelled => context.l10n.cancelled,
+  };
+}
+
+void _toast(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
