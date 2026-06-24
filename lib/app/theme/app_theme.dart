@@ -7,6 +7,7 @@ abstract final class AppColors {
   static const primary = Color(0xFF0967F2);
   /// 页面整体背景色
   static const background = Color(0xFFFFFFFF);
+
   /// 成功状态颜色：成功、通过、完成等
   static const success = Color(0xFF19B96B);
   /// 警告状态颜色：待处理、提醒等

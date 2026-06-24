@@ -3034,6 +3034,24 @@ abstract class AppLocalizations {
   /// **'请输入门牌号、楼层、房间号等详细信息'**
   String get detailAddressHint;
 
+  /// No description provided for @postalCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮政编码'**
+  String get postalCode;
+
+  /// No description provided for @postalCodeRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮政编码 *'**
+  String get postalCodeRequired;
+
+  /// No description provided for @postalCodeHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入邮政编码'**
+  String get postalCodeHint;
+
   /// No description provided for @businessStartTime.
   ///
   /// In zh, this message translates to:
@@ -3045,6 +3063,42 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'营业结束时间'**
   String get businessEndTime;
+
+  /// No description provided for @businessHoursRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'营业时间 *'**
+  String get businessHoursRequired;
+
+  /// No description provided for @startTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始时间'**
+  String get startTime;
+
+  /// No description provided for @endTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束时间'**
+  String get endTime;
+
+  /// No description provided for @to.
+  ///
+  /// In zh, this message translates to:
+  /// **'至'**
+  String get to;
+
+  /// No description provided for @operationAddressRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'经营地址 *'**
+  String get operationAddressRequired;
+
+  /// No description provided for @merchantSecurityGuarantee.
+  ///
+  /// In zh, this message translates to:
+  /// **'保障商户信息安全'**
+  String get merchantSecurityGuarantee;
 
   /// No description provided for @merchantPhotosRequired.
   ///
@@ -3058,11 +3112,29 @@ abstract class AppLocalizations {
   /// **'门店门头照'**
   String get storefrontPhoto;
 
+  /// No description provided for @uploadStorefrontPhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'上传门店门头照'**
+  String get uploadStorefrontPhoto;
+
   /// No description provided for @storeInteriorPhoto.
   ///
   /// In zh, this message translates to:
   /// **'店内环境照'**
   String get storeInteriorPhoto;
+
+  /// No description provided for @storeInteriorPhotos.
+  ///
+  /// In zh, this message translates to:
+  /// **'店内环境照'**
+  String get storeInteriorPhotos;
+
+  /// No description provided for @addInteriorPhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加图片'**
+  String get addInteriorPhoto;
 
   /// No description provided for @businessScenePhoto.
   ///
@@ -3081,6 +3153,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'请上传真实清晰的照片，最多6张，支持JPG/PNG，大小不超过10MB'**
   String get photoUploadHint;
+
+  /// No description provided for @interiorPhotoUploadHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'门店门头照需上传1张，店内环境照最多9张，支持JPG/PNG，大小不超过10MB'**
+  String get interiorPhotoUploadHint;
+
+  /// No description provided for @uploaded.
+  ///
+  /// In zh, this message translates to:
+  /// **'已上传'**
+  String get uploaded;
 
   /// No description provided for @example.
   ///
@@ -3118,11 +3202,29 @@ abstract class AppLocalizations {
   /// **'营业资质'**
   String get businessQualifications;
 
+  /// No description provided for @optional.
+  ///
+  /// In zh, this message translates to:
+  /// **'非必填'**
+  String get optional;
+
+  /// No description provided for @businessLicenseLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'营业执照'**
+  String get businessLicenseLabel;
+
   /// No description provided for @businessLicense.
   ///
   /// In zh, this message translates to:
   /// **'上传营业执照'**
   String get businessLicense;
+
+  /// No description provided for @otherQualificationLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他资质\n（非必填）'**
+  String get otherQualificationLabel;
 
   /// No description provided for @otherQualification.
   ///
@@ -3130,11 +3232,29 @@ abstract class AppLocalizations {
   /// **'上传其他资质（如食品经营许可证等）'**
   String get otherQualification;
 
+  /// No description provided for @qualificationSupplementTip.
+  ///
+  /// In zh, this message translates to:
+  /// **'  如暂未准备好，可先提交，后续在店铺管理中补充'**
+  String get qualificationSupplementTip;
+
+  /// No description provided for @uploadFormatHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持JPG/PNG格式，大小不超过10MB'**
+  String get uploadFormatHint;
+
   /// No description provided for @merchantOnboardingAgreement.
   ///
   /// In zh, this message translates to:
   /// **'《商户入驻协议》'**
   String get merchantOnboardingAgreement;
+
+  /// No description provided for @agreementPreviewContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前为协议预览内容，正式协议页面接入后可在这里打开完整内容。'**
+  String get agreementPreviewContent;
 
   /// No description provided for @completeMerchantOnboardingForm.
   ///

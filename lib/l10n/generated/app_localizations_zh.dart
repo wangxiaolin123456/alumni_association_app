@@ -1495,10 +1495,37 @@ class AppLocalizationsZh extends AppLocalizations {
   String get detailAddressHint => '请输入门牌号、楼层、房间号等详细信息';
 
   @override
+  String get postalCode => '邮政编码';
+
+  @override
+  String get postalCodeRequired => '邮政编码 *';
+
+  @override
+  String get postalCodeHint => '请输入邮政编码';
+
+  @override
   String get businessStartTime => '营业开始时间';
 
   @override
   String get businessEndTime => '营业结束时间';
+
+  @override
+  String get businessHoursRequired => '营业时间 *';
+
+  @override
+  String get startTime => '开始时间';
+
+  @override
+  String get endTime => '结束时间';
+
+  @override
+  String get to => '至';
+
+  @override
+  String get operationAddressRequired => '经营地址 *';
+
+  @override
+  String get merchantSecurityGuarantee => '保障商户信息安全';
 
   @override
   String get merchantPhotosRequired => '商户照片 *';
@@ -1507,7 +1534,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get storefrontPhoto => '门店门头照';
 
   @override
+  String get uploadStorefrontPhoto => '上传门店门头照';
+
+  @override
   String get storeInteriorPhoto => '店内环境照';
+
+  @override
+  String get storeInteriorPhotos => '店内环境照';
+
+  @override
+  String get addInteriorPhoto => '添加图片';
 
   @override
   String get businessScenePhoto => '经营场所照';
@@ -1517,6 +1553,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get photoUploadHint => '请上传真实清晰的照片，最多6张，支持JPG/PNG，大小不超过10MB';
+
+  @override
+  String get interiorPhotoUploadHint =>
+      '门店门头照需上传1张，店内环境照最多9张，支持JPG/PNG，大小不超过10MB';
+
+  @override
+  String get uploaded => '已上传';
 
   @override
   String get example => '示例';
@@ -1537,13 +1580,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String get businessQualifications => '营业资质';
 
   @override
+  String get optional => '非必填';
+
+  @override
+  String get businessLicenseLabel => '营业执照';
+
+  @override
   String get businessLicense => '上传营业执照';
+
+  @override
+  String get otherQualificationLabel => '其他资质\n（非必填）';
 
   @override
   String get otherQualification => '上传其他资质（如食品经营许可证等）';
 
   @override
+  String get qualificationSupplementTip => '  如暂未准备好，可先提交，后续在店铺管理中补充';
+
+  @override
+  String get uploadFormatHint => '支持JPG/PNG格式，大小不超过10MB';
+
+  @override
   String get merchantOnboardingAgreement => '《商户入驻协议》';
+
+  @override
+  String get agreementPreviewContent => '当前为协议预览内容，正式协议页面接入后可在这里打开完整内容。';
 
   @override
   String get completeMerchantOnboardingForm => '请填写完整的必填信息';

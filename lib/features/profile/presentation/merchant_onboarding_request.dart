@@ -6,6 +6,8 @@ class MerchantOnboardingRequest {
   const MerchantOnboardingRequest({
     required this.userId,
     required this.shopName,
+    required this.typeId,
+    required this.typeName,
     required this.types,
     required this.names,
     required this.phone,
@@ -17,13 +19,17 @@ class MerchantOnboardingRequest {
     required this.businessEndTime,
     this.postalCode = '',
     this.shopUrl = '',
-    this.shopLog = '',
+    this.shopLogo = '',
     this.shopImgs = '',
     this.licenseImages = '',
+    this.shopId,
   });
 
+  final int? shopId;
   final int userId;
   final String shopName;
+  final int typeId;
+  final String typeName;
   final String types;
   final String names;
   final String phone;
@@ -35,15 +41,17 @@ class MerchantOnboardingRequest {
   final String businessStartTime;
   final String businessEndTime;
   final String shopUrl;
-  final String shopLog;
+  final String shopLogo;
   final String shopImgs;
   final String licenseImages;
 
   Map<String, dynamic> toJson() {
-    return {
+    final json = {
       'id': 0,
       'userId': userId,
       'shopName': shopName,
+      'typeId': typeId,
+      'typeName': typeName,
       'types': types,
       'names': names,
       'phone': phone,
@@ -55,7 +63,7 @@ class MerchantOnboardingRequest {
       'businessStartTime': businessStartTime,
       'businessEndTime': businessEndTime,
       'shopUrl': shopUrl,
-      'shopLog': shopLog,
+      'shopLogo': shopLogo,
       'shopImgs': shopImgs,
       'licenseImages': licenseImages,
       'shopStatus': 0,
@@ -63,5 +71,9 @@ class MerchantOnboardingRequest {
       'updateTime': '',
       'isDeleted': 0,
     };
+    if (shopId != null) {
+      json['shopId'] = shopId!;
+    }
+    return json;
   }
 }

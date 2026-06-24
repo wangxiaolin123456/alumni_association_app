@@ -121,6 +121,7 @@ class _MemberMineView extends StatelessWidget {
             ),
           ],
         ),
+        // 我的服务
         _GridSection(
           title: l10n.myServices,
           items: [
@@ -544,7 +545,7 @@ class _GridSection extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisExtent: 65.h,
+              mainAxisExtent:70.h,
             ),
             itemCount: items.length,
             itemBuilder: (context, index) => _ActionTile(item: items[index]),

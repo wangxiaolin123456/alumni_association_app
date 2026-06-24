@@ -1540,10 +1540,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailAddressHint => 'Enter door number, floor and room details';
 
   @override
+  String get postalCode => 'Postal Code';
+
+  @override
+  String get postalCodeRequired => 'Postal Code *';
+
+  @override
+  String get postalCodeHint => 'Enter postal code';
+
+  @override
   String get businessStartTime => 'Opening Time';
 
   @override
   String get businessEndTime => 'Closing Time';
+
+  @override
+  String get businessHoursRequired => 'Business Hours *';
+
+  @override
+  String get startTime => 'Start';
+
+  @override
+  String get endTime => 'End';
+
+  @override
+  String get to => 'to';
+
+  @override
+  String get operationAddressRequired => 'Business Address *';
+
+  @override
+  String get merchantSecurityGuarantee => 'Protect merchant information';
 
   @override
   String get merchantPhotosRequired => 'Merchant Photos *';
@@ -1552,7 +1579,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storefrontPhoto => 'Storefront';
 
   @override
+  String get uploadStorefrontPhoto => 'Upload storefront photo';
+
+  @override
   String get storeInteriorPhoto => 'Interior';
+
+  @override
+  String get storeInteriorPhotos => 'Interior Photos';
+
+  @override
+  String get addInteriorPhoto => 'Add Photo';
 
   @override
   String get businessScenePhoto => 'Business Scene';
@@ -1563,6 +1599,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get photoUploadHint =>
       'Upload clear photos, up to 6 images, JPG/PNG, max 10MB';
+
+  @override
+  String get interiorPhotoUploadHint =>
+      'Upload 1 storefront photo and up to 9 interior photos. JPG/PNG, max 10MB';
+
+  @override
+  String get uploaded => 'Uploaded';
 
   @override
   String get example => 'Example';
@@ -1583,13 +1626,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessQualifications => 'Business Qualifications';
 
   @override
+  String get optional => 'Optional';
+
+  @override
+  String get businessLicenseLabel => 'Business License';
+
+  @override
   String get businessLicense => 'Upload Business License';
+
+  @override
+  String get otherQualificationLabel => 'Other Qualification\n(Optional)';
 
   @override
   String get otherQualification => 'Upload Other Qualification';
 
   @override
+  String get qualificationSupplementTip =>
+      '  If not ready, submit first and complete it later in store management';
+
+  @override
+  String get uploadFormatHint => 'JPG/PNG supported, max 10MB';
+
+  @override
   String get merchantOnboardingAgreement => 'Merchant Onboarding Agreement';
+
+  @override
+  String get agreementPreviewContent =>
+      'This is a preview. Once the official agreement page is connected, the full content can open here.';
 
   @override
   String get completeMerchantOnboardingForm =>

@@ -4,9 +4,11 @@ import 'package:alumni_association_app/core/localization/localization_extensions
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
 import 'package:alumni_association_app/features/profile/presentation/merchant_onboarding_request.dart';
 import 'package:alumni_association_app/features/profile/presentation/merchant_region_item.dart';
+import 'package:alumni_association_app/features/profile/presentation/merchant_type_item.dart';
 import 'package:alumni_association_app/util/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// 商户入驻表单逻辑。
 class MerchantOnboardingController extends GetxController {
@@ -16,6 +18,7 @@ class MerchantOnboardingController extends GetxController {
   final cityController = TextEditingController();
   final districtController = TextEditingController();
   final addressController = TextEditingController();
+  final postalCodeController = TextEditingController();
   final businessStartTimeController = TextEditingController();
   final businessEndTimeController = TextEditingController();
   final contactController = TextEditingController();
@@ -24,9 +27,15 @@ class MerchantOnboardingController extends GetxController {
   final agreed = false.obs;
   final isSubmitting = false.obs;
   final isRegionLoading = false.obs;
-  final uploadedPhotos = <String>[].obs;
+  final isIndustryLoading = false.obs;
   final uploadedLicenses = <String>[].obs;
   final errorMessage = RxnString();
+  final merchantTypes = <MerchantTypeItem>[].obs;
+  final selectedMerchantType = Rxn<MerchantTypeItem>();
+  final shopLogoPath = ''.obs;
+  final shopLogoFileName = ''.obs;
+  final interiorImagePaths = <String>[].obs;
+  final interiorImageFileNames = <String>[].obs;
   final provinces = <MerchantRegionItem>[].obs;
   final cities = <MerchantRegionItem>[].obs;
   final districts = <MerchantRegionItem>[].obs;
@@ -34,9 +43,102 @@ class MerchantOnboardingController extends GetxController {
   final selectedCity = Rxn<MerchantRegionItem>();
   final selectedDistrict = Rxn<MerchantRegionItem>();
   final AddressService _addressService = Get.find<AddressService>();
+  final ImagePicker _imagePicker = ImagePicker();
+  final int? shopId = _parseShopId(Get.arguments);
+
+  /// 从路由参数中安全解析商户 id，兼容 int 和字符串两种传参。
+  static int? _parseShopId(dynamic arguments) {
+    if (arguments is! Map) return null;
+    final raw = arguments['shopId'];
+    if (raw is int) return raw;
+    return int.tryParse(raw?.toString() ?? '');
+  }
 
   void toggleAgreement(bool? value) {
     agreed.value = value ?? false;
+  }
+
+  /// 加载商户行业列表。
+  Future<void> loadMerchantTypes() async {
+    if (merchantTypes.isNotEmpty || isIndustryLoading.value) return;
+    isIndustryLoading.value = true;
+    try {
+      LoadingUtil.showSafe();
+      merchantTypes.assignAll(await ApiRequest.merchantTypes());
+    } finally {
+      isIndustryLoading.value = false;
+      LoadingUtil.dismissSafe();
+    }
+  }
+
+  /// 选择所属行业，并保存接口返回的 typeId/typeName。
+  void selectIndustry(MerchantTypeItem industry) {
+    selectedMerchantType.value = industry;
+    industryController.text = industry.typeName;
+  }
+
+  /// 选择并上传门店门头照，接口返回 fileName 后保存到 shopLogo。
+  Future<void> pickShopLogo() async {
+    if (shopLogoPath.value.isNotEmpty) return;
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1800,
+    );
+    if (image == null) return;
+
+    LoadingUtil.showSafe();
+    try {
+      final fileName = await ApiRequest.uploadFile(filePath: image.path);
+      if (fileName == null || fileName.isEmpty) return;
+      shopLogoPath.value = image.path;
+      shopLogoFileName.value = fileName;
+    } finally {
+      LoadingUtil.dismissSafe();
+    }
+  }
+
+  /// 删除门店门头照，删除后再次点击上传框才会重新选择图片。
+  void removeShopLogo() {
+    shopLogoPath.value = '';
+    shopLogoFileName.value = '';
+  }
+
+  /// 选择并上传店内环境照，最多 9 张。
+  Future<void> pickInteriorImages() async {
+    final remain = 9 - interiorImagePaths.length;
+    if (remain <= 0) return;
+
+    final images = await _imagePicker.pickMultiImage(
+      imageQuality: 85,
+      maxWidth: 1800,
+    );
+    if (images.isEmpty) return;
+
+    final selected = images.take(remain).map((item) => item.path).toList();
+    LoadingUtil.showSafe();
+    try {
+      final fileNames = await ApiRequest.uploadFiles(filePaths: selected);
+      if (fileNames == null || fileNames.trim().isEmpty) return;
+      interiorImagePaths.addAll(selected);
+      interiorImageFileNames.addAll(
+        fileNames
+            .split(',')
+            .map((item) => item.trim())
+            .where((item) => item.isNotEmpty),
+      );
+    } finally {
+      LoadingUtil.dismissSafe();
+    }
+  }
+
+  /// 删除一张店内环境图。
+  void removeInteriorImageAt(int index) {
+    if (index < 0 || index >= interiorImagePaths.length) return;
+    interiorImagePaths.removeAt(index);
+    if (index < interiorImageFileNames.length) {
+      interiorImageFileNames.removeAt(index);
+    }
   }
 
   /// 准备地址选择器数据。
@@ -133,6 +235,11 @@ class MerchantOnboardingController extends GetxController {
     if (province != null) provinceController.text = province.name;
     if (city != null) cityController.text = city.name;
     if (district != null) districtController.text = district.name;
+    final postalCode =
+        district?.postalCode ?? city?.postalCode ?? province?.postalCode ?? '';
+    if (postalCode.isNotEmpty) {
+      postalCodeController.text = postalCode;
+    }
   }
 
   /// 选择营业时间后写回表单。
@@ -143,13 +250,6 @@ class MerchantOnboardingController extends GetxController {
       businessStartTimeController.text = value;
     } else {
       businessEndTimeController.text = value;
-    }
-  }
-
-  /// 模拟上传图片。
-  void uploadPhoto(String label) {
-    if (!uploadedPhotos.contains(label)) {
-      uploadedPhotos.add(label);
     }
   }
 
@@ -168,6 +268,7 @@ class MerchantOnboardingController extends GetxController {
         cityController.text.trim().isEmpty ||
         districtController.text.trim().isEmpty ||
         addressController.text.trim().isEmpty ||
+        postalCodeController.text.trim().isEmpty ||
         businessStartTimeController.text.trim().isEmpty ||
         businessEndTimeController.text.trim().isEmpty ||
         contactController.text.trim().isEmpty ||
@@ -175,7 +276,7 @@ class MerchantOnboardingController extends GetxController {
       errorMessage.value = l10n.completeMerchantOnboardingForm;
       return;
     }
-    if (uploadedPhotos.isEmpty) {
+    if (shopLogoFileName.value.isEmpty) {
       errorMessage.value = l10n.uploadMerchantPhotoRequired;
       return;
     }
@@ -189,20 +290,33 @@ class MerchantOnboardingController extends GetxController {
       final userInfo = SessionController.current.userInfo.value;
       final request = MerchantOnboardingRequest(
         userId: userInfo?.id ?? 0,
+
+        ///不用传
+        shopId: shopId,
         shopName: storeNameController.text.trim(),
-        types: industryController.text.trim(),
+        typeId: selectedMerchantType.value?.id ?? 0,
+        typeName:
+            selectedMerchantType.value?.typeName ??
+            industryController.text.trim(),
+        types:
+            selectedMerchantType.value?.typeName ??
+            industryController.text.trim(),
         names: contactController.text.trim(),
         phone: phoneController.text.trim(),
+        postalCode: postalCodeController.text.trim(),
         province: provinceController.text.trim(),
         city: cityController.text.trim(),
         area: districtController.text.trim(),
         address: addressController.text.trim(),
         businessStartTime: businessStartTimeController.text.trim(),
         businessEndTime: businessEndTimeController.text.trim(),
-        shopImgs: uploadedPhotos.join(','),
+        shopLogo: shopLogoFileName.value,
+        shopImgs: interiorImageFileNames.join(','),
         licenseImages: uploadedLicenses.join(','),
       );
-      final success = await ApiRequest.addMerchant(request: request);
+      final success = shopId == null
+          ? await ApiRequest.addMerchant(request: request)
+          : await ApiRequest.updateMerchant(request: request);
       if (!success) return;
       errorMessage.value = null;
       if (context.mounted) Get.back();
@@ -219,6 +333,7 @@ class MerchantOnboardingController extends GetxController {
     cityController.dispose();
     districtController.dispose();
     addressController.dispose();
+    postalCodeController.dispose();
     businessStartTimeController.dispose();
     businessEndTimeController.dispose();
     contactController.dispose();

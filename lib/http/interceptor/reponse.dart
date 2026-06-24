@@ -1,3 +1,4 @@
+import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import '../../app/router/app_router.dart';
@@ -42,7 +43,7 @@ class MyResponseInterceptor extends Interceptor {
       LoadingUtil.dismiss();
       print('清token');
       ///登录已过期，请重新登录
-      // GlobalController.current.logout();
+      SessionController.current.signOut();
       Storage.setAccessToken(token: null);
       Storage.clearUserInfo();
       final result = await ConfirmDialogUtil.show(

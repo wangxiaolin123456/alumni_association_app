@@ -1498,10 +1498,37 @@ class AppLocalizationsJa extends AppLocalizations {
   String get detailAddressHint => '番地、階、部屋番号などを入力';
 
   @override
+  String get postalCode => '郵便番号';
+
+  @override
+  String get postalCodeRequired => '郵便番号 *';
+
+  @override
+  String get postalCodeHint => '郵便番号を入力';
+
+  @override
   String get businessStartTime => '営業開始時間';
 
   @override
   String get businessEndTime => '営業終了時間';
+
+  @override
+  String get businessHoursRequired => '営業時間 *';
+
+  @override
+  String get startTime => '開始時間';
+
+  @override
+  String get endTime => '終了時間';
+
+  @override
+  String get to => '〜';
+
+  @override
+  String get operationAddressRequired => '営業住所 *';
+
+  @override
+  String get merchantSecurityGuarantee => '店舗情報の安全を保護';
 
   @override
   String get merchantPhotosRequired => '店舗写真 *';
@@ -1510,7 +1537,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get storefrontPhoto => '外観写真';
 
   @override
+  String get uploadStorefrontPhoto => '外観写真をアップロード';
+
+  @override
   String get storeInteriorPhoto => '店内写真';
+
+  @override
+  String get storeInteriorPhotos => '店内写真';
+
+  @override
+  String get addInteriorPhoto => '画像追加';
 
   @override
   String get businessScenePhoto => '営業場所写真';
@@ -1520,6 +1556,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get photoUploadHint => '鮮明な写真を最大6枚アップロード。JPG/PNG、10MB以内';
+
+  @override
+  String get interiorPhotoUploadHint => '外観写真は1枚、店内写真は最大9枚まで。JPG/PNG、10MB以内';
+
+  @override
+  String get uploaded => 'アップロード済み';
 
   @override
   String get example => '例';
@@ -1540,13 +1582,32 @@ class AppLocalizationsJa extends AppLocalizations {
   String get businessQualifications => '営業資格';
 
   @override
+  String get optional => '任意';
+
+  @override
+  String get businessLicenseLabel => '営業許可証';
+
+  @override
   String get businessLicense => '営業許可証をアップロード';
+
+  @override
+  String get otherQualificationLabel => 'その他資格\n（任意）';
 
   @override
   String get otherQualification => 'その他資格をアップロード';
 
   @override
+  String get qualificationSupplementTip => '  未準備の場合は先に提出し、後で店舗管理から補完できます';
+
+  @override
+  String get uploadFormatHint => 'JPG/PNG対応、10MB以内';
+
+  @override
   String get merchantOnboardingAgreement => '店舗登録規約';
+
+  @override
+  String get agreementPreviewContent =>
+      '現在は規約プレビューです。正式な規約ページ接続後、ここから全文を表示できます。';
 
   @override
   String get completeMerchantOnboardingForm => '必須情報をすべて入力してください';

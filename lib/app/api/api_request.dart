@@ -1,6 +1,7 @@
 import 'package:alumni_association_app/features/auth/model/response/login_response.dart';
 import 'package:alumni_association_app/features/profile/presentation/merchant_onboarding_request.dart';
 import 'package:alumni_association_app/features/profile/presentation/merchant_region_item.dart';
+import 'package:alumni_association_app/features/profile/presentation/merchant_type_item.dart';
 import 'package:dio/dio.dart';
 import '../../features/auth/model/response/user_info_response.dart';
 import '../../http/core/http_manager.dart';
@@ -35,8 +36,20 @@ class URL {
   /// 注册商户
   static const String addMerchant = "/api/merchant/addMerchant";
 
+  /// 修改商户
+  static const String updateMerchant = "/api/merchant/updateMerchant";
+
+  /// 商户所属行业
+  static const String merchantType = "/api/merchant/merchantType";
+
   /// 根据 pid 获取省市区信息
   static const String merchantRegionList = "/api/merchant/listByPid";
+
+  /// 单张图片上传
+  static const String uploadFile = "/api/upload/upload";
+
+  /// 多张图片上传
+  static const String uploadFiles = "/api/upload/uploads";
 }
 
 class ApiRequest {
@@ -247,6 +260,82 @@ class ApiRequest {
     }
   }
 
+  /// 获取商户行业类型。
+  static Future<List<MerchantTypeItem>> merchantTypes() async {
+    try {
+      final response = await HttpManager.get<dynamic>(URL.merchantType);
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return [];
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! List) return [];
+
+      return rawData
+          .whereType<Map>()
+          .map(
+            (item) =>
+                MerchantTypeItem.fromJson(Map<String, dynamic>.from(item)),
+          )
+          .where((item) => item.typeName.isNotEmpty && item.isDeleted == 0)
+          .toList();
+    } catch (e) {
+      ToastUtils.showToast(message: "行业数据获取失败", type: ToastType.error);
+      return [];
+    }
+  }
+
+  /// 单张图片上传，返回后端 fileName。
+  static Future<String?> uploadFile({required String filePath}) async {
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath),
+      });
+      final response = await HttpManager.post<dynamic>(
+        URL.uploadFile,
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
+
+      if (response.code == 200) {
+        final names = _extractFileNames(response.raw);
+        return names.isEmpty ? null : names.first;
+      }
+      ToastUtils.showToast(message: response.msg, type: ToastType.error);
+      return null;
+    } catch (e) {
+      ToastUtils.showToast(message: "图片上传失败", type: ToastType.error);
+      return null;
+    }
+  }
+
+  /// 多张图片上传，返回逗号拼接后的 fileName。
+  static Future<String?> uploadFiles({required List<String> filePaths}) async {
+    if (filePaths.isEmpty) return '';
+    try {
+      final files = <MultipartFile>[];
+      for (final path in filePaths) {
+        files.add(await MultipartFile.fromFile(path));
+      }
+      final formData = FormData.fromMap({'files': files});
+      final response = await HttpManager.post<dynamic>(
+        URL.uploadFiles,
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
+
+      if (response.code == 200) {
+        return _extractFileNames(response.raw).join(',');
+      }
+      ToastUtils.showToast(message: response.msg, type: ToastType.error);
+      return null;
+    } catch (e) {
+      ToastUtils.showToast(message: "图片上传失败", type: ToastType.error);
+      return null;
+    }
+  }
+
   /// 提交商户入驻资料。
   static Future<bool> addMerchant({
     required MerchantOnboardingRequest request,
@@ -271,6 +360,71 @@ class ApiRequest {
       ToastUtils.showToast(message: "商户入驻提交失败", type: ToastType.error);
       return false;
     }
+  }
+
+  /// 修改商户资料。
+  static Future<bool> updateMerchant({
+    required MerchantOnboardingRequest request,
+  }) async {
+    try {
+      final response = await HttpManager.post(
+        URL.updateMerchant,
+        data: request.toJson(),
+      );
+
+      if (response.code == 200) {
+        ToastUtils.showToast(
+          message: response.msg.isNotEmpty ? response.msg : "商户资料已更新",
+          type: ToastType.success,
+        );
+        return true;
+      }
+
+      ToastUtils.showToast(message: response.msg, type: ToastType.error);
+      return false;
+    } catch (e) {
+      ToastUtils.showToast(message: "商户资料更新失败", type: ToastType.error);
+      return false;
+    }
+  }
+
+  /// 从上传接口响应中提取 fileName。
+  static List<String> _extractFileNames(dynamic raw) {
+    final names = <String>[];
+    void collect(dynamic value) {
+      if (value == null) return;
+      if (value is Map) {
+        final map = Map<String, dynamic>.from(value);
+        final fileName =
+            map['fileName'] ??
+            map['fileNames'] ??
+            map['newFileName'] ??
+            map['url'] ??
+            map['urls'];
+        if (fileName is List) {
+          collect(fileName);
+        } else if (fileName != null && fileName.toString().isNotEmpty) {
+          names.addAll(
+            fileName
+                .toString()
+                .split(',')
+                .map((item) => item.trim())
+                .where((item) => item.isNotEmpty),
+          );
+        }
+        collect(map['data']);
+        collect(map['rows']);
+      } else if (value is List) {
+        for (final item in value) {
+          collect(item);
+        }
+      } else if (value is String && value.isNotEmpty) {
+        names.add(value);
+      }
+    }
+
+    collect(raw);
+    return names.toSet().toList();
   }
 
   /// 忘记密码发送验证码。

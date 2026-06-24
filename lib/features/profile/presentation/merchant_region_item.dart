@@ -7,11 +7,13 @@ class MerchantRegionItem {
     required this.id,
     required this.name,
     required this.pid,
+    this.postalCode = '',
   });
 
   final int id;
   final String name;
   final int pid;
+  final String postalCode;
 
   /// 拉取下一级地区时传给 `/api/merchant/listByPid` 的 pid。
   ///
@@ -33,11 +35,19 @@ class MerchantRegionItem {
               ?.toString() ??
           '',
       pid: _parseInt(json['pid'] ?? json['parentId'] ?? json['parent_id']),
+      postalCode:
+          (json['postalCode'] ??
+                  json['postCode'] ??
+                  json['postcode'] ??
+                  json['zipCode'] ??
+                  json['zip'])
+              ?.toString() ??
+          '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'pid': pid};
+    return {'id': id, 'name': name, 'pid': pid, 'postalCode': postalCode};
   }
 
   static int _parseInt(dynamic value) {
