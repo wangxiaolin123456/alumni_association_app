@@ -2,6 +2,8 @@ import 'package:alumni_association_app/features/auth/presentation/login_page.dar
 import 'package:alumni_association_app/features/auth/presentation/forgot_password_page.dart';
 import 'package:alumni_association_app/features/auth/presentation/account_bind_page.dart';
 import 'package:alumni_association_app/features/activity/presentation/activity_detail_page.dart';
+import 'package:alumni_association_app/features/auth/model/response/login_response.dart';
+import 'package:alumni_association_app/features/auth/model/request/bind_mobile_source.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_amount_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_coupon_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_merchant_page.dart';
@@ -35,227 +37,251 @@ import 'package:alumni_association_app/features/store/presentation/store_offer_p
 import 'package:alumni_association_app/features/store/presentation/store_reservation_confirm_page.dart';
 import 'package:alumni_association_app/features/store/presentation/store_reservation_page.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 class Pages {
-  static String login = '/login';
-  static String forgotPassword = '/auth/forgot-password';
-  static String accountBind = '/auth/account-bind';
-  static String settings = '/settings';
-  static String settingsLanguage = '/settings/language';
-  static String personalInfo = '/profile/personal-info';
-  static String merchantOnboardingPage = '/profile/merchant-onboarding';
-  static String memberSearch = '/member/search';
-  static String storeDetail = '/member/stores/detail';
-  static String storeOffer = '/member/stores/offer';
-  static String storeReservation = '/member/stores/reservation';
-  static String storeReservationConfirm = '/member/stores/reservation/confirm';
-  static String activityDetail = '/member/activities/detail';
-  static String opportunityDetail = '/member/opportunities/detail';
-  static String opportunityPublish = '/member/opportunities/publish';
-  static String consumptionMerchant = '/member/consumption/merchant';
-  static String consumptionCoupon = '/member/consumption/coupon';
-  static String consumptionAmount = '/member/consumption/amount';
-  static String consumptionSuccess = '/member/consumption/success';
-  static String memberRecords = '/member/records';
-  static String memberMessages = '/member/messages';
-  static String memberCertification = '/member/certification';
-  static String memberCertificationStatus = '/member/certification/status';
-  static String memberCertificationSuccess = '/member/certification/success';
-  static String memberCard = '/member/card';
-  static String memberQr = '/member/card/qr';
-  static String memberBenefits = '/member/benefits';
-  static String memberRegistrationRecords = '/member/profile/registrations';
-  static String memberFavoriteMerchants = '/member/profile/favorites';
-  static String memberBrowsingRecords = '/member/profile/browsing';
-  static String myOpportunities = '/member/profile/my-opportunities';
-  static String myPosts = '/member/profile/my-posts';
-  static String myActivities = '/member/profile/my-activities';
-  static String myBenefits = '/member/profile/my-benefits';
-  static String myOrdersPage = '/profile/orders';
-  static String orderDetail = '/profile/orders/detail';
-  static String entryRecordsPage = '/profile/entry-records';
-  static String opportunityManagementPage = '/profile/opportunity-management';
-  static String activityManagementPage = '/profile/activity-management';
-  static String contactService = '/member/profile/contact-service';
-  static String helpCenter = '/member/profile/help-center';
-  static String feedback = '/member/profile/feedback';
+  static const String home = '/';
+
+  static const String login = '/login';
+  static const String forgotPassword = '/auth/forgot-password';
+  static const String accountBind = '/auth/account-bind';
+
+  static const String settings = '/settings';
+  static const String settingsLanguage = '/settings/language';
+  static const String personalInfo = '/profile/personal-info';
+  static const String merchantOnboardingPage = '/profile/merchant-onboarding';
+
+  static const String memberSearch = '/member/search';
+  static const String storeDetail = '/member/stores/detail';
+  static const String storeOffer = '/member/stores/offer';
+  static const String storeReservation = '/member/stores/reservation';
+  static const String storeReservationConfirm =
+      '/member/stores/reservation/confirm';
+
+  static const String activityDetail = '/member/activities/detail';
+
+  static const String opportunityDetail = '/member/opportunities/detail';
+  static const String opportunityPublish = '/member/opportunities/publish';
+
+  static const String consumptionMerchant = '/member/consumption/merchant';
+  static const String consumptionCoupon = '/member/consumption/coupon';
+  static const String consumptionAmount = '/member/consumption/amount';
+  static const String consumptionSuccess = '/member/consumption/success';
+
+  static const String memberRecords = '/member/records';
+  static const String memberMessages = '/member/messages';
+  static const String memberCertification = '/member/certification';
+  static const String memberCertificationStatus =
+      '/member/certification/status';
+  static const String memberCertificationSuccess =
+      '/member/certification/success';
+  static const String memberCard = '/member/card';
+  static const String memberQr = '/member/card/qr';
+  static const String memberBenefits = '/member/benefits';
+
+  static const String memberRegistrationRecords =
+      '/member/profile/registrations';
+  static const String memberFavoriteMerchants = '/member/profile/favorites';
+  static const String memberBrowsingRecords = '/member/profile/browsing';
+
+  static const String myOpportunities = '/member/profile/my-opportunities';
+  static const String myPosts = '/member/profile/my-posts';
+  static const String myActivities = '/member/profile/my-activities';
+  static const String myBenefits = '/member/profile/my-benefits';
+
+  static const String myOrdersPage = '/profile/orders';
+  static const String orderDetail = '/profile/orders/detail';
+  static const String entryRecordsPage = '/profile/entry-records';
+
+  static const String opportunityManagementPage =
+      '/profile/opportunity-management';
+  static const String activityManagementPage = '/profile/activity-management';
+
+  static const String contactService = '/member/profile/contact-service';
+  static const String helpCenter = '/member/profile/help-center';
+  static const String feedback = '/member/profile/feedback';
 }
 
-final appRouter = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const _SessionGate()),
-    GoRoute(path: Pages.login, builder: (context, state) => const LoginPage()),
-    GoRoute(
-      path: Pages.forgotPassword,
-      builder: (context, state) => const ForgotPasswordPage(),
+class AppPages {
+  static const String INIT_ROUTER = Pages.home;
+  static final List<GetPage> routes = [
+    GetPage(name: Pages.home, page: () => const _SessionGate()),
+
+    GetPage(name: Pages.login, page: () => const LoginPage()),
+
+    GetPage(name: Pages.forgotPassword, page: () => const ForgotPasswordPage()),
+
+    GetPage(
+      name: Pages.accountBind,
+      page: () {
+        final args = Get.arguments;
+        return AccountBindPage(
+          email: args['email']?.toString() ?? '',
+          source: args['source'],
+        );
+      },
     ),
-    GoRoute(
-      path: Pages.accountBind,
-      builder: (context, state) => const AccountBindPage(),
+
+    GetPage(name: Pages.settings, page: () => const SettingsPage()),
+
+    GetPage(name: Pages.settingsLanguage, page: () => const LanguagePage()),
+
+    GetPage(name: Pages.personalInfo, page: () => const PersonalInfoPage()),
+
+    GetPage(
+      name: Pages.merchantOnboardingPage,
+      page: () => const MerchantOnboardingPage(),
     ),
-    GoRoute(
-      path: Pages.settings,
-      builder: (context, state) => const SettingsPage(),
+
+    GetPage(name: Pages.memberSearch, page: () => const MemberSearchPage()),
+
+    GetPage(name: Pages.storeDetail, page: () => const StoreDetailPage()),
+
+    GetPage(name: Pages.storeOffer, page: () => const StoreOfferPage()),
+
+    GetPage(
+      name: Pages.storeReservation,
+      page: () => const StoreReservationPage(),
     ),
-    GoRoute(
-      path: Pages.settingsLanguage,
-      builder: (context, state) => const LanguagePage(),
+
+    GetPage(
+      name: Pages.storeReservationConfirm,
+      page: () => const StoreReservationConfirmPage(),
     ),
-    GoRoute(
-      path: Pages.personalInfo,
-      builder: (context, state) => const PersonalInfoPage(),
+
+    GetPage(name: Pages.activityDetail, page: () => const ActivityDetailPage()),
+
+    GetPage(
+      name: Pages.opportunityDetail,
+      page: () => const OpportunityDetailPage(),
     ),
-    GoRoute(
-      path: Pages.merchantOnboardingPage,
-      builder: (context, state) => const MerchantOnboardingPage(),
+
+    GetPage(
+      name: Pages.opportunityPublish,
+      page: () => const OpportunityPublishPage(),
     ),
-    GoRoute(
-      path: Pages.memberSearch,
-      builder: (context, state) => const MemberSearchPage(),
+
+    GetPage(
+      name: Pages.consumptionMerchant,
+      page: () => const ConsumptionMerchantPage(),
     ),
-    GoRoute(
-      path: Pages.storeDetail,
-      builder: (context, state) => const StoreDetailPage(),
+
+    GetPage(
+      name: Pages.consumptionCoupon,
+      page: () => const ConsumptionCouponPage(),
     ),
-    GoRoute(
-      path: Pages.storeOffer,
-      builder: (context, state) => const StoreOfferPage(),
+
+    GetPage(
+      name: Pages.consumptionAmount,
+      page: () => const ConsumptionAmountPage(),
     ),
-    GoRoute(
-      path: Pages.storeReservation,
-      builder: (context, state) => const StoreReservationPage(),
+
+    GetPage(
+      name: Pages.consumptionSuccess,
+      page: () => const ConsumptionSuccessPage(),
     ),
-    GoRoute(
-      path: Pages.storeReservationConfirm,
-      builder: (context, state) => const StoreReservationConfirmPage(),
+
+    GetPage(
+      name: Pages.memberRecords,
+      page: () => const ConsumptionRecordsPage(),
     ),
-    GoRoute(
-      path: Pages.activityDetail,
-      builder: (context, state) => const ActivityDetailPage(),
+
+    GetPage(name: Pages.memberMessages, page: () => const MemberMessagesPage()),
+
+    GetPage(
+      name: Pages.memberCertification,
+      page: () => const CertificationFormPage(),
     ),
-    GoRoute(
-      path: Pages.opportunityDetail,
-      builder: (context, state) => const OpportunityDetailPage(),
+
+    GetPage(
+      name: Pages.memberCertificationStatus,
+      page: () => const CertificationStatusPage(),
     ),
-    GoRoute(
-      path: Pages.opportunityPublish,
-      builder: (context, state) => const OpportunityPublishPage(),
+
+    GetPage(
+      name: Pages.memberCertificationSuccess,
+      page: () => const CertificationSuccessPage(),
     ),
-    GoRoute(
-      path: Pages.consumptionMerchant,
-      builder: (context, state) => const ConsumptionMerchantPage(),
+
+    GetPage(name: Pages.memberCard, page: () => const MemberCardPage()),
+
+    GetPage(name: Pages.memberQr, page: () => const MemberQrPage()),
+
+    GetPage(
+      name: Pages.memberBenefits,
+      page: () => const MerchantBenefitsPage(),
     ),
-    GoRoute(
-      path: Pages.consumptionCoupon,
-      builder: (context, state) => const ConsumptionCouponPage(),
-    ),
-    GoRoute(
-      path: Pages.consumptionAmount,
-      builder: (context, state) => const ConsumptionAmountPage(),
-    ),
-    GoRoute(
-      path: Pages.consumptionSuccess,
-      builder: (context, state) => const ConsumptionSuccessPage(),
-    ),
-    GoRoute(
-      path: Pages.memberRecords,
-      builder: (context, state) => const ConsumptionRecordsPage(),
-    ),
-    GoRoute(
-      path: Pages.memberMessages,
-      builder: (context, state) => const MemberMessagesPage(),
-    ),
-    GoRoute(
-      path: Pages.memberCertification,
-      builder: (context, state) => const CertificationFormPage(),
-    ),
-    GoRoute(
-      path: Pages.memberCertificationStatus,
-      builder: (context, state) => const CertificationStatusPage(),
-    ),
-    GoRoute(
-      path: Pages.memberCertificationSuccess,
-      builder: (context, state) => const CertificationSuccessPage(),
-    ),
-    GoRoute(
-      path: Pages.memberCard,
-      builder: (context, state) => const MemberCardPage(),
-    ),
-    GoRoute(
-      path: Pages.memberQr,
-      builder: (context, state) => const MemberQrPage(),
-    ),
-    GoRoute(
-      path: Pages.memberBenefits,
-      builder: (context, state) => const MerchantBenefitsPage(),
-    ),
-    GoRoute(
-      path: Pages.memberRegistrationRecords,
-      builder: (context, state) =>
+
+    GetPage(
+      name: Pages.memberRegistrationRecords,
+      page: () =>
           const MemberRecordPage(type: MemberRecordPageType.registration),
     ),
-    GoRoute(
-      path: Pages.memberFavoriteMerchants,
-      builder: (context, state) =>
-          const MemberRecordPage(type: MemberRecordPageType.favorite),
+
+    GetPage(
+      name: Pages.memberFavoriteMerchants,
+      page: () => const MemberRecordPage(type: MemberRecordPageType.favorite),
     ),
-    GoRoute(
-      path: Pages.memberBrowsingRecords,
-      builder: (context, state) =>
-          const MemberRecordPage(type: MemberRecordPageType.browsing),
+
+    GetPage(
+      name: Pages.memberBrowsingRecords,
+      page: () => const MemberRecordPage(type: MemberRecordPageType.browsing),
     ),
-    GoRoute(
-      path: Pages.myOpportunities,
-      builder: (_, _) => const ProfileServiceListPage(
+
+    GetPage(
+      name: Pages.myOpportunities,
+      page: () => const ProfileServiceListPage(
         type: ProfileServiceListType.opportunities,
       ),
     ),
-    GoRoute(
-      path: Pages.myPosts,
-      builder: (_, _) =>
+
+    GetPage(
+      name: Pages.myPosts,
+      page: () =>
           const ProfileServiceListPage(type: ProfileServiceListType.posts),
     ),
-    GoRoute(
-      path: Pages.myActivities,
-      builder: (_, _) =>
+
+    GetPage(
+      name: Pages.myActivities,
+      page: () =>
           const ProfileServiceListPage(type: ProfileServiceListType.activities),
     ),
-    GoRoute(
-      path: Pages.myBenefits,
-      builder: (_, _) =>
+
+    GetPage(
+      name: Pages.myBenefits,
+      page: () =>
           const ProfileServiceListPage(type: ProfileServiceListType.benefits),
     ),
-    GoRoute(path: Pages.myOrdersPage, builder: (_, _) => const MyOrdersPage()),
-    GoRoute(
-      path: Pages.orderDetail,
-      builder: (_, state) => OrderDetailPage(
-        order: state.extra is ProfileOrderItem
-            ? state.extra! as ProfileOrderItem
-            : null,
-      ),
+
+    GetPage(name: Pages.myOrdersPage, page: () => const MyOrdersPage()),
+
+    GetPage(
+      name: Pages.orderDetail,
+      page: () {
+        final args = Get.arguments;
+        return OrderDetailPage(order: args is ProfileOrderItem ? args : null);
+      },
     ),
-    GoRoute(
-      path: Pages.entryRecordsPage,
-      builder: (_, _) => const EntryRecordsPage(),
+
+    GetPage(name: Pages.entryRecordsPage, page: () => const EntryRecordsPage()),
+
+    GetPage(
+      name: Pages.opportunityManagementPage,
+      page: () => const OpportunityManagementPage(),
     ),
-    GoRoute(
-      path: Pages.opportunityManagementPage,
-      builder: (_, _) => const OpportunityManagementPage(),
+
+    GetPage(
+      name: Pages.activityManagementPage,
+      page: () => const ActivityManagementPage(),
     ),
-    GoRoute(
-      path: Pages.activityManagementPage,
-      builder: (_, _) => const ActivityManagementPage(),
-    ),
-    GoRoute(
-      path: Pages.contactService,
-      builder: (_, _) => const ContactServicePage(),
-    ),
-    GoRoute(path: Pages.helpCenter, builder: (_, _) => const HelpCenterPage()),
-    GoRoute(path: Pages.feedback, builder: (_, _) => const FeedbackPage()),
-  ],
-);
+
+    GetPage(name: Pages.contactService, page: () => const ContactServicePage()),
+
+    GetPage(name: Pages.helpCenter, page: () => const HelpCenterPage()),
+
+    GetPage(name: Pages.feedback, page: () => const FeedbackPage()),
+  ];
+}
 
 /// 启动页结束后先进入首页。
 ///

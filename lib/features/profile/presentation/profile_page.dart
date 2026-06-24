@@ -6,7 +6,6 @@ import 'package:alumni_association_app/features/auth/domain/user_role.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
 ///我的首页
 class ProfilePage extends StatelessWidget {
@@ -60,7 +59,7 @@ class _GuestProfileView extends StatelessWidget {
                 width: double.infinity,
                 height: 48.h,
                 child: FilledButton(
-                  onPressed: () => context.push(Pages.login),
+                  onPressed: () => Get.toNamed(Pages.login),
                   child: Text(context.l10n.goLoginRegister),
                 ),
               ),
@@ -78,13 +77,20 @@ class _MemberMineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final userInfo = SessionController.current.userInfo.value;
     return _MineScaffold(
       header: _MineHeader(
         avatarIcon: Icons.apartment_rounded,
         roleTag: l10n.campus,
-        name: l10n.profileName,
+        name: userInfo?.displayName ?? l10n.profileName,
         badge: l10n.verified,
-        subline: '${l10n.alumniMember}  |  ${l10n.memberNumber}',
+        subline: _profileSubline(
+          defaultRole: l10n.alumniMember,
+          memberNumber: l10n.memberNumber,
+          email: userInfo?.email ?? '',
+          phone: userInfo?.phone ?? '',
+        ),
+        avatarUrl: userInfo?.avatar ?? '',
       ),
       children: [
         _MemberCard(),
@@ -94,24 +100,24 @@ class _MemberMineView extends StatelessWidget {
             _ActionItem(
               Icons.assignment_add,
               l10n.myOrders,
-              () => context.push(Pages.myOrdersPage),
+              () => Get.toNamed(Pages.myOrdersPage),
             ),
             _ActionItem(
               Icons.payments_rounded,
               l10n.registrationRecords,
-              () => context.push(Pages.memberRegistrationRecords),
+              () => Get.toNamed(Pages.memberRegistrationRecords),
               color: const Color(0xFFFF6B3D),
             ),
             _ActionItem(
               Icons.storefront_rounded,
               l10n.favoriteMerchants,
-              () => context.push(Pages.memberFavoriteMerchants),
+              () => Get.toNamed(Pages.memberFavoriteMerchants),
               color: AppColors.success,
             ),
             _ActionItem(
               Icons.schedule_rounded,
               l10n.browsingRecords,
-              () => context.push(Pages.memberBrowsingRecords),
+              () => Get.toNamed(Pages.memberBrowsingRecords),
             ),
           ],
         ),
@@ -121,38 +127,38 @@ class _MemberMineView extends StatelessWidget {
             _ActionItem(
               Icons.verified_user_rounded,
               l10n.alumniCertification,
-              () => context.push(Pages.memberCertification),
+              () => Get.toNamed(Pages.memberCertification),
             ),
             _ActionItem(
               Icons.business_center_rounded,
               l10n.opportunityManagement,
-              () => context.push(Pages.opportunityManagementPage),
+              () => Get.toNamed(Pages.opportunityManagementPage),
             ),
             _ActionItem(
               Icons.event_available_rounded,
               l10n.activityManagement,
-              () => context.push(Pages.activityManagementPage),
+              () => Get.toNamed(Pages.activityManagementPage),
             ),
             _ActionItem(
               Icons.confirmation_number_rounded,
               l10n.myCoupons,
-              () => context.push(Pages.myBenefits),
+              () => Get.toNamed(Pages.myBenefits),
             ),
             _ActionItem(
               Icons.storefront_rounded,
               l10n.merchantOnboarding,
-              () => context.push(Pages.merchantOnboardingPage),
+              () => Get.toNamed(Pages.merchantOnboardingPage),
               isNew: true,
             ),
             _ActionItem(
               Icons.support_agent_rounded,
               l10n.helpCenter,
-              () => context.push(Pages.helpCenter),
+              () => Get.toNamed(Pages.helpCenter),
             ),
             _ActionItem(
               Icons.chat_rounded,
               l10n.feedback,
-              () => context.push(Pages.feedback),
+              () => Get.toNamed(Pages.feedback),
             ),
           ],
         ),
@@ -167,13 +173,20 @@ class _MerchantMineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final userInfo = SessionController.current.userInfo.value;
     return _MineScaffold(
       header: _MineHeader(
         avatarIcon: Icons.apartment_rounded,
         roleTag: l10n.merchant,
-        name: l10n.merchantProfileName,
+        name: userInfo?.displayName ?? l10n.merchantProfileName,
         badge: l10n.verifiedMerchant,
-        subline: l10n.memberNumber,
+        subline: _profileSubline(
+          defaultRole: l10n.merchant,
+          memberNumber: l10n.memberNumber,
+          email: userInfo?.email ?? '',
+          phone: userInfo?.phone ?? '',
+        ),
+        avatarUrl: userInfo?.avatar ?? '',
       ),
       children: [
         _MyMerchantCard(),
@@ -184,24 +197,24 @@ class _MerchantMineView extends StatelessWidget {
             _ActionItem(
               Icons.assignment_add,
               l10n.myOrders,
-              () => context.push(Pages.myOrdersPage),
+              () => Get.toNamed(Pages.myOrdersPage),
             ),
             _ActionItem(
               Icons.payments_rounded,
               l10n.registrationRecords,
-              () => context.push(Pages.memberRegistrationRecords),
+              () => Get.toNamed(Pages.memberRegistrationRecords),
               color: const Color(0xFFFF6B3D),
             ),
             _ActionItem(
               Icons.storefront_rounded,
               l10n.favoriteMerchants,
-              () => context.push(Pages.memberFavoriteMerchants),
+              () => Get.toNamed(Pages.memberFavoriteMerchants),
               color: AppColors.success,
             ),
             _ActionItem(
               Icons.receipt_long_rounded,
               l10n.entryRecords,
-              () => context.push(Pages.entryRecordsPage),
+              () => Get.toNamed(Pages.entryRecordsPage),
             ),
             _ActionItem(
               Icons.account_balance_wallet_rounded,
@@ -216,17 +229,17 @@ class _MerchantMineView extends StatelessWidget {
             _ActionItem(
               Icons.verified_user_rounded,
               l10n.alumniCertification,
-              () => context.push(Pages.memberCertification),
+              () => Get.toNamed(Pages.memberCertification),
             ),
             _ActionItem(
               Icons.business_center_rounded,
               l10n.opportunityManagement,
-              () => context.push(Pages.opportunityManagementPage),
+              () => Get.toNamed(Pages.opportunityManagementPage),
             ),
             _ActionItem(
               Icons.event_available_rounded,
               l10n.activityManagement,
-              () => context.push(Pages.activityManagementPage),
+              () => Get.toNamed(Pages.activityManagementPage),
             ),
             _ActionItem(
               Icons.confirmation_number_rounded,
@@ -237,12 +250,12 @@ class _MerchantMineView extends StatelessWidget {
             _ActionItem(
               Icons.support_agent_rounded,
               l10n.helpCenter,
-              () => context.push(Pages.helpCenter),
+              () => Get.toNamed(Pages.helpCenter),
             ),
             _ActionItem(
               Icons.chat_rounded,
               l10n.feedback,
-              () => context.push(Pages.feedback),
+              () => Get.toNamed(Pages.feedback),
             ),
           ],
         ),
@@ -266,14 +279,14 @@ class _MineScaffold extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
-              onPressed: () => context.push(Pages.settings),
+              onPressed: () => Get.toNamed(Pages.settings),
               icon: Icon(Icons.settings_outlined, size: 28.sp),
             ),
             Stack(
               clipBehavior: Clip.none,
               children: [
                 IconButton(
-                  onPressed: () => context.push(Pages.memberMessages),
+                  onPressed: () => Get.toNamed(Pages.memberMessages),
                   icon: Icon(Icons.chat_bubble_outline_rounded, size: 27.sp),
                 ),
                 Positioned(
@@ -303,6 +316,7 @@ class _MineHeader extends StatelessWidget {
     required this.name,
     required this.badge,
     required this.subline,
+    this.avatarUrl = '',
   });
 
   final IconData avatarIcon;
@@ -310,11 +324,12 @@ class _MineHeader extends StatelessWidget {
   final String name;
   final String badge;
   final String subline;
+  final String avatarUrl;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.push(Pages.personalInfo),
+      onTap: () => Get.toNamed(Pages.personalInfo),
       child: Row(
         children: [
           Stack(
@@ -323,7 +338,12 @@ class _MineHeader extends StatelessWidget {
               CircleAvatar(
                 radius: 43.r,
                 backgroundColor: const Color(0xFFE0ECFF),
-                child: Icon(avatarIcon, color: AppColors.primary, size: 48.sp),
+                backgroundImage: avatarUrl.isEmpty
+                    ? null
+                    : NetworkImage(avatarUrl),
+                child: avatarUrl.isEmpty
+                    ? Icon(avatarIcon, color: AppColors.primary, size: 48.sp)
+                    : null,
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
@@ -338,7 +358,7 @@ class _MineHeader extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: 16.w),
+          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,12 +371,12 @@ class _MineHeader extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 23.sp,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                    SizedBox(width: 7.w),
+                    SizedBox(width: 4.w),
                     Icon(
                       Icons.verified_rounded,
                       color: AppColors.primary,
@@ -387,6 +407,17 @@ class _MineHeader extends StatelessWidget {
   }
 }
 
+String _profileSubline({
+  required String defaultRole,
+  required String memberNumber,
+  required String email,
+  required String phone,
+}) {
+  final contact = phone.isNotEmpty ? phone : email;
+  if (contact.isEmpty) return '$defaultRole  |  $memberNumber';
+  return '$defaultRole  |  $contact';
+}
+
 class _MemberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -394,7 +425,7 @@ class _MemberCard extends StatelessWidget {
       title: context.l10n.electronicMemberCard,
       subtitle: context.l10n.exclusiveBenefits,
       button: context.l10n.viewMemberCode,
-      onTap: () => context.push(Pages.memberQr),
+      onTap: () => Get.toNamed(Pages.memberQr),
     );
   }
 }
@@ -461,6 +492,8 @@ class _DarkCard extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20.sp,
@@ -470,6 +503,8 @@ class _DarkCard extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Text(
                   subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.white70, fontSize: 14.sp),
                 ),
               ],
@@ -478,7 +513,7 @@ class _DarkCard extends StatelessWidget {
           FilledButton.icon(
             onPressed: onTap,
             icon: const Icon(Icons.qr_code_2_rounded),
-            label: Text(button),
+            label: Text(button, style: TextStyle(fontSize: 14.sp)),
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFFFFD37A),
               foregroundColor: const Color(0xFF151515),
@@ -509,7 +544,7 @@ class _GridSection extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisExtent: 88.h,
+              mainAxisExtent: 65.h,
             ),
             itemCount: items.length,
             itemBuilder: (context, index) => _ActionTile(item: items[index]),

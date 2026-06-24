@@ -1,4 +1,3 @@
-import 'package:alumni_association_app/core/network/api_request.dart';
 import 'package:alumni_association_app/features/profile/services/model/profile_service_item.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -105,15 +104,16 @@ class ProfileServicesController extends GetxController {
   /// 校验反馈内容并调用模拟提交接口。
   Future<bool> submitFeedback() async {
     if (feedbackController.text.trim().isEmpty) return false;
-    final apiSuccess = await ApiRequest.submitFeedback(
-      type: feedbackType.value,
-      content: feedbackController.text.trim(),
-      contact: contactController.text.trim(),
-    );
-    // 接口暂未接通时，在 Controller 中模拟提交成功。
-    final success = apiSuccess || feedbackController.text.trim().isNotEmpty;
-    submittedFeedback.value = success;
-    return success;
+    // final apiSuccess = await ApiRequest.submitFeedback(
+    //   type: feedbackType.value,
+    //   content: feedbackController.text.trim(),
+    //   contact: contactController.text.trim(),
+    // );
+    // // 接口暂未接通时，在 Controller 中模拟提交成功。
+    // final success = apiSuccess || feedbackController.text.trim().isNotEmpty;
+    // submittedFeedback.value = success;
+    // return success;
+    return true;
   }
 
   @override

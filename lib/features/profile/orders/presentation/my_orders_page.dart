@@ -6,7 +6,7 @@ import 'package:alumni_association_app/features/profile/orders/presentation/my_o
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 class MyOrdersPage extends StatelessWidget {
   const MyOrdersPage({super.key});
@@ -16,7 +16,7 @@ class MyOrdersPage extends StatelessWidget {
     final controller = Get.put(MyOrdersController());
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () => context.pop()),
+        leading: BackButton(onPressed: () => Get.back()),
         title: Text(context.l10n.myOrders, style: _titleStyle),
         centerTitle: true,
         actions: [
@@ -134,7 +134,7 @@ class _OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.push(Pages.orderDetail, extra: order),
+      onTap: () => Get.toNamed(Pages.orderDetail),
       borderRadius: BorderRadius.circular(18.r),
       child: Container(
         padding: EdgeInsets.all(14.r),
@@ -233,7 +233,7 @@ class _OrderCard extends StatelessWidget {
                 else
                   OutlinedButton(
                     onPressed: () =>
-                        context.push(Pages.orderDetail, extra: order),
+                        Get.toNamed(Pages.orderDetail),
                     child: Text(context.l10n.viewDetail),
                   ),
               ],

@@ -7,7 +7,7 @@ import 'package:alumni_association_app/features/store/presentation/store_widgets
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 class StoreReservationPage extends StatelessWidget {
   const StoreReservationPage({super.key});
@@ -75,7 +75,7 @@ class _TopBar extends StatelessWidget {
           Positioned(
             left: 6.w,
             child: IconButton(
-              onPressed: () => context.pop(),
+              onPressed: () => Get.back(),
               icon: Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 22.r,
@@ -586,7 +586,7 @@ class _ConfirmButton extends StatelessWidget {
         height: 54.h,
         child: FilledButton(
           onPressed: enabled
-              ? () => context.push(Pages.storeReservationConfirm)
+              ? () => Get.toNamed(Pages.storeReservationConfirm)
               : null,
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,

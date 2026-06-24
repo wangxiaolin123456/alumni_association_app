@@ -7,7 +7,7 @@ import 'package:alumni_association_app/features/consumption/presentation/consump
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///消费入单 第二步
 class ConsumptionCouponPage extends StatelessWidget {
   const ConsumptionCouponPage({super.key});
@@ -34,7 +34,7 @@ class ConsumptionCouponPage extends StatelessWidget {
           SizedBox(height: 24.h),
           SelectedMerchantCard(
             merchant: controller.selectedMerchant,
-            onReselect: () => context.pop(),
+            onReselect: () => Get.back(),
           ),
           SizedBox(height: 14.h),
           Row(
@@ -94,7 +94,7 @@ class ConsumptionCouponPage extends StatelessWidget {
           child: FilledButton(
             onPressed: () {
               controller.goToStep(3);
-              context.push(Pages.consumptionAmount);
+              Get.toNamed(Pages.consumptionAmount);
             },
             child: Text(context.l10n.nextEnterAmount),
           ),

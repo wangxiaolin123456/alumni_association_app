@@ -1351,14 +1351,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordRuleHint =>
-      'Password must be 8-20 characters and include letters, numbers and special characters';
+      'Password must be 8-18 characters and include both letters and numbers';
 
   @override
   String get passwordRequirements =>
-      'Password requirements\n• 8-20 characters\n• Include letters, numbers and special characters\n• Case sensitive';
+      'Password requirements\n• 8-18 characters\n• Include both letters and numbers\n• Case sensitive';
 
   @override
-  String get passwordRuleMessage => 'Enter an 8-20 character password';
+  String get passwordRuleMessage =>
+      'Enter an 8-18 character password with letters and numbers';
 
   @override
   String get passwordNotMatch => 'Passwords do not match';
@@ -1452,6 +1453,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get region => 'Region';
 
   @override
+  String get registerTime => 'Registration Time';
+
+  @override
+  String get accountRole => 'Account Role';
+
+  @override
   String get save => 'Save';
 
   @override
@@ -1524,10 +1531,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseDistrict => 'District';
 
   @override
+  String get selectRegion => 'Select Region';
+
+  @override
   String get detailAddressRequired => 'Detailed Address *';
 
   @override
   String get detailAddressHint => 'Enter door number, floor and room details';
+
+  @override
+  String get businessStartTime => 'Opening Time';
+
+  @override
+  String get businessEndTime => 'Closing Time';
 
   @override
   String get merchantPhotosRequired => 'Merchant Photos *';
@@ -1742,4 +1758,113 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personUnit => '';
+
+  @override
+  String get exclusiveIdentity => 'Identity';
+
+  @override
+  String get exclusiveRights => 'Benefits';
+
+  @override
+  String get exclusiveService => 'Services';
+
+  @override
+  String get realNameHint => 'Enter your real name';
+
+  @override
+  String get chooseGraduatedSchool => 'Select your school';
+
+  @override
+  String get chooseCollege => 'Select your college';
+
+  @override
+  String get chooseCohort => 'Select graduation cohort';
+
+  @override
+  String get majorHint => 'Enter major name';
+
+  @override
+  String get proofMaterial => 'Proof Material';
+
+  @override
+  String get proofMaterialHint =>
+      'Upload student card, diploma or alumni proof (image/PDF)';
+
+  @override
+  String get uploadImagesTitle => 'Upload Images';
+
+  @override
+  String get uploadAtLeastOne => 'at least one';
+
+  @override
+  String get exampleImage => 'Example';
+
+  @override
+  String get warmTip => 'Tips';
+
+  @override
+  String get submitCertificationAgreementPrefix =>
+      'By submitting, you agree to ';
+
+  @override
+  String get alumniCertificationAgreement =>
+      'Alumni Verification Service Agreement';
+
+  @override
+  String get certificationInstructionDetail =>
+      'Please enter valid alumni information and upload clear proof such as student card, diploma or alumni certificate. Review usually takes 1-3 business days.';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get chooseFromAlbum => 'Choose from Album';
+
+  @override
+  String get removeUploadedImage => 'Remove Uploaded Image';
+
+  @override
+  String get sendCodeFailed =>
+      'Failed to send the verification code. Please try again later.';
+
+  @override
+  String get bindPhone => 'Bind Phone';
+
+  @override
+  String get bindPhoneDesc =>
+      'Bind a phone number for important notices, account recovery and security.';
+
+  @override
+  String get phoneCodePlaceholder => 'Enter SMS code';
+
+  @override
+  String get invalidPhoneMessage => 'Enter a valid phone number';
+
+  @override
+  String get phoneCodeRequiredMessage => 'Enter SMS code';
+
+  @override
+  String get phoneBindSuccess => 'Phone bound successfully';
+
+  @override
+  String get phoneBindTip => 'You can enter the app after binding';
+
+  @override
+  String get accountVerified => 'Account Verified';
+
+  @override
+  String get accountVerifiedDesc =>
+      'Bind your phone number to complete account security.';
+
+  @override
+  String get sendCodeSuccess =>
+      'Verification code sent. Please check your email.';
+
+  @override
+  String get registerSuccess =>
+      'Registration successful. Please log in with your email and password.';
+
+  @override
+  String get registerFailed =>
+      'Registration failed. Please check the verification code or try again later.';
 }

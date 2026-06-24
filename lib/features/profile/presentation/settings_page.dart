@@ -1,3 +1,4 @@
+import 'package:alumni_association_app/app/api/api_request.dart';
 import 'package:alumni_association_app/app/router/app_router.dart';
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
@@ -5,7 +6,7 @@ import 'package:alumni_association_app/features/auth/domain/session_controller.d
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///设置
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -18,12 +19,12 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          onPressed: context.pop,
+          onPressed: Get.back,
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
         title: Text(
           l10n.settings,
-          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800),
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w800),
         ),
         centerTitle: true,
       ),
@@ -35,14 +36,14 @@ class SettingsPage extends StatelessWidget {
             color: const Color(0xFF5B5EF7),
             title: l10n.changePassword,
             subtitle: l10n.changePasswordDesc,
-            onTap: () => context.push(Pages.forgotPassword),
+            onTap: () => Get.toNamed(Pages.forgotPassword),
           ),
           _SettingsCard(
             icon: Icons.language_rounded,
             color: AppColors.primary,
             title: l10n.languageSwitch,
             subtitle: l10n.chinese,
-            onTap: () => context.push(Pages.settingsLanguage),
+            onTap: () => Get.toNamed(Pages.settingsLanguage),
           ),
           _SettingsCard(
             icon: Icons.work_outline_rounded,
@@ -73,8 +74,7 @@ class SettingsPage extends StatelessWidget {
             height: 58.h,
             child: FilledButton(
               onPressed: () {
-                Get.find<SessionController>().signOut();
-                context.go('/');
+                _handleSignOut();
               },
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -94,6 +94,19 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+/// 调用退出登录接口，并清理本地登录态。
+Future<void> _handleSignOut() async {
+  final session = Get.find<SessionController>();
+  final userId = session.userInfo.value?.id ?? 0;
+
+  if (userId > 0) {
+    await ApiRequest.loginOut(userId: userId);
+  }
+
+  await session.signOut();
+  Get.offAllNamed(Pages.home);
 }
 
 class _SettingsCard extends StatelessWidget {

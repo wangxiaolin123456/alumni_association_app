@@ -5,7 +5,7 @@ import 'package:alumni_association_app/features/opportunity/presentation/opportu
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+///发布商机
 class OpportunityPublishPage extends StatelessWidget {
   const OpportunityPublishPage({super.key});
 
@@ -30,6 +30,7 @@ class OpportunityPublishPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(context.l10n.publishOpportunity,
           style: TextStyle(
@@ -38,18 +39,6 @@ class OpportunityPublishPage extends StatelessWidget {
             fontSize: 18.sp,
           ),),
         centerTitle: true,
-        actions: [
-          Obx(
-            () => TextButton(
-              onPressed: controller.saveDraft,
-              child: Text(
-                controller.draftSaved.value
-                    ? context.l10n.draftSaved
-                    : context.l10n.saveDraft,
-              ),
-            ),
-          ),
-        ],
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 110.h),

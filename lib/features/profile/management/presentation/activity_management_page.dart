@@ -5,7 +5,7 @@ import 'package:alumni_association_app/features/profile/management/presentation/
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///活动管理
 class ActivityManagementPage extends StatelessWidget {
   const ActivityManagementPage({super.key});
@@ -16,7 +16,7 @@ class ActivityManagementPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        leading: BackButton(onPressed: () => context.pop()),
+        leading: BackButton(onPressed: () => Get.back()),
         title: Text(context.l10n.activityManagement, style: _titleStyle),
         centerTitle: true,
         actions: [

@@ -1,6 +1,6 @@
 import 'package:alumni_association_app/core/localization/locale_controller.dart';
-import 'package:alumni_association_app/core/network/core/http_manager.dart';
 import 'package:alumni_association_app/core/storage/storage_providers.dart';
+import 'package:alumni_association_app/app/services/address_service.dart';
 import 'package:alumni_association_app/features/activity/presentation/activity_controller.dart';
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
 import 'package:alumni_association_app/features/auth/presentation/login_controller.dart';
@@ -18,6 +18,8 @@ import 'package:alumni_association_app/features/profile/services/presentation/pr
 import 'package:alumni_association_app/storage/inner_storage.dart';
 import 'package:get/get.dart';
 
+import '../../http/core/http_manager.dart';
+
 class AppBinding {
   static Future<void> init() async {
     // HttpManager 会从 InnerStorage 读取 token，必须在业务 Controller 请求前初始化。
@@ -26,7 +28,9 @@ class AppBinding {
 
     // 网络服务需要先于业务 Controller 注册，方便 Controller 初始化时请求接口。
     Get.put(HttpManager(), permanent: true);
+    Get.put(AddressService(), permanent: true);
     final session = Get.put(SessionController(), permanent: true);
+    session.restoreFromStorage();
     Get.put(LocaleController(), permanent: true);
     Get.put(LoginController(session), permanent: true);
     Get.put(MemberHomeController(), permanent: true);

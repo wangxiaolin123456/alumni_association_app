@@ -1,8 +1,9 @@
-import 'package:alumni_association_app/core/network/api_request.dart';
-import 'package:alumni_association_app/core/network/model/page_response.dart';
 import 'package:alumni_association_app/features/opportunity/model/response/opportunity_response.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+
+import '../../../app/api/api_request.dart';
+import '../../../http/model/page_response.dart';
 
 /// Owns opportunity browsing, detail interactions and publishing-form state.
 class OpportunityController extends GetxController {
@@ -184,17 +185,17 @@ class OpportunityController extends GetxController {
     isRefreshing.value = isRefresh;
     isLoadingMore.value = !isRefresh;
     try {
-      final result =
-          await ApiRequest.opportunityList(
-            pageNum: pageNum,
-            pageSize: pageSize,
-          ) ??
+      // final result =
+      //     await ApiRequest.opportunityList(
+      //       pageNum: pageNum,
+      //       pageSize: pageSize,
+      //     ) ??
           _mockPage(filteredOpportunities);
-      isRefresh
-          ? opportunityList.assignAll(result.rows)
-          : opportunityList.addAll(result.rows);
-      hasMore.value = result.hasMore;
-      if (result.hasMore) pageNum++;
+      // isRefresh
+      //     ? opportunityList.assignAll(result.rows)
+      //     : opportunityList.addAll(result.rows);
+      // hasMore.value = result.hasMore;
+      // if (result.hasMore) pageNum++;
     } finally {
       isLoading.value = false;
       isRefreshing.value = false;

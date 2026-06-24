@@ -1,11 +1,11 @@
-import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/app/router/app_router.dart';
+import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
+import 'package:alumni_association_app/features/auth/model/request/bind_mobile_source.dart';
 import 'package:alumni_association_app/features/auth/presentation/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
 class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
@@ -30,11 +30,13 @@ class LoginPage extends GetView<LoginController> {
                   children: [
                     SizedBox(height: 4.h),
                     _BrandHeader(),
-                    SizedBox(height: 36.h),
+                    SizedBox(height: 30.h),
                     _LoginModeSelector(),
                     SizedBox(height: 14.h),
                     _EmailField(),
                     SizedBox(height: 12.h),
+
+                    /// 根据当前模式显示不同表单
                     Obx(
                       () => controller.isRegisterMode.value
                           ? _RegisterFields()
@@ -42,26 +44,32 @@ class LoginPage extends GetView<LoginController> {
                               hintText: context.l10n.passwordPlaceholder,
                             ),
                     ),
+
                     SizedBox(height: 20.h),
                     _LoginButton(),
+
+                    /// 登录模式显示忘记密码，注册模式不显示
                     Obx(
                       () => controller.isRegisterMode.value
                           ? SizedBox(height: 12.h)
                           : Align(
                               alignment: Alignment.center,
                               child: TextButton(
-                                onPressed: () =>
-                                    context.push(Pages.forgotPassword),
+                                onPressed: () {
+                                  Get.toNamed(Pages.forgotPassword);
+                                },
                                 child: Text(context.l10n.forgotPassword),
                               ),
                             ),
                     ),
+
                     _AgreementRow(),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 25.h),
                     _ThirdPartyDivider(),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 15.h),
                     _ThirdPartyLogin(),
-                    SizedBox(height: 22.h),
+                    SizedBox(height: 18.h),
+
                     Obx(
                       () => Text(
                         controller.isRegisterMode.value
@@ -76,12 +84,14 @@ class LoginPage extends GetView<LoginController> {
                   ],
                 ),
               ),
+
+              /// 左上角返回首页按钮
               Positioned(
                 left: 0.w,
                 top: 0.h,
                 child: IconButton(
                   tooltip: context.l10n.backHome,
-                  onPressed: () => controller.backHome(context),
+                  onPressed: () => controller.backHome(),
                   icon: Icon(Icons.arrow_back_ios_new_rounded, size: 22.sp),
                 ),
               ),
@@ -245,6 +255,18 @@ class _RegisterFields extends StatelessWidget {
         _CodeField(),
         SizedBox(height: 12.h),
         _PasswordField(hintText: context.l10n.setPasswordPlaceholder),
+        SizedBox(height: 8.h),
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            context.l10n.passwordRuleHint,
+            style: TextStyle(
+              color: const Color(0xFFFF3B30),
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -256,7 +278,7 @@ class _CodeField extends GetView<LoginController> {
     return Obx(
       () => _LoginField(
         controller: controller.codeController,
-        icon: Icons.lock_outline_rounded,
+        icon: Icons.verified_outlined,
         hintText: context.l10n.emailCodePlaceholder,
         keyboardType: TextInputType.number,
         suffix: TextButton(
@@ -343,17 +365,6 @@ class _LoginButton extends GetView<LoginController> {
             ),
           ),
         ),
-        Obx(
-          () => controller.errorMessage.value == null
-              ? const SizedBox.shrink()
-              : Padding(
-                  padding: EdgeInsets.only(top: 8.h),
-                  child: Text(
-                    controller.errorMessage.value!,
-                    style: TextStyle(color: AppColors.danger, fontSize: 12.sp),
-                  ),
-                ),
-        ),
       ],
     );
   }
@@ -423,13 +434,19 @@ class _ThirdPartyLogin extends StatelessWidget {
         _ThirdPartyButton(
           icon: Icons.wechat,
           label: context.l10n.wechat,
-          onTap: () => context.push(Pages.accountBind),
+          onTap: () => Get.toNamed(
+            Pages.accountBind,
+            arguments: BindMobileSource.wechat('mock_wechat_id'),
+          ),
         ),
         SizedBox(width: 52.w),
         _ThirdPartyButton(
           icon: Icons.chat_bubble_outline_rounded,
           label: 'LINE',
-          onTap: () => context.push(Pages.accountBind),
+          onTap: () => Get.toNamed(
+            Pages.accountBind,
+            arguments: BindMobileSource.line('mock_line_id'),
+          ),
         ),
       ],
     );

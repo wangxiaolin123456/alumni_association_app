@@ -1,7 +1,5 @@
-import 'package:alumni_association_app/core/network/model/json_request.dart';
-
 /// Query parameters sent when requesting member-home recommendation data.
-class MemberHomeQuery implements JsonRequest {
+class MemberHomeQuery {
   const MemberHomeQuery({this.cityCode, this.page = 1, this.pageSize = 10});
 
   final String? cityCode;

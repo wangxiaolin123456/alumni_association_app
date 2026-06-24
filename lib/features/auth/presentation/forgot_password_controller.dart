@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:alumni_association_app/app/api/api_request.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
+import 'package:alumni_association_app/util/loading_util.dart';
+import 'package:alumni_association_app/util/password_util.dart';
+import 'package:alumni_association_app/util/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
 /// 忘记密码页面逻辑。
 class ForgotPasswordController extends GetxController {
@@ -32,14 +35,25 @@ class ForgotPasswordController extends GetxController {
     obscureConfirmPassword.value = !obscureConfirmPassword.value;
   }
 
-  /// 发送邮箱验证码，当前先模拟倒计时。
-  void sendCode() {
+  /// 发送邮箱验证码。
+  Future<void> sendCode() async {
     if (!canSendCode) {
       errorMessage.value =
           Get.context?.l10n.invalidEmailMessage ?? '请输入有效的邮件地址';
       return;
     }
     errorMessage.value = null;
+
+    LoadingUtil.showSafe();
+    final success = await ApiRequest.sendResetCode(
+      email: emailController.text.trim(),
+    ).whenComplete(LoadingUtil.dismissSafe);
+
+    if (!success) return;
+    ToastUtils.showToast(
+      message: Get.context?.l10n.sendCodeSuccess ?? '验证码已发送，请查收邮件',
+    );
+
     secondsRemaining.value = 60;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -68,7 +82,7 @@ class ForgotPasswordController extends GetxController {
       errorMessage.value = l10n.codeRequiredMessage;
       return;
     }
-    if (password.length < 8 || password.length > 20) {
+    if (!PasswordUtil.isValid(password)) {
       errorMessage.value = l10n.passwordRuleMessage;
       return;
     }
@@ -78,16 +92,23 @@ class ForgotPasswordController extends GetxController {
     }
 
     isSubmitting.value = true;
+    LoadingUtil.showSafe();
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 300));
+      final success = await ApiRequest.passwordReset(
+        email: email,
+        code: code,
+        password: PasswordUtil.encryptForApi(password),
+      );
+      if (!success) return;
       errorMessage.value = null;
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.passwordResetSuccess)));
-      context.pop();
+      Get.back();
     } finally {
       isSubmitting.value = false;
+      LoadingUtil.dismissSafe();
     }
   }
 

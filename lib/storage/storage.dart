@@ -1,4 +1,5 @@
 import '../features/auth/model/response/login_response.dart';
+import '../features/auth/model/response/user_info_response.dart';
 import 'inner_storage.dart';
 
 /// 全局Key
@@ -7,7 +8,7 @@ class _StorageKeys {
   static String token = "access_token";
 
   ///整体用户信息
-  static String loginInfo = "login_info";
+  static String userInfo = "user_info";
 
   /// 更新对话框显示版本
   static String updateDialogShownVersion = "update_dialog_shown_version";
@@ -16,15 +17,15 @@ class _StorageKeys {
 /// 全局管理器
 class Storage {
   /// 保存登录之后返回得信息 包括用户信息
-  static Future<void> setLoginInfo(LoginResponse loginInfo) async {
-    await InnerStorage().setJSON(_StorageKeys.loginInfo, loginInfo.toJson());
+  static Future<void> setLoginInfo(UserInfoResponse userInfo) async {
+    await InnerStorage().setJSON(_StorageKeys.userInfo, userInfo.toJson());
   }
 
   /// 获取登录信息
-  static LoginResponse? get loginInfo {
-    final data = InnerStorage().getJSON(_StorageKeys.loginInfo);
+  static UserInfoResponse? get userInfo {
+    final data = InnerStorage().getJSON(_StorageKeys.userInfo);
     if (data == null) return null;
-    return LoginResponse.fromJson(data);
+    return UserInfoResponse.fromJson(data);
   }
 
   /// 设置token
@@ -44,9 +45,9 @@ class Storage {
   }
 
   /// 清除登录信息（token + 用户信息）
-  static Future<void> clearLoginInfo() async {
+  static Future<void> clearUserInfo() async {
     await InnerStorage().remove(_StorageKeys.token);
-    await InnerStorage().remove(_StorageKeys.loginInfo);
+    await InnerStorage().remove(_StorageKeys.userInfo);
   }
 
   /// 设置更新对话框显示版本

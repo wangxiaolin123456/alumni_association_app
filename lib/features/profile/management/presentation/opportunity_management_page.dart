@@ -1,4 +1,3 @@
-import 'package:alumni_association_app/app/router/app_router.dart';
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/profile/management/model/profile_management_item.dart';
@@ -6,7 +5,8 @@ import 'package:alumni_association_app/features/profile/management/presentation/
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
+
 ///商机管理
 class OpportunityManagementPage extends StatelessWidget {
   const OpportunityManagementPage({super.key});
@@ -16,7 +16,7 @@ class OpportunityManagementPage extends StatelessWidget {
     final controller = Get.put(OpportunityManagementController());
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () => context.pop()),
+        leading: BackButton(onPressed: () => Get.back()),
         title: Text(context.l10n.opportunityManagement, style: _titleStyle),
         centerTitle: true,
         actions: [
@@ -26,7 +26,7 @@ class OpportunityManagementPage extends StatelessWidget {
               onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(context.l10n.publishActivity)),
               ),
-              icon:  Icon(Icons.add_circle_outline_rounded,size: 26.sp,),
+              icon: Icon(Icons.add_circle_outline_rounded, size: 26.sp),
               tooltip: context.l10n.publishActivity,
             ),
           ),
@@ -71,10 +71,7 @@ class _ManagementBody<T extends GetxController> extends StatelessWidget {
               controller: controller.searchController,
               onSubmitted: (_) => controller.fetchInitial(),
               textAlignVertical: TextAlignVertical.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFF1F2937),
-              ),
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF1F2937)),
               decoration: InputDecoration(
                 hintText: searchHint,
                 hintStyle: TextStyle(

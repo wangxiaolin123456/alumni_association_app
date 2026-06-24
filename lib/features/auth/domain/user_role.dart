@@ -1,7 +1,6 @@
 enum UserRole {
   member('会员'),
-  merchant('商家/店员'),
-  administrator('管理员');
+  merchant('商家/店员');
 
   const UserRole(this.label);
 

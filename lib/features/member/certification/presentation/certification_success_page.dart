@@ -4,7 +4,8 @@ import 'package:alumni_association_app/core/localization/localization_extensions
 import 'package:alumni_association_app/features/member/widgets/member_feature_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
+
 
 class CertificationSuccessPage extends StatelessWidget {
   const CertificationSuccessPage({super.key});
@@ -31,12 +32,14 @@ class CertificationSuccessPage extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.certificationSuccess,
+        title: Text(
+          context.l10n.certificationSuccess,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 18.sp,
-          ),),
+          ),
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -137,14 +140,14 @@ class CertificationSuccessPage extends StatelessWidget {
             children: [
               Expanded(
                 child: FilledButton(
-                  onPressed: () => context.pushReplacement(Pages.memberCard),
+                  onPressed: () => Get.toNamed(Pages.memberCard),
                   child: Text(context.l10n.viewMemberCard),
                 ),
               ),
               SizedBox(width: 12.w),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => context.go('/'),
+                  onPressed: () => Get.offAllNamed('/'),
                   child: Text(context.l10n.returnHome),
                 ),
               ),

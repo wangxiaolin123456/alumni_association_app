@@ -8,7 +8,6 @@ import 'package:alumni_association_app/features/activity/presentation/activity_w
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
 ///活动首页
 class ActivityListPage extends StatelessWidget {
@@ -177,7 +176,7 @@ class ActivityListPage extends StatelessWidget {
           bottom: 10.h,
           child: GestureDetector(
             onTap: () {
-              context.push(Pages.opportunityPublish);
+              Get.toNamed(Pages.opportunityPublish);
             },
 
             child: Stack(
@@ -205,7 +204,7 @@ class ActivityListPage extends StatelessWidget {
 
   void _openDetail(BuildContext context, ActivityResponse activity) {
     Get.find<ActivityController>().selectActivity(activity);
-    context.push(Pages.activityDetail);
+    Get.toNamed(Pages.activityDetail);
   }
 }
 

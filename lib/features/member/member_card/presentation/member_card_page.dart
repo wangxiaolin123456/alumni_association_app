@@ -6,7 +6,7 @@ import 'package:alumni_association_app/features/member/widgets/member_feature_wi
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///电子会员卡
 class MemberCardPage extends StatelessWidget {
   const MemberCardPage({super.key});
@@ -146,7 +146,7 @@ class MemberCardPage extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
           FilledButton(
-            onPressed: () => context.push(Pages.memberQr),
+            onPressed: () => Get.toNamed(Pages.memberQr),
             child: Text(context.l10n.showMemberQr),
           ),
         ],

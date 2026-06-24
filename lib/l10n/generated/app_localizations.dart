@@ -2677,19 +2677,19 @@ abstract class AppLocalizations {
   /// No description provided for @passwordRuleHint.
   ///
   /// In zh, this message translates to:
-  /// **'密码需包含 8-20 位字符，且至少包含字母、数字和特殊字符'**
+  /// **'密码必须是 8-18 位，且同时包含数字、字母'**
   String get passwordRuleHint;
 
   /// No description provided for @passwordRequirements.
   ///
   /// In zh, this message translates to:
-  /// **'密码要求\n• 8-20 位字符\n• 至少包含字母、数字和特殊字符\n• 区分大小写'**
+  /// **'密码要求\n• 8-18 位字符\n• 同时包含数字、字母\n• 区分大小写'**
   String get passwordRequirements;
 
   /// No description provided for @passwordRuleMessage.
   ///
   /// In zh, this message translates to:
-  /// **'请输入 8-20 位新密码'**
+  /// **'请输入 8-18 位且包含数字、字母的密码'**
   String get passwordRuleMessage;
 
   /// No description provided for @passwordNotMatch.
@@ -2866,6 +2866,18 @@ abstract class AppLocalizations {
   /// **'所在地区'**
   String get region;
 
+  /// No description provided for @registerTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'注册时间'**
+  String get registerTime;
+
+  /// No description provided for @accountRole.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号身份'**
+  String get accountRole;
+
   /// No description provided for @save.
   ///
   /// In zh, this message translates to:
@@ -3004,6 +3016,12 @@ abstract class AppLocalizations {
   /// **'请选择区'**
   String get chooseDistrict;
 
+  /// No description provided for @selectRegion.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择省市区'**
+  String get selectRegion;
+
   /// No description provided for @detailAddressRequired.
   ///
   /// In zh, this message translates to:
@@ -3015,6 +3033,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'请输入门牌号、楼层、房间号等详细信息'**
   String get detailAddressHint;
+
+  /// No description provided for @businessStartTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'营业开始时间'**
+  String get businessStartTime;
+
+  /// No description provided for @businessEndTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'营业结束时间'**
+  String get businessEndTime;
 
   /// No description provided for @merchantPhotosRequired.
   ///
@@ -3435,6 +3465,204 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'人'**
   String get personUnit;
+
+  /// No description provided for @exclusiveIdentity.
+  ///
+  /// In zh, this message translates to:
+  /// **'专属身份'**
+  String get exclusiveIdentity;
+
+  /// No description provided for @exclusiveRights.
+  ///
+  /// In zh, this message translates to:
+  /// **'专属权益'**
+  String get exclusiveRights;
+
+  /// No description provided for @exclusiveService.
+  ///
+  /// In zh, this message translates to:
+  /// **'专属服务'**
+  String get exclusiveService;
+
+  /// No description provided for @realNameHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入真实姓名'**
+  String get realNameHint;
+
+  /// No description provided for @chooseGraduatedSchool.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择毕业院校'**
+  String get chooseGraduatedSchool;
+
+  /// No description provided for @chooseCollege.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择所在学院'**
+  String get chooseCollege;
+
+  /// No description provided for @chooseCohort.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择毕业届别'**
+  String get chooseCohort;
+
+  /// No description provided for @majorHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入专业名称'**
+  String get majorHint;
+
+  /// No description provided for @proofMaterial.
+  ///
+  /// In zh, this message translates to:
+  /// **'证明材料'**
+  String get proofMaterial;
+
+  /// No description provided for @proofMaterialHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'上传学生证 / 毕业证 / 校友证明等（支持图片或PDF）'**
+  String get proofMaterialHint;
+
+  /// No description provided for @uploadImagesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'上传图片'**
+  String get uploadImagesTitle;
+
+  /// No description provided for @uploadAtLeastOne.
+  ///
+  /// In zh, this message translates to:
+  /// **'至少上传一项'**
+  String get uploadAtLeastOne;
+
+  /// No description provided for @exampleImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'示例图'**
+  String get exampleImage;
+
+  /// No description provided for @warmTip.
+  ///
+  /// In zh, this message translates to:
+  /// **'温馨提示'**
+  String get warmTip;
+
+  /// No description provided for @submitCertificationAgreementPrefix.
+  ///
+  /// In zh, this message translates to:
+  /// **'提交即表示同意 '**
+  String get submitCertificationAgreementPrefix;
+
+  /// No description provided for @alumniCertificationAgreement.
+  ///
+  /// In zh, this message translates to:
+  /// **'《校友认证服务协议》'**
+  String get alumniCertificationAgreement;
+
+  /// No description provided for @certificationInstructionDetail.
+  ///
+  /// In zh, this message translates to:
+  /// **'请填写真实有效的校友信息，并上传清晰可见的学生证、毕业证或校友证明。提交后工作人员会在 1-3 个工作日内完成审核。'**
+  String get certificationInstructionDetail;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'拍照上传'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromAlbum.
+  ///
+  /// In zh, this message translates to:
+  /// **'从相册选择'**
+  String get chooseFromAlbum;
+
+  /// No description provided for @removeUploadedImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除已上传图片'**
+  String get removeUploadedImage;
+
+  /// No description provided for @sendCodeFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'验证码发送失败，请稍后再试'**
+  String get sendCodeFailed;
+
+  /// No description provided for @bindPhone.
+  ///
+  /// In zh, this message translates to:
+  /// **'绑定手机号'**
+  String get bindPhone;
+
+  /// No description provided for @bindPhoneDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'绑定手机号用于接收重要通知、找回账号和保障账号安全'**
+  String get bindPhoneDesc;
+
+  /// No description provided for @phoneCodePlaceholder.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入手机验证码'**
+  String get phoneCodePlaceholder;
+
+  /// No description provided for @invalidPhoneMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入有效的手机号'**
+  String get invalidPhoneMessage;
+
+  /// No description provided for @phoneCodeRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入手机验证码'**
+  String get phoneCodeRequiredMessage;
+
+  /// No description provided for @phoneBindSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'手机号绑定成功'**
+  String get phoneBindSuccess;
+
+  /// No description provided for @phoneBindTip.
+  ///
+  /// In zh, this message translates to:
+  /// **'绑定后可直接进入 App'**
+  String get phoneBindTip;
+
+  /// No description provided for @accountVerified.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号验证已完成'**
+  String get accountVerified;
+
+  /// No description provided for @accountVerifiedDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'请继续绑定手机号，完善账号安全信息'**
+  String get accountVerifiedDesc;
+
+  /// No description provided for @sendCodeSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'验证码已发送，请查收邮件'**
+  String get sendCodeSuccess;
+
+  /// No description provided for @registerSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'注册成功，请使用邮箱和密码登录'**
+  String get registerSuccess;
+
+  /// No description provided for @registerFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'注册失败，请检查验证码或稍后再试'**
+  String get registerFailed;
 }
 
 class _AppLocalizationsDelegate

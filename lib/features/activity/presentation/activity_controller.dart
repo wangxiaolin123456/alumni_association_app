@@ -1,8 +1,8 @@
-import 'package:alumni_association_app/core/network/api_request.dart';
-import 'package:alumni_association_app/core/network/model/page_response.dart';
 import 'package:alumni_association_app/features/activity/model/response/activity_response.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+
+import '../../../http/model/page_response.dart';
 
 /// Owns activity-list filtering and activity-detail interaction state.
 class ActivityController extends GetxController {
@@ -156,19 +156,19 @@ class ActivityController extends GetxController {
     isRefreshing.value = isRefresh;
     isLoadingMore.value = !isRefresh;
     try {
-      final result =
-          await ApiRequest.activityList(
-            pageNum: pageNum,
-            pageSize: pageSize,
-            keyword: keyword.value,
-            category: categoryCodes[selectedCategory.value],
-          ) ??
+    //   final result =
+    //       await ApiRequest.activityList(
+    //         pageNum: pageNum,
+    //         pageSize: pageSize,
+    //         keyword: keyword.value,
+    //         category: categoryCodes[selectedCategory.value],
+    //       ) ??
           _mockPage();
-      isRefresh
-          ? activityList.assignAll(result.rows)
-          : activityList.addAll(result.rows);
-      hasMore.value = result.hasMore;
-      if (result.hasMore) pageNum++;
+      // isRefresh
+      //     ? activityList.assignAll(result.rows)
+      //     : activityList.addAll(result.rows);
+      // hasMore.value = result.hasMore;
+      // if (result.hasMore) pageNum++;
     } finally {
       isLoading.value = false;
       isRefreshing.value = false;

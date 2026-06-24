@@ -5,7 +5,7 @@ import 'package:alumni_association_app/features/consumption/presentation/consump
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 import '../../../app/router/app_router.dart';
 ///消费入单 第四步
@@ -96,8 +96,8 @@ class ConsumptionSuccessPage extends StatelessWidget {
           SizedBox(height: 18.h),
           OutlinedButton(
             onPressed: () {
-              context.push(Pages.memberRecords);
-              context.go('/');
+              Get.toNamed(Pages.memberRecords);
+              Get.offAllNamed('/');
             },
             child: Text(context.l10n.viewOrder),
           ),
@@ -105,7 +105,7 @@ class ConsumptionSuccessPage extends StatelessWidget {
           FilledButton(
             onPressed: () {
               controller.resetWorkflow();
-              context.go('/');
+              Get.offAllNamed('/');
             },
             child: Text(context.l10n.returnHome),
           ),

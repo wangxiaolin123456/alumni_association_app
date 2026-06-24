@@ -1,8 +1,8 @@
-import 'package:alumni_association_app/core/network/api_request.dart';
-import 'package:alumni_association_app/core/network/model/page_response.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+
+import '../../../http/model/page_response.dart';
 
 /// Owns merchant browsing, offer selection and reservation form state.
 class StoreController extends GetxController {
@@ -212,14 +212,14 @@ class StoreController extends GetxController {
     isRefreshing.value = isRefresh;
     isLoadingMore.value = !isRefresh;
     try {
-      final result =
-          await ApiRequest.storeList(pageNum: pageNum, pageSize: pageSize) ??
+      // final result =
+      //     await ApiRequest.storeList(pageNum: pageNum, pageSize: pageSize) ??
           _mockPage(filteredStores);
-      isRefresh
-          ? storeList.assignAll(result.rows)
-          : storeList.addAll(result.rows);
-      hasMore.value = result.hasMore;
-      if (result.hasMore) pageNum++;
+      // isRefresh
+      //     ? storeList.assignAll(result.rows)
+      //     : storeList.addAll(result.rows);
+      // hasMore.value = result.hasMore;
+      // if (result.hasMore) pageNum++;
     } finally {
       isLoading.value = false;
       isRefreshing.value = false;

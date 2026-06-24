@@ -8,7 +8,7 @@ import 'package:alumni_association_app/features/opportunity/presentation/opportu
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 ///商机管理
 class OpportunityListPage extends StatelessWidget {
@@ -93,7 +93,7 @@ class OpportunityListPage extends StatelessWidget {
                           opportunity: opportunities[index],
                           onTap: () {
                             controller.selectOpportunity(opportunities[index]);
-                            context.push(Pages.opportunityDetail);
+                            Get.toNamed(Pages.opportunityDetail);
                           },
                         ),
                       ),
@@ -113,7 +113,7 @@ class OpportunityListPage extends StatelessWidget {
           bottom: 10.h,
           child: GestureDetector(
             onTap: () {
-              context.push(Pages.opportunityPublish);
+              Get.toNamed(Pages.opportunityPublish);
             },
 
             child: Stack(

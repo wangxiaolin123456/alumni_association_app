@@ -1315,14 +1315,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get confirmNewPasswordPlaceholder => '请再次输入新密码';
 
   @override
-  String get passwordRuleHint => '密码需包含 8-20 位字符，且至少包含字母、数字和特殊字符';
+  String get passwordRuleHint => '密码必须是 8-18 位，且同时包含数字、字母';
 
   @override
-  String get passwordRequirements =>
-      '密码要求\n• 8-20 位字符\n• 至少包含字母、数字和特殊字符\n• 区分大小写';
+  String get passwordRequirements => '密码要求\n• 8-18 位字符\n• 同时包含数字、字母\n• 区分大小写';
 
   @override
-  String get passwordRuleMessage => '请输入 8-20 位新密码';
+  String get passwordRuleMessage => '请输入 8-18 位且包含数字、字母的密码';
 
   @override
   String get passwordNotMatch => '两次输入的密码不一致';
@@ -1412,6 +1411,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get region => '所在地区';
 
   @override
+  String get registerTime => '注册时间';
+
+  @override
+  String get accountRole => '账号身份';
+
+  @override
   String get save => '保存';
 
   @override
@@ -1481,10 +1486,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chooseDistrict => '请选择区';
 
   @override
+  String get selectRegion => '选择省市区';
+
+  @override
   String get detailAddressRequired => '详细地址 *';
 
   @override
   String get detailAddressHint => '请输入门牌号、楼层、房间号等详细信息';
+
+  @override
+  String get businessStartTime => '营业开始时间';
+
+  @override
+  String get businessEndTime => '营业结束时间';
 
   @override
   String get merchantPhotosRequired => '商户照片 *';
@@ -1695,4 +1709,104 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get personUnit => '人';
+
+  @override
+  String get exclusiveIdentity => '专属身份';
+
+  @override
+  String get exclusiveRights => '专属权益';
+
+  @override
+  String get exclusiveService => '专属服务';
+
+  @override
+  String get realNameHint => '请输入真实姓名';
+
+  @override
+  String get chooseGraduatedSchool => '请选择毕业院校';
+
+  @override
+  String get chooseCollege => '请选择所在学院';
+
+  @override
+  String get chooseCohort => '请选择毕业届别';
+
+  @override
+  String get majorHint => '请输入专业名称';
+
+  @override
+  String get proofMaterial => '证明材料';
+
+  @override
+  String get proofMaterialHint => '上传学生证 / 毕业证 / 校友证明等（支持图片或PDF）';
+
+  @override
+  String get uploadImagesTitle => '上传图片';
+
+  @override
+  String get uploadAtLeastOne => '至少上传一项';
+
+  @override
+  String get exampleImage => '示例图';
+
+  @override
+  String get warmTip => '温馨提示';
+
+  @override
+  String get submitCertificationAgreementPrefix => '提交即表示同意 ';
+
+  @override
+  String get alumniCertificationAgreement => '《校友认证服务协议》';
+
+  @override
+  String get certificationInstructionDetail =>
+      '请填写真实有效的校友信息，并上传清晰可见的学生证、毕业证或校友证明。提交后工作人员会在 1-3 个工作日内完成审核。';
+
+  @override
+  String get takePhoto => '拍照上传';
+
+  @override
+  String get chooseFromAlbum => '从相册选择';
+
+  @override
+  String get removeUploadedImage => '删除已上传图片';
+
+  @override
+  String get sendCodeFailed => '验证码发送失败，请稍后再试';
+
+  @override
+  String get bindPhone => '绑定手机号';
+
+  @override
+  String get bindPhoneDesc => '绑定手机号用于接收重要通知、找回账号和保障账号安全';
+
+  @override
+  String get phoneCodePlaceholder => '请输入手机验证码';
+
+  @override
+  String get invalidPhoneMessage => '请输入有效的手机号';
+
+  @override
+  String get phoneCodeRequiredMessage => '请输入手机验证码';
+
+  @override
+  String get phoneBindSuccess => '手机号绑定成功';
+
+  @override
+  String get phoneBindTip => '绑定后可直接进入 App';
+
+  @override
+  String get accountVerified => '账号验证已完成';
+
+  @override
+  String get accountVerifiedDesc => '请继续绑定手机号，完善账号安全信息';
+
+  @override
+  String get sendCodeSuccess => '验证码已发送，请查收邮件';
+
+  @override
+  String get registerSuccess => '注册成功，请使用邮箱和密码登录';
+
+  @override
+  String get registerFailed => '注册失败，请检查验证码或稍后再试';
 }

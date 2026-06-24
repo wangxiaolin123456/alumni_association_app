@@ -1,10 +1,11 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/profile/presentation/merchant_onboarding_controller.dart';
+import 'package:alumni_association_app/features/profile/presentation/merchant_region_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 /// 商户入驻
 class MerchantOnboardingPage extends StatelessWidget {
   const MerchantOnboardingPage({super.key});
@@ -17,10 +18,13 @@ class MerchantOnboardingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: context.pop,
+          onPressed: Get.back,
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
-        title: Text(l10n.merchantOnboarding),
+        title: Text(
+          l10n.merchantOnboarding,
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w800),
+        ),
         centerTitle: true,
         actions: [
           TextButton.icon(
@@ -56,6 +60,7 @@ class MerchantOnboardingPage extends StatelessWidget {
                     child: _CompactField(
                       l10n.chooseProvince,
                       controller.provinceController,
+                      onTap: () => _showRegionPicker(context, controller),
                     ),
                   ),
                   SizedBox(width: 10.w),
@@ -63,6 +68,7 @@ class MerchantOnboardingPage extends StatelessWidget {
                     child: _CompactField(
                       l10n.chooseCity,
                       controller.cityController,
+                      onTap: () => _showRegionPicker(context, controller),
                     ),
                   ),
                   SizedBox(width: 10.w),
@@ -70,6 +76,7 @@ class MerchantOnboardingPage extends StatelessWidget {
                     child: _CompactField(
                       l10n.chooseDistrict,
                       controller.districtController,
+                      onTap: () => _showRegionPicker(context, controller),
                     ),
                   ),
                 ],
@@ -80,6 +87,30 @@ class MerchantOnboardingPage extends StatelessWidget {
                 l10n.detailAddressHint,
                 controller.addressController,
                 maxLength: 100,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _TimeField(
+                      label: l10n.businessStartTime,
+                      controller: controller.businessStartTimeController,
+                      onTap: () =>
+                          _pickBusinessTime(context, controller, isStart: true),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: _TimeField(
+                      label: l10n.businessEndTime,
+                      controller: controller.businessEndTimeController,
+                      onTap: () => _pickBusinessTime(
+                        context,
+                        controller,
+                        isStart: false,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -153,6 +184,112 @@ class MerchantOnboardingPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _pickBusinessTime(
+    BuildContext context,
+    MerchantOnboardingController controller, {
+    required bool isStart,
+  }) async {
+    final time = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 9, minute: 0),
+    );
+    if (time == null) return;
+    controller.updateBusinessTime(isStart: isStart, time: time);
+  }
+
+  Future<void> _showRegionPicker(
+    BuildContext context,
+    MerchantOnboardingController controller,
+  ) async {
+    await controller.prepareRegionPicker();
+    if (!context.mounted) return;
+    // 如果省份数据为空，不弹出地址选择弹窗
+    if (controller.provinces.isEmpty) {
+      return;
+    }
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          height: 520.h,
+          padding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 18.h),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF7FAFF),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(26.r)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 42.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD5DFEF),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                children: [
+                  Text(
+                    context.l10n.selectRegion,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      controller.confirmRegionSelection();
+                      Get.back();
+                    },
+                    child: Text(context.l10n.confirm),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.h),
+              Expanded(
+                child: Obx(
+                  () =>
+                      controller.isRegionLoading.value &&
+                          controller.provinces.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : Row(
+                          children: [
+                            _RegionColumn(
+                              title: context.l10n.chooseProvince,
+                              items: controller.provinces,
+                              selectedId: controller.selectedProvince.value?.id,
+                              onTap: controller.selectProvince,
+                            ),
+                            SizedBox(width: 8.w),
+                            _RegionColumn(
+                              title: context.l10n.chooseCity,
+                              items: controller.cities,
+                              selectedId: controller.selectedCity.value?.id,
+                              onTap: controller.selectCity,
+                            ),
+                            SizedBox(width: 8.w),
+                            _RegionColumn(
+                              title: context.l10n.chooseDistrict,
+                              items: controller.districts,
+                              selectedId: controller.selectedDistrict.value?.id,
+                              onTap: controller.selectDistrict,
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -274,18 +411,138 @@ class _Field extends StatelessWidget {
 }
 
 class _CompactField extends StatelessWidget {
-  const _CompactField(this.hint, this.controller);
+  const _CompactField(this.hint, this.controller, {this.onTap});
 
   final String hint;
   final TextEditingController controller;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      readOnly: onTap != null,
+      onTap: onTap,
       decoration: InputDecoration(
         hintText: hint,
         suffixIcon: Icon(Icons.keyboard_arrow_down_rounded, size: 18.sp),
+      ),
+    );
+  }
+}
+
+class _TimeField extends StatelessWidget {
+  const _TimeField({
+    required this.label,
+    required this.controller,
+    required this.onTap,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      readOnly: true,
+      onTap: onTap,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: '09:00',
+        suffixIcon: Icon(Icons.access_time_rounded, size: 18.sp),
+      ),
+    );
+  }
+}
+
+class _RegionColumn extends StatelessWidget {
+  const _RegionColumn({
+    required this.title,
+    required this.items,
+    required this.selectedId,
+    required this.onTap,
+  });
+
+  final String title;
+  final List<MerchantRegionItem> items;
+  final int? selectedId;
+  final void Function(MerchantRegionItem item) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w700),
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: items.isEmpty
+                  ? Center(
+                      child: Text(
+                        context.l10n.noMoreData,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        final selected = item.id == selectedId;
+                        return InkWell(
+                          onTap: () => onTap(item),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 3.h,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 9.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? const Color(0xFFEAF2FF)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            child: Text(
+                              item.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: selected
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                                fontSize: 13.sp,
+                                fontWeight: selected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -34,11 +34,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  # 状态管理框架
-  # 用于管理登录状态、用户信息、语言切换、全局数据等
-  # 路由管理
-  # 用于页面跳转、登录拦截、角色首页区分等
-  go_router: ^17.0.0
   # 网络请求库
   dio: ^5.9.2
   # 本地轻量级存储
@@ -49,6 +44,10 @@ dependencies:
   connectivity_plus: 6.1.5
   # 网络图片缓存
   cached_network_image: ^3.4.1
+  #  全局 loading 提示
+  flutter_easyloading: ^3.0.5
+  #  全局 toast 提示
+  bot_toast: ^4.0.0
   # 图片选择
   image_picker: ^1.2.1
   # 权限申请

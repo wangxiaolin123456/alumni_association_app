@@ -7,7 +7,7 @@ import 'package:alumni_association_app/features/consumption/presentation/consump
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 import '../widget/consumption_category_sheet.dart';
 
@@ -171,7 +171,7 @@ class ConsumptionMerchantPage extends StatelessWidget {
           child: FilledButton(
             onPressed: () {
               controller.goToStep(2);
-              context.push(Pages.consumptionCoupon);
+              Get.toNamed(Pages.consumptionCoupon);
             },
             child: Text(context.l10n.nextSelectCoupon),
           ),

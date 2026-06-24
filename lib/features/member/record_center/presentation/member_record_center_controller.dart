@@ -1,7 +1,8 @@
-import 'package:alumni_association_app/core/network/api_request.dart';
-import 'package:alumni_association_app/core/network/model/page_response.dart';
 import 'package:alumni_association_app/features/member/record_center/model/response/member_record_response.dart';
 import 'package:get/get.dart';
+
+import '../../../../app/api/api_request.dart';
+import '../../../../http/model/page_response.dart';
 
 class MemberRecordCenterController extends GetxController {
   final registrationList = <MemberRecordResponse>[].obs;
@@ -181,17 +182,17 @@ class MemberRecordCenterController extends GetxController {
     registrationLoading.value = true;
     registrationLoadingMore.value = !isRefresh;
     try {
-      final result =
-          await ApiRequest.registrationRecords(
-            pageNum: registrationPageNum,
-            pageSize: pageSize,
-          ) ??
+      // final result =
+      //     await ApiRequest.registrationRecords(
+      //       pageNum: registrationPageNum,
+      //       pageSize: pageSize,
+      //     ) ??
           _mockPage(registrations, registrationPageNum);
-      isRefresh
-          ? registrationList.assignAll(result.rows)
-          : registrationList.addAll(result.rows);
-      registrationHasMore.value = result.hasMore;
-      if (result.hasMore) registrationPageNum++;
+      // isRefresh
+      //     ? registrationList.assignAll(result.rows)
+      //     : registrationList.addAll(result.rows);
+      // registrationHasMore.value = result.hasMore;
+      // if (result.hasMore) registrationPageNum++;
     } finally {
       registrationLoading.value = false;
       registrationLoadingMore.value = false;
@@ -204,17 +205,17 @@ class MemberRecordCenterController extends GetxController {
     favoriteLoading.value = true;
     favoriteLoadingMore.value = !isRefresh;
     try {
-      final result =
-          await ApiRequest.favoriteMerchants(
-            pageNum: favoritePageNum,
-            pageSize: pageSize,
-          ) ??
+      // final result =
+      //     await ApiRequest.favoriteMerchants(
+      //       pageNum: favoritePageNum,
+      //       pageSize: pageSize,
+      //     ) ??
           _mockPage(activeFavorites, favoritePageNum);
-      isRefresh
-          ? favoriteList.assignAll(result.rows)
-          : favoriteList.addAll(result.rows);
-      favoriteHasMore.value = result.hasMore;
-      if (result.hasMore) favoritePageNum++;
+      // isRefresh
+      //     ? favoriteList.assignAll(result.rows)
+      //     : favoriteList.addAll(result.rows);
+      // favoriteHasMore.value = result.hasMore;
+      // if (result.hasMore) favoritePageNum++;
     } finally {
       favoriteLoading.value = false;
       favoriteLoadingMore.value = false;
@@ -227,17 +228,17 @@ class MemberRecordCenterController extends GetxController {
     browsingLoading.value = true;
     browsingLoadingMore.value = !isRefresh;
     try {
-      final result =
-          await ApiRequest.browsingRecords(
-            pageNum: browsingPageNum,
-            pageSize: pageSize,
-          ) ??
+      // final result =
+      //     await ApiRequest.browsingRecords(
+      //       pageNum: browsingPageNum,
+      //       pageSize: pageSize,
+      //     ) ??
           _mockPage(browsingRecords, browsingPageNum);
-      isRefresh
-          ? browsingList.assignAll(result.rows)
-          : browsingList.addAll(result.rows);
-      browsingHasMore.value = result.hasMore;
-      if (result.hasMore) browsingPageNum++;
+      // isRefresh
+      //     ? browsingList.assignAll(result.rows)
+      //     : browsingList.addAll(result.rows);
+      // browsingHasMore.value = result.hasMore;
+      // if (result.hasMore) browsingPageNum++;
     } finally {
       browsingLoading.value = false;
       browsingLoadingMore.value = false;

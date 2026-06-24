@@ -1316,14 +1316,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get confirmNewPasswordPlaceholder => 'もう一度入力してください';
 
   @override
-  String get passwordRuleHint => 'パスワードは8〜20文字で、英字・数字・記号を含めてください';
+  String get passwordRuleHint => 'パスワードは8〜18文字で、英字と数字を含めてください';
 
   @override
   String get passwordRequirements =>
-      'パスワード要件\n• 8〜20文字\n• 英字、数字、記号を含む\n• 大文字小文字を区別';
+      'パスワード要件\n• 8〜18文字\n• 英字と数字を含む\n• 大文字小文字を区別';
 
   @override
-  String get passwordRuleMessage => '8〜20文字のパスワードを入力してください';
+  String get passwordRuleMessage => '英字と数字を含む8〜18文字のパスワードを入力してください';
 
   @override
   String get passwordNotMatch => 'パスワードが一致しません';
@@ -1414,6 +1414,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get region => '地域';
 
   @override
+  String get registerTime => '登録時間';
+
+  @override
+  String get accountRole => 'アカウント種別';
+
+  @override
   String get save => '保存';
 
   @override
@@ -1483,10 +1489,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get chooseDistrict => '区を選択';
 
   @override
+  String get selectRegion => '地域を選択';
+
+  @override
   String get detailAddressRequired => '詳細住所 *';
 
   @override
   String get detailAddressHint => '番地、階、部屋番号などを入力';
+
+  @override
+  String get businessStartTime => '営業開始時間';
+
+  @override
+  String get businessEndTime => '営業終了時間';
 
   @override
   String get merchantPhotosRequired => '店舗写真 *';
@@ -1697,4 +1712,104 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get personUnit => '人';
+
+  @override
+  String get exclusiveIdentity => '専属身分';
+
+  @override
+  String get exclusiveRights => '専属特典';
+
+  @override
+  String get exclusiveService => '専属サービス';
+
+  @override
+  String get realNameHint => '実名を入力してください';
+
+  @override
+  String get chooseGraduatedSchool => '卒業学校を選択してください';
+
+  @override
+  String get chooseCollege => '所属学院を選択してください';
+
+  @override
+  String get chooseCohort => '卒業年度を選択してください';
+
+  @override
+  String get majorHint => '専攻名を入力してください';
+
+  @override
+  String get proofMaterial => '証明資料';
+
+  @override
+  String get proofMaterialHint => '学生証 / 卒業証書 / 同窓生証明などをアップロード（画像またはPDF）';
+
+  @override
+  String get uploadImagesTitle => '画像アップロード';
+
+  @override
+  String get uploadAtLeastOne => '1点以上';
+
+  @override
+  String get exampleImage => 'サンプル';
+
+  @override
+  String get warmTip => '注意事項';
+
+  @override
+  String get submitCertificationAgreementPrefix => '送信すると次に同意したものとみなされます ';
+
+  @override
+  String get alumniCertificationAgreement => '同窓生認証サービス規約';
+
+  @override
+  String get certificationInstructionDetail =>
+      '有効な同窓生情報を入力し、学生証、卒業証書、同窓生証明など鮮明な資料をアップロードしてください。審査は通常1〜3営業日です。';
+
+  @override
+  String get takePhoto => '写真を撮る';
+
+  @override
+  String get chooseFromAlbum => 'アルバムから選択';
+
+  @override
+  String get removeUploadedImage => 'アップロード画像を削除';
+
+  @override
+  String get sendCodeFailed => '認証コードの送信に失敗しました。しばらくしてからもう一度お試しください';
+
+  @override
+  String get bindPhone => '電話番号を連携';
+
+  @override
+  String get bindPhoneDesc => '重要通知、アカウント復旧、安全保護のため電話番号を連携してください。';
+
+  @override
+  String get phoneCodePlaceholder => 'SMS認証コードを入力';
+
+  @override
+  String get invalidPhoneMessage => '有効な電話番号を入力してください';
+
+  @override
+  String get phoneCodeRequiredMessage => 'SMS認証コードを入力してください';
+
+  @override
+  String get phoneBindSuccess => '電話番号を連携しました';
+
+  @override
+  String get phoneBindTip => '連携後、アプリに入れます';
+
+  @override
+  String get accountVerified => 'アカウント認証完了';
+
+  @override
+  String get accountVerifiedDesc => '電話番号を連携してアカウント安全情報を完成してください';
+
+  @override
+  String get sendCodeSuccess => '認証コードを送信しました。メールをご確認ください';
+
+  @override
+  String get registerSuccess => '登録が完了しました。メールアドレスとパスワードでログインしてください';
+
+  @override
+  String get registerFailed => '登録に失敗しました。認証コードを確認するか、しばらくしてからもう一度お試しください';
 }

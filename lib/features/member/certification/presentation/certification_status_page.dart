@@ -6,7 +6,7 @@ import 'package:alumni_association_app/features/member/widgets/member_feature_wi
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 class CertificationStatusPage extends StatelessWidget {
   const CertificationStatusPage({super.key});
@@ -17,12 +17,14 @@ class CertificationStatusPage extends StatelessWidget {
     final data = controller.submitted.value;
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.certificationStatus,
+        title: Text(
+          context.l10n.certificationStatus,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 18.sp,
-          ),),
+          ),
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -108,7 +110,7 @@ class CertificationStatusPage extends StatelessWidget {
           OutlinedButton(
             onPressed: () {
               controller.withdraw();
-              context.pushReplacement(Pages.memberCertification);
+              Get.toNamed(Pages.memberCertification);
             },
             child: Text(context.l10n.withdrawAndEdit),
           ),
@@ -116,7 +118,7 @@ class CertificationStatusPage extends StatelessWidget {
           FilledButton(
             onPressed: () {
               controller.approve();
-              context.pushReplacement(Pages.memberCertificationSuccess);
+              Get.toNamed(Pages.memberCertificationSuccess);
             },
             child: Text(context.l10n.viewReviewResult),
           ),

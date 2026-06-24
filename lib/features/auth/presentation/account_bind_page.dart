@@ -1,18 +1,28 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
+import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
+import 'package:alumni_association_app/features/auth/model/request/bind_mobile_source.dart';
+import 'package:alumni_association_app/features/auth/model/response/login_response.dart';
+import 'package:alumni_association_app/features/auth/model/response/user_info_response.dart';
 import 'package:alumni_association_app/features/auth/presentation/account_bind_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
+/// 绑定手机号页面。
+///
+/// 注册成功后进入该页面，用户只需要完成手机号绑定即可进入 App；
+/// 第三方登录也复用同一页面，不再展示邮箱绑定和分步骤流程。
 class AccountBindPage extends StatelessWidget {
-  const AccountBindPage({super.key});
+  const AccountBindPage({this.email = '',this.source, super.key});
+  final String email;
+  final BindMobileSource? source;
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AccountBindController());
-    final l10n = context.l10n;
+    final controller = _putController();
+    controller.syncInitialSource(source);
 
     return Scaffold(
       body: Container(
@@ -30,53 +40,39 @@ class AccountBindPage extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  onPressed: context.pop,
+                  onPressed: () => Get.back(),
                   icon: const Icon(Icons.arrow_back_ios_new_rounded),
                 ),
               ),
-              Icon(Icons.school_rounded, color: AppColors.primary, size: 76.sp),
-              SizedBox(height: 8.h),
-              Text(
-                l10n.appName,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              Text(
-                l10n.heroSubtitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14.sp,
-                ),
-              ),
-              SizedBox(height: 28.h),
-              _StepBar(controller: controller),
-              SizedBox(height: 28.h),
-              _WechatAuthCard(),
-              SizedBox(height: 14.h),
-              Obx(
-                () => controller.currentStep.value == 1
-                    ? _SetPasswordCard(controller: controller)
-                    : _BindEmailCard(controller: controller),
-              ),
-              SizedBox(height: 26.h),
+              _BrandHeader(),
+              SizedBox(height: 32.h),
+              _AuthSourceCard(),
+              SizedBox(height: 16.h),
+              _BindPhoneCard(controller: controller),
+              SizedBox(height: 24.h),
               Obx(
                 () => SizedBox(
                   height: 54.h,
                   child: FilledButton(
                     onPressed: controller.isSubmitting.value
                         ? null
-                        : () => controller.next(context),
-                    child: Text(
-                      controller.currentStep.value == 2
-                          ? l10n.finishBinding
-                          : l10n.nextStep,
-                      style: TextStyle(fontSize: 17.sp),
-                    ),
+                        : () => controller.bindPhone(context,email),
+                    child: controller.isSubmitting.value
+                        ? SizedBox(
+                            width: 20.r,
+                            height: 20.r,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.w,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            context.l10n.completeBinding,
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -95,13 +91,13 @@ class AccountBindPage extends StatelessWidget {
                         ),
                       ),
               ),
-              SizedBox(height: 28.h),
+              SizedBox(height: 26.h),
               Row(
                 children: [
                   const Expanded(child: Divider()),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: Text(l10n.otherLoginMethods, style: _hintStyle),
+                    child: Text(context.l10n.phoneBindTip, style: _hintStyle),
                   ),
                   const Expanded(child: Divider()),
                 ],
@@ -112,58 +108,60 @@ class AccountBindPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class _StepBar extends StatelessWidget {
-  const _StepBar({required this.controller});
-
-  final AccountBindController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final labels = [
-      context.l10n.bindEmail,
-      context.l10n.setPassword,
-      context.l10n.completeBinding,
-    ];
-    return Obx(
-      () => Row(
-        children: List.generate(labels.length, (index) {
-          final active = controller.currentStep.value >= index;
-          return Expanded(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 18.r,
-                  backgroundColor: active
-                      ? AppColors.primary
-                      : const Color(0xFFEAF2FF),
-                  child: Text(
-                    '${index + 1}',
-                    style: TextStyle(
-                      color: active ? Colors.white : AppColors.textSecondary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  labels[index],
-                  style: TextStyle(
-                    color: active ? AppColors.primary : AppColors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
+  AccountBindController _putController() {
+    if (Get.isRegistered<AccountBindController>()) {
+      return Get.find<AccountBindController>();
+    }
+    return Get.put(
+      AccountBindController(
+        Get.find<SessionController>(),
+        initialSource: source,
       ),
     );
   }
 }
 
-class _WechatAuthCard extends StatelessWidget {
+class _BrandHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 82.r,
+          height: 82.r,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.school_rounded,
+            color: AppColors.primary,
+            size: 50.sp,
+          ),
+        ),
+        SizedBox(height: 14.h),
+        Text(
+          context.l10n.appName,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.primary,
+            fontSize: 32.sp,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Text(
+          context.l10n.heroSubtitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: const Color(0xFF4D7FC5), fontSize: 14.sp),
+        ),
+      ],
+    );
+  }
+}
+
+class _AuthSourceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -171,111 +169,34 @@ class _WechatAuthCard extends StatelessWidget {
       decoration: _cardDecoration,
       child: Row(
         children: [
-          _IconBox(icon: Icons.wechat, color: AppColors.success),
+          _IconBox(icon: Icons.verified_user_rounded, color: AppColors.success),
           SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(context.l10n.wechatLogin, style: _titleStyle),
+                Text(context.l10n.accountVerified, style: _titleStyle),
                 SizedBox(height: 4.h),
-                Text(context.l10n.authorizedLogin, style: _hintStyle),
+                Text(context.l10n.accountVerifiedDesc, style: _hintStyle),
               ],
             ),
           ),
           Text(
             context.l10n.loggedIn,
-            style: TextStyle(color: AppColors.success),
+            style: const TextStyle(color: AppColors.success),
           ),
           SizedBox(width: 8.w),
-          Icon(Icons.check_circle_outline, color: AppColors.success),
+          const Icon(Icons.check_circle_outline, color: AppColors.success),
         ],
       ),
     );
   }
 }
 
-class _BindEmailCard extends StatelessWidget {
-  const _BindEmailCard({required this.controller});
+class _BindPhoneCard extends StatelessWidget {
+  const _BindPhoneCard({required this.controller});
 
   final AccountBindController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return _WhiteCard(
-      title: context.l10n.bindEmail,
-      subtitle: context.l10n.bindEmailDesc,
-      children: [
-        _Input(
-          controller.emailController,
-          context.l10n.emailPlaceholder,
-          Icons.email_outlined,
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => _Input(
-            controller.codeController,
-            context.l10n.emailCodePlaceholder,
-            Icons.lock_outline_rounded,
-            suffix: TextButton(
-              onPressed: controller.secondsRemaining.value == 0
-                  ? controller.sendCode
-                  : null,
-              child: Text(
-                controller.secondsRemaining.value == 0
-                    ? context.l10n.getVerificationCode
-                    : '${controller.secondsRemaining.value}s',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SetPasswordCard extends StatelessWidget {
-  const _SetPasswordCard({required this.controller});
-
-  final AccountBindController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return _WhiteCard(
-      title: context.l10n.setPassword,
-      subtitle: context.l10n.setPasswordDesc,
-      children: [
-        Obx(
-          () => _Input(
-            controller.passwordController,
-            context.l10n.setPasswordPlaceholder,
-            Icons.lock_outline_rounded,
-            obscureText: controller.obscurePassword.value,
-            suffix: IconButton(
-              onPressed: controller.togglePasswordVisible,
-              icon: Icon(
-                controller.obscurePassword.value
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _WhiteCard extends StatelessWidget {
-  const _WhiteCard({
-    required this.title,
-    required this.subtitle,
-    required this.children,
-  });
-
-  final String title;
-  final String subtitle;
-  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -285,11 +206,19 @@ class _WhiteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: _titleStyle),
+          Text(context.l10n.bindPhone, style: _titleStyle),
           SizedBox(height: 8.h),
-          Text(subtitle, style: _hintStyle),
+          Text(context.l10n.bindPhoneDesc, style: _hintStyle),
           SizedBox(height: 18.h),
-          ...children,
+          _Input(
+            controller.phoneController,
+            context.l10n.phoneHint,
+            Icons.phone_android_rounded,
+            keyboardType: TextInputType.phone,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
+            ],
+          ),
         ],
       ),
     );
@@ -298,28 +227,28 @@ class _WhiteCard extends StatelessWidget {
 
 class _Input extends StatelessWidget {
   const _Input(
-    this.controller,
-    this.hint,
-    this.icon, {
-    this.suffix,
-    this.obscureText = false,
-  });
+      this.controller,
+      this.hint,
+      this.icon, {
+        this.keyboardType,
+        this.inputFormatters,
+      });
 
   final TextEditingController controller;
   final String hint;
   final IconData icon;
-  final Widget? suffix;
-  final bool obscureText;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      obscureText: obscureText,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(icon, color: AppColors.primary),
-        suffixIcon: suffix,
       ),
     );
   }

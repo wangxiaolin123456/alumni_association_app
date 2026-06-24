@@ -4,7 +4,7 @@ import 'package:alumni_association_app/features/profile/presentation/personal_in
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///个人信息
 class PersonalInfoPage extends StatelessWidget {
   const PersonalInfoPage({super.key});
@@ -17,7 +17,7 @@ class PersonalInfoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: context.pop,
+          onPressed: Get.back,
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
         title: Text(l10n.personalInfo),
@@ -59,7 +59,7 @@ class PersonalInfoPage extends StatelessWidget {
             decoration: _cardDecoration,
             child: Column(
               children: [
-                _AvatarRow(),
+                _AvatarRow(controller: controller),
                 Obx(
                   () => _InfoRow(
                     label: l10n.nickname,
@@ -78,17 +78,26 @@ class PersonalInfoPage extends StatelessWidget {
                 ),
                 Obx(
                   () => _InfoRow(
-                    label: l10n.birthday,
-                    value: controller.birthday.value,
+                    label: l10n.emailAddress,
+                    value: controller.email.value,
                     onTap: () =>
-                        _edit(context, l10n.birthday, controller.birthday),
+                        _edit(context, l10n.emailAddress, controller.email),
                   ),
                 ),
                 Obx(
                   () => _InfoRow(
-                    label: l10n.region,
-                    value: controller.region.value,
-                    onTap: () => _edit(context, l10n.region, controller.region),
+                    label: l10n.registerTime,
+                    value: controller.createTime.value,
+                    onTap: () {},
+                  ),
+                ),
+                Obx(
+                  () => _InfoRow(
+                    label: l10n.accountRole,
+                    value: controller.isMerchant.value
+                        ? l10n.merchant
+                        : l10n.alumniMember,
+                    onTap: () {},
                     showDivider: false,
                   ),
                 ),
@@ -127,9 +136,9 @@ class PersonalInfoPage extends StatelessWidget {
         title: Text(title),
         content: TextField(controller: input, autofocus: true),
         actions: [
-          TextButton(onPressed: context.pop, child: Text(context.l10n.cancel)),
+          TextButton(onPressed: Get.back, child: Text(context.l10n.cancel)),
           FilledButton(
-            onPressed: () => context.pop(input.text),
+            onPressed: () => Get.back(result: input.text),
             child: Text(context.l10n.confirm),
           ),
         ],
@@ -142,6 +151,10 @@ class PersonalInfoPage extends StatelessWidget {
 }
 
 class _AvatarRow extends StatelessWidget {
+  const _AvatarRow({required this.controller});
+
+  final PersonalInfoController controller;
+
   @override
   Widget build(BuildContext context) {
     return _InfoShell(
@@ -153,13 +166,20 @@ class _AvatarRow extends StatelessWidget {
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
           ),
           const Spacer(),
-          CircleAvatar(
-            radius: 34.r,
-            backgroundColor: const Color(0xFFEAF2FF),
-            child: Icon(
-              Icons.person_rounded,
-              color: AppColors.primary,
-              size: 38.sp,
+          Obx(
+            () => CircleAvatar(
+              radius: 34.r,
+              backgroundColor: const Color(0xFFEAF2FF),
+              backgroundImage: controller.avatar.value.isEmpty
+                  ? null
+                  : NetworkImage(controller.avatar.value),
+              child: controller.avatar.value.isEmpty
+                  ? Icon(
+                      Icons.person_rounded,
+                      color: AppColors.primary,
+                      size: 38.sp,
+                    )
+                  : null,
             ),
           ),
           Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),

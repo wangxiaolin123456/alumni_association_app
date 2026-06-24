@@ -5,7 +5,7 @@ import 'package:alumni_association_app/features/profile/records/presentation/ent
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///入单记录
 class EntryRecordsPage extends StatelessWidget {
   const EntryRecordsPage({super.key});
@@ -15,7 +15,7 @@ class EntryRecordsPage extends StatelessWidget {
     final controller = Get.put(EntryRecordsController());
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () => context.pop()),
+        leading: BackButton(onPressed: () => Get.back()),
         title: Text(context.l10n.entryRecords, style: _titleStyle),
         centerTitle: true,
         actions: [

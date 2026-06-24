@@ -7,7 +7,7 @@ import 'package:alumni_association_app/features/store/presentation/store_widgets
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///商家详情
 class StoreDetailPage extends StatelessWidget {
   const StoreDetailPage({super.key});
@@ -33,7 +33,7 @@ class StoreDetailPage extends StatelessWidget {
                   store: store,
                   onUseOffer: (index) {
                     controller.selectOffer(index);
-                    context.push(Pages.storeOffer);
+                    Get.toNamed(Pages.storeOffer);
                   },
                 ),
                 SizedBox(height: 14.h),
@@ -65,7 +65,7 @@ class _FloatingTopBar extends StatelessWidget {
           children: [
             _CircleIconButton(
               icon: Icons.arrow_back_ios_new_rounded,
-              onTap: () => context.pop(),
+              onTap: () => Get.back(),
             ),
             const Spacer(),
             Obx(
@@ -561,7 +561,7 @@ class _BottomBar extends StatelessWidget {
               child: SizedBox(
                 height: 52.h,
                 child: OutlinedButton(
-                  onPressed: () => context.push(Pages.storeReservation),
+                  onPressed: () => Get.toNamed(Pages.storeReservation),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: const Color(0xFFEAF2FF),
                     side: BorderSide.none,
@@ -585,7 +585,7 @@ class _BottomBar extends StatelessWidget {
               child: SizedBox(
                 height: 52.h,
                 child: FilledButton(
-                  onPressed: () => context.push(Pages.storeOffer),
+                  onPressed: () => Get.toNamed(Pages.storeOffer),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     elevation: 0,

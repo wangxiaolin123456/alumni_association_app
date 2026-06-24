@@ -9,7 +9,7 @@ import 'package:alumni_association_app/features/member/presentation/member_home_
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 
 class MemberDashboardPage extends StatelessWidget {
@@ -23,8 +23,8 @@ class MemberDashboardPage extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 28.h),
       children: [
         _MemberHeader(
-          onSearch: () => context.push(Pages.memberSearch),
-          onMessages: () => context.push(Pages.memberMessages),
+          onSearch: () => Get.toNamed(Pages.memberSearch),
+          onMessages: () => Get.toNamed(Pages.memberMessages),
         ),
         SizedBox(height: 14.h),
         _MemberHeroBanner(controller: controller),
@@ -238,7 +238,7 @@ class _MemberQuickActions extends StatelessWidget {
         const Color(0xFFFF4057),
         () => _openAfterLogin(context, () {
           Get.find<ConsumptionEntryController>().resetWorkflow();
-          context.push(Pages.consumptionMerchant);
+          Get.toNamed(Pages.consumptionMerchant);
         }),
       ),
       (
@@ -246,7 +246,7 @@ class _MemberQuickActions extends StatelessWidget {
         l10n.consumptionRecords,
         l10n.consumptionRecordsDesc,
         AppColors.success,
-        () => _openAfterLogin(context, () => context.push(Pages.memberRecords)),
+        () => _openAfterLogin(context, () => Get.toNamed(Pages.memberRecords)),
       ),
       (
         Icons.storefront_rounded,
@@ -254,14 +254,14 @@ class _MemberQuickActions extends StatelessWidget {
         l10n.discountMerchantsDesc,
         const Color(0xFFFFA51F),
         () =>
-            _openAfterLogin(context, () => context.push(Pages.memberBenefits)),
+            _openAfterLogin(context, () => Get.toNamed(Pages.memberBenefits)),
       ),
       (
         Icons.badge_outlined,
         l10n.electronicMemberCard,
         l10n.memberBenefits,
         const Color(0xFF6856F5),
-        () => _openAfterLogin(context, () => context.push(Pages.memberCard)),
+        () => _openAfterLogin(context, () => Get.toNamed(Pages.memberCard)),
       ),
     ];
 
@@ -322,7 +322,7 @@ class _MemberQuickActions extends StatelessWidget {
   void _openAfterLogin(BuildContext context, VoidCallback action) {
     final session = Get.find<SessionController>();
     if (!session.isAuthenticated.value) {
-      context.push(Pages.login);
+      Get.toNamed(Pages.login);
       return;
     }
     action();

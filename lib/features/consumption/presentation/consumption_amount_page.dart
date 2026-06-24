@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 ///消费入单 第三步
 class ConsumptionAmountPage extends StatelessWidget {
   const ConsumptionAmountPage({super.key});
@@ -75,7 +75,7 @@ class ConsumptionAmountPage extends StatelessWidget {
                   children: [
                     Expanded(child: Text(context.l10n.selectedCoupon)),
                     TextButton(
-                      onPressed: () => context.pop(),
+                      onPressed: () => Get.back(),
                       child: Text(context.l10n.changeCoupon),
                     ),
                   ],
@@ -143,7 +143,7 @@ class ConsumptionAmountPage extends StatelessWidget {
             onPressed: () {
               if (controller.canContinueFromAmount) {
                 controller.submit();
-                context.push(Pages.consumptionSuccess);
+                Get.toNamed(Pages.consumptionSuccess);
               }
             },
             child: Text(context.l10n.nextConfirmSubmit),

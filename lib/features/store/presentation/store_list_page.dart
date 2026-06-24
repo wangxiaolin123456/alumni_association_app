@@ -8,7 +8,7 @@ import 'package:alumni_association_app/features/store/presentation/store_widgets
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+
 
 /// 底部商家首页
 class StoreListPage extends StatefulWidget {
@@ -110,7 +110,7 @@ class _StoreListPageState extends State<StoreListPage> {
                         store: store,
                         onTap: () {
                           controller.selectStore(store);
-                          context.push(Pages.storeDetail);
+                          Get.toNamed(Pages.storeDetail);
                         },
                       );
                     },
