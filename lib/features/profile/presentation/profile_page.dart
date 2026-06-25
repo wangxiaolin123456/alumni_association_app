@@ -499,13 +499,13 @@ class _ActionTile extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Icon(item.icon, color: item.color, size: 34.sp),
-                SizedBox(height: 10.h),
+                Icon(item.icon, color: item.color, size: 35.sp),
+                SizedBox(height: 4.h),
                 Text(
                   item.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 13.sp),
+                  style: TextStyle(fontSize: 14.sp,color: AppColors.textPrimary,fontWeight: FontWeight.bold),
                 ),
               ],
             ),
