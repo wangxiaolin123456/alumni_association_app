@@ -4,6 +4,7 @@ import 'package:alumni_association_app/features/profile/presentation/merchant_re
 import 'package:alumni_association_app/features/profile/presentation/merchant_type_item.dart';
 import 'package:dio/dio.dart';
 import '../../features/auth/model/response/user_info_response.dart';
+import '../../features/merchant/coupon/model/request/coupon_request.dart';
 import '../../features/store/model/response/store_response.dart';
 import '../../http/core/http_manager.dart';
 import '../../http/model/page_response.dart';
@@ -56,8 +57,14 @@ class URL {
   /// 商户列表
   static const String merchantList = "/api/merchant/merchantList";
 
+  /// 商户详情
+  static const String merchantInfo = "/api/merchant/merchantInfo";
+
   /// 我的商户列表
   static const String myMerchantList = "/api/merchant/myMerchantList";
+
+  /// 新增优惠券
+  static const String addCoupons = "/api/coupons/addCoupons";
 }
 
 class ApiRequest {
@@ -355,7 +362,6 @@ class ApiRequest {
       );
 
       if (response.code == 200) {
-        ToastUtils.showToast(message: "商户入驻资料已提交。", type: ToastType.success);
         return true;
       }
 
@@ -378,10 +384,6 @@ class ApiRequest {
       );
 
       if (response.code == 200) {
-        ToastUtils.showToast(
-          message: response.msg.isNotEmpty ? response.msg : "商户资料已更新",
-          type: ToastType.success,
-        );
         return true;
       }
 
@@ -512,6 +514,32 @@ class ApiRequest {
     }
   }
 
+  /// 商户详情。
+  ///
+  /// 详情页进入后按 shopId 重新请求完整数据，包含商户图片、资质和优惠券列表。
+  static Future<StoreResponse?> merchantInfo({required int shopId}) async {
+    try {
+      final response = await HttpManager.get<dynamic>(
+        URL.merchantInfo,
+        params: {"shopId": shopId},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! Map) return null;
+
+      return StoreResponse.fromJson(Map<String, dynamic>.from(rawData));
+    } catch (e) {
+      ToastUtils.showToast(message: "商户详情获取失败", type: ToastType.error);
+      return null;
+    }
+  }
+
   /// 我的商户列表。
   ///
   /// 后端直接返回数组，不分页；这里从原始 data 中解析，避免泛型 List
@@ -541,6 +569,32 @@ class ApiRequest {
     } catch (e) {
       ToastUtils.showToast(message: "我的商户获取失败", type: ToastType.error);
       return [];
+    }
+  }
+
+  /// 新增优惠券
+  static Future<bool> addCoupons({
+    required CouponRequest request,
+  }) async {
+    try {
+      final response = await HttpManager.post(
+        URL.addCoupons,
+        data: request.toJson(),
+      );
+
+      if (response.code == 200) {
+        ToastUtils.showToast(
+          message: response.msg.isNotEmpty ? response.msg : "优惠券发布成功",
+          type: ToastType.success,
+        );
+        return true;
+      }
+
+      ToastUtils.showToast(message: response.msg, type: ToastType.error);
+      return false;
+    } catch (e) {
+      ToastUtils.showToast(message: "优惠券发布失败", type: ToastType.error);
+      return false;
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:alumni_association_app/features/auth/presentation/login_page.dart';
 import 'package:alumni_association_app/features/auth/presentation/forgot_password_page.dart';
 import 'package:alumni_association_app/features/auth/presentation/account_bind_page.dart';
-import 'package:alumni_association_app/features/activity/presentation/activity_detail_page.dart';
+import 'package:alumni_association_app/features/activity/pages/activity_detail_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_amount_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_coupon_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_merchant_page.dart';
@@ -17,7 +17,7 @@ import 'package:alumni_association_app/features/member/member_card/presentation/
 import 'package:alumni_association_app/features/member/messages/presentation/member_messages_page.dart';
 import 'package:alumni_association_app/features/member/record_center/presentation/member_record_pages.dart';
 import 'package:alumni_association_app/features/member/presentation/member_search_page.dart';
-import 'package:alumni_association_app/features/merchant/presentation/my_merchant_page.dart';
+import 'package:alumni_association_app/features/merchant/center/pages/view/my_merchant_page.dart';
 import 'package:alumni_association_app/features/opportunity/presentation/opportunity_detail_page.dart';
 import 'package:alumni_association_app/features/opportunity/presentation/opportunity_publish_page.dart';
 import 'package:alumni_association_app/features/profile/presentation/language_page.dart';
@@ -38,7 +38,8 @@ import 'package:alumni_association_app/features/store/presentation/store_reserva
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../features/merchant/presentation/merchant_dashboard_page.dart';
+import '../../features/merchant/coupon/pages/view/publish_coupon_page.dart';
+import '../../features/merchant/center/pages/view/merchant_dashboard_page.dart';
 
 class Pages {
   static const String home = '/';
@@ -103,6 +104,8 @@ class Pages {
   static const String contactService = '/member/profile/contact-service';
   static const String helpCenter = '/member/profile/help-center';
   static const String feedback = '/member/profile/feedback';
+
+  static const publishCoupon = '/publish/coupon';
 }
 
 class AppPages {
@@ -291,6 +294,11 @@ class AppPages {
     GetPage(name: Pages.helpCenter, page: () => const HelpCenterPage()),
 
     GetPage(name: Pages.feedback, page: () => const FeedbackPage()),
+
+    GetPage(
+      name: Pages.publishCoupon,
+      page: () => const PublishCouponPage(),
+    ),
   ];
 }
 

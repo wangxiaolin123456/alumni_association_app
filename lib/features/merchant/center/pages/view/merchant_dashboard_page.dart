@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../core/config/app_config.dart';
-import 'merchant_dashboard_controller.dart';
+import '../../../../../core/config/app_config.dart';
+import '../controller/merchant_dashboard_controller.dart';
 
 /// 我的商户 / 商户工作台首页
 class MerchantDashboardPage extends StatelessWidget {

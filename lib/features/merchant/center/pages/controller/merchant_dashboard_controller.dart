@@ -171,8 +171,7 @@ class MerchantDashboardController extends GetxController {
 
   /// 优惠券管理
   void openCouponManagement() {
-    /// TODO: 换成你的优惠券管理页面路由
-    // Get.toNamed(Pages.couponManagement);
+    Get.toNamed(Pages.publishCoupon);
   }
 
   /// 商户设置

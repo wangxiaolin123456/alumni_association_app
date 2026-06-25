@@ -1,5 +1,5 @@
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/activity/presentation/activity_list_page.dart';
+import 'package:alumni_association_app/features/activity/pages/activity_list_page.dart';
 import 'package:alumni_association_app/features/member/presentation/member_dashboard_page.dart';
 import 'package:alumni_association_app/features/opportunity/presentation/opportunity_list_page.dart';
 import 'package:alumni_association_app/features/profile/presentation/profile_page.dart';

@@ -1,7 +1,7 @@
 import 'package:alumni_association_app/core/localization/locale_controller.dart';
 import 'package:alumni_association_app/core/storage/storage_providers.dart';
 import 'package:alumni_association_app/app/services/address_service.dart';
-import 'package:alumni_association_app/features/activity/presentation/activity_controller.dart';
+import 'package:alumni_association_app/features/activity/pages/activity_controller.dart';
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
 import 'package:alumni_association_app/features/auth/presentation/login_controller.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_entry_controller.dart';

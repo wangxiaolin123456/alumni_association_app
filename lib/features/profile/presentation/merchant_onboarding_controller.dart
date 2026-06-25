@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../util/toast_utils.dart';
+
 /// 商户入驻表单逻辑。
 class MerchantOnboardingController extends GetxController {
   final storeNameController = TextEditingController();
@@ -350,8 +352,9 @@ class MerchantOnboardingController extends GetxController {
       }
       errorMessage.value = null;
 
-      await Future.delayed(const Duration(milliseconds: 150));
+
       Get.back();
+      ToastUtils.showToast(message: "商户资料已提交。", type: ToastType.success);
     } finally {
       isSubmitting.value = false;
     }

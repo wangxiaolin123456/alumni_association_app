@@ -63,6 +63,7 @@ class StoreController extends GetxController {
   final isLoading = false.obs;
   final isRefreshing = false.obs;
   final isLoadingMore = false.obs;
+  final isDetailLoading = false.obs;
 
   /// 是否还有更多
   final hasMore = true.obs;
@@ -233,6 +234,35 @@ class StoreController extends GetxController {
 
     selectedStoreIndex.value = index < 0 ? 0 : index;
     selectedOfferIndex.value = 0;
+
+    /// 列表接口返回的是摘要数据，进入详情后再按 shopId 拉完整详情。
+    fetchStoreDetail(store.shopId);
+  }
+
+  /// 获取商户详情
+  ///
+  /// 详情接口会返回优惠券 coupons 等完整字段，回来后替换列表中的当前商户，
+  /// 页面通过 selectedStore 自动刷新。
+  Future<void> fetchStoreDetail(int shopId) async {
+    if (shopId <= 0 || isDetailLoading.value) return;
+
+    isDetailLoading.value = true;
+
+    try {
+      final detail = await ApiRequest.merchantInfo(shopId: shopId);
+      if (detail == null) return;
+
+      final index = storeList.indexWhere((item) => item.shopId == shopId);
+      if (index >= 0) {
+        storeList[index] = detail;
+        selectedStoreIndex.value = index;
+      } else {
+        storeList.insert(0, detail);
+        selectedStoreIndex.value = 0;
+      }
+    } finally {
+      isDetailLoading.value = false;
+    }
   }
 
   /// 首次加载 / 重新加载第一页

@@ -22,6 +22,7 @@ class StoreResponse {
     required this.createTime,
     required this.updateTime,
     required this.isDeleted,
+    this.coupons = const [],
   });
 
   /// 商户ID
@@ -94,6 +95,11 @@ class StoreResponse {
   /// 1 = 已删除
   final int isDeleted;
 
+  /// 商户优惠券列表
+  ///
+  /// 详情接口没有优惠券时会返回空数组，页面需要据此隐藏优惠区块。
+  final List<StoreCouponResponse> coupons;
+
   factory StoreResponse.fromJson(Map<String, dynamic> json) {
     return StoreResponse(
       shopId: _intValue(json['shopId']),
@@ -117,6 +123,7 @@ class StoreResponse {
       createTime: _stringValue(json['createTime']),
       updateTime: _stringValue(json['updateTime']),
       isDeleted: _intValue(json['isDeleted']),
+      coupons: _couponList(json['coupons']),
     );
   }
 
@@ -143,6 +150,7 @@ class StoreResponse {
       'createTime': createTime,
       'updateTime': updateTime,
       'isDeleted': isDeleted,
+      'coupons': coupons.map((item) => item.toJson()).toList(),
     };
   }
 
@@ -215,5 +223,169 @@ class StoreResponse {
     if (value is num) return value.toInt();
     if (value is String) return int.tryParse(value) ?? 0;
     return 0;
+  }
+
+  static List<StoreCouponResponse> _couponList(Object? value) {
+    if (value is! List) return const [];
+
+    return value
+        .whereType<Map>()
+        .map(
+          (item) =>
+              StoreCouponResponse.fromJson(Map<String, dynamic>.from(item)),
+        )
+        .where((item) => item.isDeleted == 0)
+        .toList();
+  }
+}
+
+/// 商户详情里的优惠券模型
+///
+/// 当前优惠券由商户详情接口一并返回，字段保持和后端 JSON 对齐。
+class StoreCouponResponse {
+  const StoreCouponResponse({
+    required this.couponId,
+    required this.userId,
+    required this.name,
+    required this.description,
+    required this.type,
+    required this.value,
+    required this.minOrderAmount,
+    required this.maxDiscountAmount,
+    required this.startTime,
+    required this.endTime,
+    required this.disableStatus,
+    required this.disableMsg,
+    required this.createTime,
+    required this.updateTime,
+    required this.isDeleted,
+    required this.shopIds,
+  });
+
+  /// 优惠券ID
+  final int couponId;
+
+  /// 所属用户ID
+  final int userId;
+
+  /// 优惠券名称
+  final String name;
+
+  /// 优惠券说明
+  final String description;
+
+  /// 优惠类型，具体含义以后端定义为准
+  final int type;
+
+  /// 优惠值，例如折扣值或满减金额
+  final double value;
+
+  /// 最低使用金额
+  final double minOrderAmount;
+
+  /// 最大优惠金额
+  final double maxDiscountAmount;
+
+  /// 开始时间
+  final String startTime;
+
+  /// 结束时间
+  final String endTime;
+
+  /// 禁用状态
+  final int disableStatus;
+
+  /// 禁用原因
+  final String disableMsg;
+
+  /// 创建时间
+  final String createTime;
+
+  /// 更新时间
+  final String updateTime;
+
+  /// 是否删除
+  final int isDeleted;
+
+  /// 适用商户ID集合，后端通常用逗号分隔
+  final String shopIds;
+
+  factory StoreCouponResponse.fromJson(Map<String, dynamic> json) {
+    return StoreCouponResponse(
+      couponId: StoreResponse._intValue(json['couponId']),
+      userId: StoreResponse._intValue(json['userId']),
+      name: StoreResponse._stringValue(json['name']),
+      description: StoreResponse._stringValue(json['description']),
+      type: StoreResponse._intValue(json['type']),
+      value: _doubleValue(json['value']),
+      minOrderAmount: _doubleValue(json['minOrderAmount']),
+      maxDiscountAmount: _doubleValue(json['maxDiscountAmount']),
+      startTime: StoreResponse._stringValue(json['startTime']),
+      endTime: StoreResponse._stringValue(json['endTime']),
+      disableStatus: StoreResponse._intValue(json['disableStatus']),
+      disableMsg: StoreResponse._stringValue(json['disableMsg']),
+      createTime: StoreResponse._stringValue(json['createTime']),
+      updateTime: StoreResponse._stringValue(json['updateTime']),
+      isDeleted: StoreResponse._intValue(json['isDeleted']),
+      shopIds: StoreResponse._stringValue(json['shopIds']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'couponId': couponId,
+      'userId': userId,
+      'name': name,
+      'description': description,
+      'type': type,
+      'value': value,
+      'minOrderAmount': minOrderAmount,
+      'maxDiscountAmount': maxDiscountAmount,
+      'startTime': startTime,
+      'endTime': endTime,
+      'disableStatus': disableStatus,
+      'disableMsg': disableMsg,
+      'createTime': createTime,
+      'updateTime': updateTime,
+      'isDeleted': isDeleted,
+      'shopIds': shopIds,
+    };
+  }
+
+  /// 优惠券是否可用
+  bool get isEnabled => disableStatus == 0;
+
+  /// 页面展示用主文案
+  String get displayTitle => name.trim().isEmpty ? '会员优惠' : name;
+
+  /// 页面展示用副文案
+  String get displayDescription {
+    if (description.trim().isNotEmpty) return description;
+    if (minOrderAmount > 0) return '满${_formatAmount(minOrderAmount)}元可用';
+    return '到店消费可使用';
+  }
+
+  /// 页面展示用优惠值
+  String get displayValue {
+    if (type == 1) {
+      return '${_formatAmount(value)}折';
+    }
+    if (minOrderAmount > 0) {
+      return '满${_formatAmount(minOrderAmount)}减${_formatAmount(value)}';
+    }
+    return '¥${_formatAmount(value)}';
+  }
+
+  static double _doubleValue(Object? value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  static String _formatAmount(double value) {
+    if (value % 1 == 0) return value.toInt().toString();
+    return value.toStringAsFixed(1);
   }
 }

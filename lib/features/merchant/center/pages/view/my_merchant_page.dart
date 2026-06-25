@@ -2,7 +2,7 @@ import 'package:alumni_association_app/app/router/app_router.dart';
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/config/app_config.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/merchant/presentation/my_merchant_controller.dart';
+import 'package:alumni_association_app/features/merchant/center/pages/controller/my_merchant_controller.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

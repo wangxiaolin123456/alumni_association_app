@@ -1,5 +1,6 @@
 import 'package:alumni_association_app/app/router/app_router.dart';
 import 'package:alumni_association_app/app/theme/app_theme.dart';
+import 'package:alumni_association_app/core/config/app_config.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:alumni_association_app/features/store/presentation/store_controller.dart';
@@ -8,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../model/response/store_offer_response.dart';
-
 ///商家详情
 class StoreDetailPage extends StatelessWidget {
   const StoreDetailPage({super.key});
@@ -17,12 +16,10 @@ class StoreDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<StoreController>();
-
     return Scaffold(
       backgroundColor: const Color(0xFFF6F8FC),
       body: Obx(() {
         final store = controller.selectedStore;
-
         return Stack(
           children: [
             ListView(
@@ -31,14 +28,16 @@ class StoreDetailPage extends StatelessWidget {
                 _HeroInfoCard(store: store),
                 SizedBox(height: 14.h),
                 ///会员优惠
-                _BenefitCard(
-                  store: store,
-                  onUseOffer: (index) {
-                    controller.selectOffer(index);
-                    Get.toNamed(Pages.storeOffer);
-                  },
-                ),
-                SizedBox(height: 14.h),
+                if (store.coupons.isNotEmpty) ...[
+                  _BenefitCard(
+                    store: store,
+                    onUseOffer: (index) {
+                      controller.selectOffer(index);
+                      Get.toNamed(Pages.storeOffer);
+                    },
+                  ),
+                  SizedBox(height: 14.h),
+                ],
                 const _IntroCard(),
               ],
             ),
@@ -138,21 +137,18 @@ class _HeroInfoCard extends StatelessWidget {
               children: [
                 _StoreTitleRow(store: store),
                 SizedBox(height: 13.h),
-                _StoreScoreRow(store: store),
-                SizedBox(height: 13.h),
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
                   children: [
-                    _CategoryChip(text: context.l10n.food),
-                    const _CategoryChip(text: '中餐'),
-                    const _CategoryChip(text: '西餐'),
+                    _CategoryChip(text: store.typeName),
                   ],
                 ),
-                SizedBox(height: 16.h),
-                const _InfoLine(
+                SizedBox(height: 12.h),
+                _InfoLine(
                   icon: Icons.schedule_rounded,
-                  text: '营业时间：10:00–22:00',
+                  text:
+                      '${context.l10n.businessHoursRequired.replaceAll(' *', '')}: ${_businessHoursText(store)}',
                 ),
                 SizedBox(height: 11.h),
                 Row(
@@ -160,14 +156,10 @@ class _HeroInfoCard extends StatelessWidget {
                     Expanded(
                       child: _InfoLine(
                         icon: Icons.location_on_outlined,
-                        text: store.address,
+                        text: store.fullAddress,
                       ),
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      store.province,
-                      style: _normalText,
-                    ),
+
                   ],
                 ),
               ],
@@ -246,7 +238,7 @@ class _StoreImageState extends State<_StoreImage> {
                 },
                 itemBuilder: (context, index) {
                   return Image.network(
-                    images[index],
+                    _networkImageUrl(images[index]),
                     width: double.infinity,
                     height: 192.h,
                     fit: BoxFit.cover,
@@ -326,6 +318,27 @@ class _StoreImageState extends State<_StoreImage> {
   }
 }
 
+/// 详情页营业时间文案，避免接口字段为空时出现孤立连接符。
+String _businessHoursText(StoreResponse store) {
+  final start = store.businessStartTime.trim();
+  final end = store.businessEndTime.trim();
+
+  if (start.isNotEmpty && end.isNotEmpty) return '$start–$end';
+  if (start.isNotEmpty) return start;
+  if (end.isNotEmpty) return end;
+  return '--';
+}
+
+/// 后端图片字段通常返回相对路径，详情页统一拼成完整图片地址。
+String _networkImageUrl(String path) {
+  final value = path.trim();
+  if (value.startsWith('http://') || value.startsWith('https://')) {
+    return value;
+  }
+  if (value.startsWith('/')) return '${AppConfig.apiBaseUrl}$value';
+  return '${AppConfig.apiBaseUrl}/$value';
+}
+
 class _StoreTitleRow extends StatelessWidget {
   const _StoreTitleRow({required this.store});
 
@@ -338,11 +351,11 @@ class _StoreTitleRow extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            store.names,
+            store.shopName.trim().isEmpty ? store.names : store.shopName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 22.sp,
+              fontSize: 20.sp,
               height: 1.15,
               color: const Color(0xFF111827),
               fontWeight: FontWeight.w800,
@@ -357,43 +370,7 @@ class _StoreTitleRow extends StatelessWidget {
   }
 }
 
-class _StoreScoreRow extends StatelessWidget {
-  const _StoreScoreRow({required this.store});
 
-  final StoreResponse store;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          Icons.star_rounded,
-          size: 19.r,
-          color: const Color(0xFFFF6A1A),
-        ),
-        SizedBox(width: 4.w),
-        Text(
-          '5分',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: const Color(0xFFFF6A1A),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const _VerticalDivider(),
-        Text(
-          context.l10n.monthlySales(store.userId),
-          style: _normalText,
-        ),
-        const _VerticalDivider(),
-        Text(
-          '人均 ¥80',
-          style: _normalText,
-        ),
-      ],
-    );
-  }
-}
 ///会员优惠
 class _BenefitCard extends StatelessWidget {
   const _BenefitCard({
@@ -418,9 +395,9 @@ class _BenefitCard extends StatelessWidget {
         children: [
           _SectionTitle(title: context.l10n.memberBenefitsTitle),
           SizedBox(height: 14.h),
-          ...store.imageUrls.asMap().entries.map(
+          ...store.coupons.asMap().entries.map(
                 (entry) => _CouponItem(
-               offer: StoreOfferResponse(id: '', title: '', subtitle: '', price: 0, originalPrice: 0, discountLabel: ''),///entry.value
+              coupon: entry.value,
               selected: entry.key == 0,
               onTap: () => onUseOffer(entry.key),
             ),
@@ -433,12 +410,12 @@ class _BenefitCard extends StatelessWidget {
 
 class _CouponItem extends StatelessWidget {
   const _CouponItem({
-    required this.offer,
+    required this.coupon,
     required this.selected,
     required this.onTap,
   });
 
-  final StoreOfferResponse offer;
+  final StoreCouponResponse coupon;
   final bool selected;
   final VoidCallback onTap;
 
@@ -466,7 +443,7 @@ class _CouponItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    offer.title,
+                    coupon.displayTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -477,7 +454,7 @@ class _CouponItem extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    offer.subtitle,
+                    coupon.displayDescription,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -491,7 +468,7 @@ class _CouponItem extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
             Text(
-              offer.discountLabel,
+              coupon.displayValue,
               style: TextStyle(
                 color: const Color(0xFFFF5B22),
                 fontSize: 16.sp,
@@ -811,7 +788,7 @@ class _SectionTitle extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 17.sp,
+        fontSize: 16.sp,
         color: const Color(0xFF111827),
         fontWeight: FontWeight.w800,
         letterSpacing: -0.2,

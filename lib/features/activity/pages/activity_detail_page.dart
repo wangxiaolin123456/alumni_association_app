@@ -1,7 +1,7 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/activity/presentation/activity_controller.dart';
-import 'package:alumni_association_app/features/activity/presentation/activity_widgets.dart';
+import 'package:alumni_association_app/features/activity/pages/activity_controller.dart';
+import 'package:alumni_association_app/features/activity/pages/activity_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
