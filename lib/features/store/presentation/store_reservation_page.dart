@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../model/response/store_offer_response.dart';
+
 
 class StoreReservationPage extends StatelessWidget {
   const StoreReservationPage({super.key});
@@ -110,8 +112,9 @@ class _StoreInfoCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
-            child: StoreVisual(
-              store: store,
+
+            child:  Image.asset(
+              "assets/default_image.png",
               width: 96.w,
               height: 76.h,
             ),
@@ -127,7 +130,7 @@ class _StoreInfoCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          store.name,
+                          store.names,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -170,7 +173,7 @@ class _StoreInfoCard extends StatelessWidget {
           ),
           SizedBox(width: 8.w),
           Text(
-            store.distance,
+            store.province,
             style: TextStyle(
               fontSize: 13.sp,
               color: const Color(0xFF4B5563),

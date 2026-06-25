@@ -866,22 +866,35 @@ class _InteriorImagesGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final paths = controller.interiorImagePaths;
-      return Wrap(
-        spacing: 8.w,
-        runSpacing: 8.h,
-        children: [
-          ...paths.asMap().entries.map(
-            (entry) => _ImageThumb(
-              path: entry.value,
-              onRemove: () => controller.removeInteriorImageAt(entry.key),
-            ),
+      final itemCount = paths.length + (paths.length < 9 ? 1 : 0);
+
+      return SizedBox(
+        height: 76.h,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          clipBehavior: Clip.hardEdge,
+          padding: EdgeInsets.only(
+            top: 2.h,
+            right: 2.w,
+            bottom: 2.h,
           ),
-          if (paths.length < 9)
-            _AddImageTile(
+          itemCount: itemCount,
+          separatorBuilder: (_, _) => SizedBox(width: 8.w),
+          itemBuilder: (context, index) {
+            if (index < paths.length) {
+              return _ImageThumb(
+                path: paths[index],
+                onRemove: () => controller.removeInteriorImageAt(index),
+              );
+            }
+
+            return _AddImageTile(
               text: context.l10n.addInteriorPhoto,
               onTap: controller.pickInteriorImages,
-            ),
-        ],
+            );
+          },
+        ),
       );
     });
   }
@@ -910,49 +923,59 @@ class _SingleImagePickerTile extends StatelessWidget {
 }
 
 class _ImageThumb extends StatelessWidget {
-  const _ImageThumb({required this.path, required this.onRemove});
+  const _ImageThumb({
+    required this.path,
+    required this.onRemove,
+  });
 
   final String path;
   final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        GestureDetector(
-          onTap: () => _showImagePreview(context, path),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.r),
-            child: Image.file(
-              File(path),
-              width: 64.w,
-              height: 64.w,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Positioned(
-          right: 0.w,
-          top: -6.h,
-          child: GestureDetector(
-            onTap: onRemove,
-            child: Container(
-              width: 18.w,
-              height: 18.w,
-              decoration: const BoxDecoration(
-                color: AppColors.danger,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.close_rounded,
-                color: Colors.white,
-                size: 12.sp,
+    return SizedBox(
+      width: 64.w,
+      height: 64.w,
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: () => _showImagePreview(context, path),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.r),
+              child: Image.file(
+                File(path),
+                width: 64.w,
+                height: 64.w,
+                fit: BoxFit.cover,
               ),
             ),
           ),
-        ),
-      ],
+          Positioned(
+            right: 3.w,
+            top: 3.h,
+            child: GestureDetector(
+              onTap: onRemove,
+              child: Container(
+                width: 18.w,
+                height: 18.w,
+                decoration: BoxDecoration(
+                  color: AppColors.danger,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 1.2,
+                  ),
+                ),
+                child: Icon(
+                  Icons.close_rounded,
+                  color: Colors.white,
+                  size: 12.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1065,16 +1088,14 @@ class _LicenseSection extends StatelessWidget {
           SizedBox(height: 18.h),
           _UploadLine(
             label: context.l10n.businessLicenseLabel,
-            child: Expanded(child: Obx(
-                  () => _WideUploadBox(
-                title: context.l10n.businessLicense,
-                uploaded: controller.uploadedLicenses.contains(
-                  context.l10n.businessLicense,
-                ),
-                onTap: () =>
-                    controller.uploadLicense(context.l10n.businessLicense),
+            child: Obx(
+              () => _SingleImagePickerTile(
+                addText: context.l10n.businessLicense,
+                imagePath: controller.businessLicensePath.value,
+                onTap: controller.pickBusinessLicense,
+                onRemove: controller.removeBusinessLicense,
               ),
-            )),
+            ),
           ),
         ],
       ),
@@ -1105,62 +1126,10 @@ class _UploadLine extends StatelessWidget {
             ),
           ),
         ),
-        child,
+        Expanded(
+          child: Align(alignment: Alignment.centerLeft, child: child),
+        ),
       ],
-    );
-  }
-}
-
-/// 大上传框
-class _WideUploadBox extends StatelessWidget {
-  const _WideUploadBox({
-    required this.title,
-    required this.uploaded,
-    required this.onTap,
-  });
-
-  final String title;
-  final bool uploaded;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8.r),
-      child: Container(
-        height: 74.h,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: const Color(0xFFDDE6F6), width: 1),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              uploaded ? Icons.check_circle_rounded : Icons.add_rounded,
-              color: AppColors.primary,
-              size: 26.sp,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF23324D),
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              context.l10n.uploadFormatHint,
-              style: TextStyle(fontSize: 11.sp, color: AppColors.textSecondary),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

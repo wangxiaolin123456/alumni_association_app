@@ -2,7 +2,8 @@ import 'package:alumni_association_app/app/router/app_router.dart';
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
-import 'package:alumni_association_app/features/auth/domain/user_role.dart';
+import 'package:alumni_association_app/features/auth/model/response/user_info_response.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,9 +17,18 @@ class ProfilePage extends StatelessWidget {
     final session = Get.find<SessionController>();
     return Obx(() {
       if (!session.isAuthenticated.value) return const _GuestProfileView();
-      return session.role.value == UserRole.merchant
-          ? const _MerchantMineView()
-          : const _MemberMineView();
+      final userInfo = session.userInfo.value;
+      return _MemberMineView(
+
+        userInfo: userInfo,
+
+        isMerchant: userInfo?.merchant ?? session.isMerchant,
+
+        onRefresh: () async {
+          await SessionController.current.refreshUserInfo();
+        },
+
+      );
     });
   }
 }
@@ -72,20 +82,31 @@ class _GuestProfileView extends StatelessWidget {
 }
 
 class _MemberMineView extends StatelessWidget {
-  const _MemberMineView();
+  const _MemberMineView({
+    required this.userInfo,
+    required this.isMerchant,
+    required this.onRefresh,
+  });
+
+  final UserInfoResponse? userInfo;
+  final bool isMerchant;
+  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final userInfo = SessionController.current.userInfo.value;
+
     return _MineScaffold(
+      onRefresh: onRefresh,
       header: _MineHeader(
         avatarIcon: Icons.apartment_rounded,
-        roleTag: l10n.campus,
-        name: userInfo?.displayName ?? l10n.profileName,
-        badge: l10n.verified,
+        roleTag: isMerchant ? l10n.merchant : l10n.campus,
+        name:
+        userInfo?.displayName ??
+            (isMerchant ? l10n.merchantProfileName : l10n.profileName),
+        badge: isMerchant ? l10n.verifiedMerchant : l10n.verified,
         subline: _profileSubline(
-          defaultRole: l10n.alumniMember,
+          defaultRole: isMerchant ? l10n.merchant : l10n.alumniMember,
           memberNumber: l10n.memberNumber,
           email: userInfo?.email ?? '',
           phone: userInfo?.phone ?? '',
@@ -100,163 +121,65 @@ class _MemberMineView extends StatelessWidget {
             _ActionItem(
               Icons.assignment_add,
               l10n.myOrders,
-              () => Get.toNamed(Pages.myOrdersPage),
+                  () => Get.toNamed(Pages.myOrdersPage),
             ),
             _ActionItem(
               Icons.payments_rounded,
               l10n.registrationRecords,
-              () => Get.toNamed(Pages.memberRegistrationRecords),
+                  () => Get.toNamed(Pages.memberRegistrationRecords),
               color: const Color(0xFFFF6B3D),
             ),
             _ActionItem(
               Icons.storefront_rounded,
               l10n.favoriteMerchants,
-              () => Get.toNamed(Pages.memberFavoriteMerchants),
+                  () => Get.toNamed(Pages.memberFavoriteMerchants),
               color: AppColors.success,
             ),
             _ActionItem(
               Icons.schedule_rounded,
               l10n.browsingRecords,
-              () => Get.toNamed(Pages.memberBrowsingRecords),
+                  () => Get.toNamed(Pages.memberBrowsingRecords),
             ),
           ],
         ),
-        // 我的服务
         _GridSection(
           title: l10n.myServices,
           items: [
             _ActionItem(
               Icons.verified_user_rounded,
               l10n.alumniCertification,
-              () => Get.toNamed(Pages.memberCertification),
+                  () => Get.toNamed(Pages.memberCertification),
             ),
             _ActionItem(
               Icons.business_center_rounded,
               l10n.opportunityManagement,
-              () => Get.toNamed(Pages.opportunityManagementPage),
+                  () => Get.toNamed(Pages.opportunityManagementPage),
             ),
             _ActionItem(
               Icons.event_available_rounded,
               l10n.activityManagement,
-              () => Get.toNamed(Pages.activityManagementPage),
+                  () => Get.toNamed(Pages.activityManagementPage),
             ),
             _ActionItem(
               Icons.confirmation_number_rounded,
               l10n.myCoupons,
-              () => Get.toNamed(Pages.myBenefits),
+                  () => Get.toNamed(Pages.myBenefits),
             ),
             _ActionItem(
               Icons.storefront_rounded,
-              l10n.merchantOnboarding,
-              () => Get.toNamed(Pages.merchantOnboardingPage),
-              isNew: true,
+              isMerchant ? l10n.myMerchant : l10n.merchantOnboarding,
+                  () => Get.toNamed(Pages.merchantOnboardingPage),
+              isNew: !isMerchant,
             ),
             _ActionItem(
               Icons.support_agent_rounded,
               l10n.helpCenter,
-              () => Get.toNamed(Pages.helpCenter),
+                  () => Get.toNamed(Pages.helpCenter),
             ),
             _ActionItem(
               Icons.chat_rounded,
               l10n.feedback,
-              () => Get.toNamed(Pages.feedback),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _MerchantMineView extends StatelessWidget {
-  const _MerchantMineView();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final userInfo = SessionController.current.userInfo.value;
-    return _MineScaffold(
-      header: _MineHeader(
-        avatarIcon: Icons.apartment_rounded,
-        roleTag: l10n.merchant,
-        name: userInfo?.displayName ?? l10n.merchantProfileName,
-        badge: l10n.verifiedMerchant,
-        subline: _profileSubline(
-          defaultRole: l10n.merchant,
-          memberNumber: l10n.memberNumber,
-          email: userInfo?.email ?? '',
-          phone: userInfo?.phone ?? '',
-        ),
-        avatarUrl: userInfo?.avatar ?? '',
-      ),
-      children: [
-        _MyMerchantCard(),
-        _GridSection(
-          title: l10n.myOrdersRecords,
-          // columns: 5,
-          items: [
-            _ActionItem(
-              Icons.assignment_add,
-              l10n.myOrders,
-              () => Get.toNamed(Pages.myOrdersPage),
-            ),
-            _ActionItem(
-              Icons.payments_rounded,
-              l10n.registrationRecords,
-              () => Get.toNamed(Pages.memberRegistrationRecords),
-              color: const Color(0xFFFF6B3D),
-            ),
-            _ActionItem(
-              Icons.storefront_rounded,
-              l10n.favoriteMerchants,
-              () => Get.toNamed(Pages.memberFavoriteMerchants),
-              color: AppColors.success,
-            ),
-            _ActionItem(
-              Icons.receipt_long_rounded,
-              l10n.entryRecords,
-              () => Get.toNamed(Pages.entryRecordsPage),
-            ),
-            _ActionItem(
-              Icons.account_balance_wallet_rounded,
-              l10n.revenueRecords,
-              () {},
-            ),
-          ],
-        ),
-        _GridSection(
-          title: l10n.myServices,
-          items: [
-            _ActionItem(
-              Icons.verified_user_rounded,
-              l10n.alumniCertification,
-              () => Get.toNamed(Pages.memberCertification),
-            ),
-            _ActionItem(
-              Icons.business_center_rounded,
-              l10n.opportunityManagement,
-              () => Get.toNamed(Pages.opportunityManagementPage),
-            ),
-            _ActionItem(
-              Icons.event_available_rounded,
-              l10n.activityManagement,
-              () => Get.toNamed(Pages.activityManagementPage),
-            ),
-            _ActionItem(
-              Icons.confirmation_number_rounded,
-              l10n.couponManage,
-              () {},
-            ),
-            _ActionItem(Icons.bar_chart_rounded, l10n.dataStatistics, () {}),
-            _ActionItem(
-              Icons.support_agent_rounded,
-              l10n.helpCenter,
-              () => Get.toNamed(Pages.helpCenter),
-            ),
-            _ActionItem(
-              Icons.chat_rounded,
-              l10n.feedback,
-              () => Get.toNamed(Pages.feedback),
+                  () => Get.toNamed(Pages.feedback),
             ),
           ],
         ),
@@ -266,46 +189,80 @@ class _MerchantMineView extends StatelessWidget {
 }
 
 class _MineScaffold extends StatelessWidget {
-  const _MineScaffold({required this.header, required this.children});
+  const _MineScaffold({
+    required this.header,
+    required this.children,
+    required this.onRefresh,
+  });
 
   final Widget header;
   final List<Widget> children;
+  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 28.h),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              onPressed: () => Get.toNamed(Pages.settings),
-              icon: Icon(Icons.settings_outlined, size: 28.sp),
-            ),
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  onPressed: () => Get.toNamed(Pages.memberMessages),
-                  icon: Icon(Icons.chat_bubble_outline_rounded, size: 27.sp),
-                ),
-                Positioned(
-                  top: 5.h,
-                  right: 8.w,
-                  child: CircleAvatar(
-                    radius: 4.r,
-                    backgroundColor: AppColors.danger,
-                  ),
-                ),
-              ],
-            ),
-          ],
+    return EasyRefresh(
+      header: ClassicHeader(
+        position: IndicatorPosition.above,
+        dragText: '下拉刷新个人信息',
+        armedText: '松开立即刷新',
+        readyText: '正在刷新...',
+        processingText: '正在刷新...',
+        processedText: '刷新完成',
+        noMoreText: '没有更多数据',
+        failedText: '刷新失败',
+        messageText: '最后更新于 %T',
+        iconTheme: IconThemeData(
+          color: AppColors.primary,
+          size: 22.sp,
         ),
-        header,
-        SizedBox(height: 18.h),
-        ...children.expand((child) => [child, SizedBox(height: 14.h)]),
-      ],
+        textStyle: TextStyle(
+          color: AppColors.primary,
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w700,
+        ),
+        messageStyle: TextStyle(
+          color: AppColors.textSecondary,
+          fontSize: 11.sp,
+        ),
+        spacing: 8.w,
+      ),
+      onRefresh: onRefresh,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 28.h),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: () => Get.toNamed(Pages.settings),
+                icon: Icon(Icons.settings_outlined, size: 28.sp),
+              ),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    onPressed: () => Get.toNamed(Pages.memberMessages),
+                    icon: Icon(Icons.chat_bubble_outline_rounded, size: 27.sp),
+                  ),
+                  Positioned(
+                    top: 5.h,
+                    right: 8.w,
+                    child: CircleAvatar(
+                      radius: 4.r,
+                      backgroundColor: AppColors.danger,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          header,
+          SizedBox(height: 18.h),
+          ...children.expand((child) => [child, SizedBox(height: 14.h)]),
+        ],
+      ),
     );
   }
 }
@@ -431,35 +388,6 @@ class _MemberCard extends StatelessWidget {
   }
 }
 
-class _MyMerchantCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return _Card(
-      child: Row(
-        children: [
-          Icon(Icons.storefront_rounded, color: AppColors.primary, size: 58.sp),
-          SizedBox(width: 18.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(context.l10n.myMerchant, style: _sectionTitleStyle),
-                SizedBox(height: 6.h),
-                Text(context.l10n.myMerchantDesc, style: _hintStyle),
-              ],
-            ),
-          ),
-          FilledButton(
-            onPressed: () {},
-            child: Text(context.l10n.viewMerchant),
-          ),
-          Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
-        ],
-      ),
-    );
-  }
-}
-
 class _DarkCard extends StatelessWidget {
   const _DarkCard({
     required this.title,
@@ -545,7 +473,7 @@ class _GridSection extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisExtent:70.h,
+              mainAxisExtent: 70.h,
             ),
             itemCount: items.length,
             itemBuilder: (context, index) => _ActionTile(item: items[index]),

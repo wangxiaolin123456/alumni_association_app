@@ -32,14 +32,18 @@ class StoreReservationConfirmPage extends StatelessWidget {
           StoreSectionCard(
             child: Row(
               children: [
-                StoreVisual(store: store, width: 86.w, height: 72.h),
+                Image.asset(
+                  "assets/default_image.png",
+                  width: 86.w,
+                  height: 72.h,
+                ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        store.name,
+                        store.names,
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w700,
@@ -53,7 +57,7 @@ class StoreReservationConfirmPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(store.distance),
+                Text(store.province),
               ],
             ),
           ),

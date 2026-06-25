@@ -4,7 +4,9 @@ import 'package:alumni_association_app/features/profile/presentation/merchant_re
 import 'package:alumni_association_app/features/profile/presentation/merchant_type_item.dart';
 import 'package:dio/dio.dart';
 import '../../features/auth/model/response/user_info_response.dart';
+import '../../features/store/model/response/store_response.dart';
 import '../../http/core/http_manager.dart';
+import '../../http/model/page_response.dart';
 import '../../storage/storage.dart';
 import '../../util/toast_utils.dart';
 
@@ -50,6 +52,9 @@ class URL {
 
   /// 多张图片上传
   static const String uploadFiles = "/api/upload/uploads";
+
+  /// 商户列表
+  static const String merchantList = "/api/merchant/merchantList";
 }
 
 class ApiRequest {
@@ -212,7 +217,7 @@ class ApiRequest {
     try {
       final response = await HttpManager.get<UserInfoResponse>(
         URL.userInfo,
-        params: {"userId": userId},
+        // params: {"userId": userId},
       );
       if (response.code == 200 && response.data != null) {
         return response.data;
@@ -347,10 +352,7 @@ class ApiRequest {
       );
 
       if (response.code == 200) {
-        ToastUtils.showToast(
-          message: response.msg.isNotEmpty ? response.msg : "商户入驻资料已提交",
-          type: ToastType.success,
-        );
+        ToastUtils.showToast(message: "商户入驻资料已提交。", type: ToastType.success);
         return true;
       }
 
@@ -473,6 +475,37 @@ class ApiRequest {
     } catch (e) {
       ToastUtils.showToast(message: "密码重置失败", type: ToastType.error);
       return false;
+    }
+  }
+
+  /// 商户列表。
+  ///
+  /// typeId = 0 表示全部。
+  static Future<PageResponse<StoreResponse>?> storeList({
+    required int typeId,
+    required int pageNum,
+    required int pageSize,
+    required String shopName,
+  }) async {
+    try {
+      final response = await HttpManager.get<PageResponse<StoreResponse>>(
+        URL.merchantList,
+        params: {
+          "shopName": shopName,
+          "typeId": typeId,
+          "pageNum": pageNum,
+          "pageSize": pageSize,
+        },
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+      return response.data;
+    } catch (e) {
+      return null;
     }
   }
 }

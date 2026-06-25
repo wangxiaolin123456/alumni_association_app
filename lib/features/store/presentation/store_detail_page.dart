@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../model/response/store_offer_response.dart';
+
 ///商家详情
 class StoreDetailPage extends StatelessWidget {
   const StoreDetailPage({super.key});
@@ -163,7 +165,7 @@ class _HeroInfoCard extends StatelessWidget {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      store.distance,
+                      store.province,
                       style: _normalText,
                     ),
                   ],
@@ -202,7 +204,7 @@ class _StoreImageState extends State<_StoreImage> {
   void didUpdateWidget(covariant _StoreImage oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.store.id != widget.store.id) {
+    if (oldWidget.store.shopId != widget.store.shopId) {
       _currentIndex = 0;
       if (_pageController.hasClients) {
         _pageController.jumpToPage(0);
@@ -228,8 +230,8 @@ class _StoreImageState extends State<_StoreImage> {
         child: Stack(
           children: [
             if (images.isEmpty)
-              StoreVisual(
-                store: widget.store,
+              Image.asset(
+               "assets/default_image.png",
                 width: double.infinity,
                 height: 192.h,
               )
@@ -253,15 +255,15 @@ class _StoreImageState extends State<_StoreImage> {
 
                       return Container(
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: widget.store.accentColors
-                                .map((color) => Color(color))
-                                .toList(),
-                          ),
-                        ),
+                        // decoration: BoxDecoration(
+                          // gradient: LinearGradient(
+                          //   begin: Alignment.topLeft,
+                          //   end: Alignment.bottomRight,
+                            // colors: widget.store.accentColors
+                            //     .map((color) => Color(color))
+                            //     .toList(),
+                          // ),
+                        // ),
                         child: SizedBox(
                           width: 22.r,
                           height: 22.r,
@@ -273,8 +275,8 @@ class _StoreImageState extends State<_StoreImage> {
                       );
                     },
                     errorBuilder: (context, error, stackTrace) {
-                      return StoreVisual(
-                        store: widget.store,
+                      return  Image.asset(
+                        "assets/default_image.png",
                         width: double.infinity,
                         height: 192.h,
                       );
@@ -336,7 +338,7 @@ class _StoreTitleRow extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            store.name,
+            store.names,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -371,7 +373,7 @@ class _StoreScoreRow extends StatelessWidget {
         ),
         SizedBox(width: 4.w),
         Text(
-          '${store.rating}分',
+          '5分',
           style: TextStyle(
             fontSize: 14.sp,
             color: const Color(0xFFFF6A1A),
@@ -380,7 +382,7 @@ class _StoreScoreRow extends StatelessWidget {
         ),
         const _VerticalDivider(),
         Text(
-          context.l10n.monthlySales(store.monthlySales),
+          context.l10n.monthlySales(store.userId),
           style: _normalText,
         ),
         const _VerticalDivider(),
@@ -416,9 +418,9 @@ class _BenefitCard extends StatelessWidget {
         children: [
           _SectionTitle(title: context.l10n.memberBenefitsTitle),
           SizedBox(height: 14.h),
-          ...store.offers.asMap().entries.map(
+          ...store.imageUrls.asMap().entries.map(
                 (entry) => _CouponItem(
-              offer: entry.value,
+               offer: StoreOfferResponse(id: '', title: '', subtitle: '', price: 0, originalPrice: 0, discountLabel: ''),///entry.value
               selected: entry.key == 0,
               onTap: () => onUseOffer(entry.key),
             ),

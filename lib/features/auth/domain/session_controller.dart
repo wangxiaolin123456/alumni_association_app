@@ -1,8 +1,8 @@
 import 'package:alumni_association_app/features/auth/domain/user_role.dart';
 import 'package:get/get.dart';
 
+import '../../../app/api/api_request.dart';
 import '../../../storage/storage.dart';
-import '../model/response/login_response.dart';
 import '../model/response/user_info_response.dart';
 
 class SessionController extends GetxController {
@@ -17,6 +17,9 @@ class SessionController extends GetxController {
 
   /// 当前登录用户信息
   final userInfo = Rxn<UserInfoResponse>();
+
+  /// 是否正在刷新用户信息
+  final isRefreshingUserInfo = false.obs;
 
   /// 是否已登录
   bool get isLogin => isAuthenticated.value;
@@ -49,13 +52,17 @@ class SessionController extends GetxController {
   }
 
   /// 按指定角色进入 App
-  Future<void> signInAs(UserInfoResponse userInfoResponse) async{
+  Future<void> signInAs(UserInfoResponse userInfoResponse) async {
     role.value = _roleFromResponse(userInfoResponse);
+    userInfo.value = userInfoResponse;
     isAuthenticated.value = true;
+
+    await Storage.setLoginInfo(userInfoResponse);
   }
 
   /// 登录成功后保存登录状态
   Future<void> signIn(UserInfoResponse response) async {
+    isAuthenticated.value = true;
     await updateLoginInfo(response);
   }
 
@@ -65,8 +72,39 @@ class SessionController extends GetxController {
   Future<void> updateLoginInfo(UserInfoResponse response) async {
     userInfo.value = response;
     role.value = _roleFromResponse(response);
+    isAuthenticated.value = true;
 
     await Storage.setLoginInfo(response);
+  }
+
+  /// 调接口刷新当前登录用户信息
+  ///
+  /// 使用场景：
+  /// 1. 我的页面下拉刷新
+  /// 2. 修改个人资料成功后刷新
+  /// 3. 商户入驻成功后刷新用户身份
+  Future<UserInfoResponse?> refreshUserInfo() async {
+    if (!isAuthenticated.value) return null;
+
+    final currentUser = userInfo.value;
+    if (currentUser == null) return null;
+
+    if (isRefreshingUserInfo.value) return currentUser;
+
+    isRefreshingUserInfo.value = true;
+
+    try {
+      final latest = await ApiRequest.userInfo(userId: currentUser.id);
+
+      if (latest != null) {
+        await updateLoginInfo(latest);
+        return latest;
+      }
+
+      return null;
+    } finally {
+      isRefreshingUserInfo.value = false;
+    }
   }
 
   /// 退出登录
@@ -74,6 +112,7 @@ class SessionController extends GetxController {
     isAuthenticated.value = false;
     role.value = UserRole.member;
     userInfo.value = null;
+    isRefreshingUserInfo.value = false;
 
     await Storage.clearUserInfo();
   }

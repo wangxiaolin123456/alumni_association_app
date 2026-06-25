@@ -1,5 +1,8 @@
+import 'package:alumni_association_app/http/model/page_response.dart';
+
 import '../../features/auth/model/response/login_response.dart';
 import '../../features/auth/model/response/user_info_response.dart';
+import '../../features/store/model/response/store_response.dart';
 
 class FactoryModel {
   static T generateModel<T>(json) {
@@ -17,7 +20,12 @@ class FactoryModel {
     if (T.toString() == (UserInfoResponse).toString()) {
       return UserInfoResponse.fromJson(json) as T;
     }
-
+    if (T == PageResponse<StoreResponse>) {
+      return PageResponse<StoreResponse>.fromJson(
+        Map<String, dynamic>.from(json as Map),
+        StoreResponse.fromJson,
+      ) as T;
+    }
     return json;
   }
 }

@@ -30,7 +30,11 @@ class StoreOfferPage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    StoreVisual(store: store, width: 72.r, height: 72.r),
+                    Image.asset(
+                      "assets/default_image.png",
+                      width: 72.w,
+                      height: 72.h,
+                    ),
                     SizedBox(width: 12.w),
                     Expanded(
                       child: Column(
@@ -43,7 +47,7 @@ class StoreOfferPage extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          Text(store.name, style: storeSecondaryText),
+                          Text(store.names, style: storeSecondaryText),
                           Text(
                             '¥${offer.price.toStringAsFixed(0)}',
                             style: TextStyle(
@@ -73,7 +77,7 @@ class StoreOfferPage extends StatelessWidget {
                 Obx(
                   () => QrImageView(
                     data:
-                        '${store.id}-${offer.id}-${controller.qrRefreshCount.value}',
+                        '${store.shopId}-${offer.id}-${controller.qrRefreshCount.value}',
                     size: 176.r,
                   ),
                 ),

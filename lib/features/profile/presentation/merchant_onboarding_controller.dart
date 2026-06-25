@@ -28,7 +28,6 @@ class MerchantOnboardingController extends GetxController {
   final isSubmitting = false.obs;
   final isRegionLoading = false.obs;
   final isIndustryLoading = false.obs;
-  final uploadedLicenses = <String>[].obs;
   final errorMessage = RxnString();
   final merchantTypes = <MerchantTypeItem>[].obs;
   final selectedMerchantType = Rxn<MerchantTypeItem>();
@@ -36,6 +35,8 @@ class MerchantOnboardingController extends GetxController {
   final shopLogoFileName = ''.obs;
   final interiorImagePaths = <String>[].obs;
   final interiorImageFileNames = <String>[].obs;
+  final businessLicensePath = ''.obs;
+  final businessLicenseFileName = ''.obs;
   final provinces = <MerchantRegionItem>[].obs;
   final cities = <MerchantRegionItem>[].obs;
   final districts = <MerchantRegionItem>[].obs;
@@ -139,6 +140,33 @@ class MerchantOnboardingController extends GetxController {
     if (index < interiorImageFileNames.length) {
       interiorImageFileNames.removeAt(index);
     }
+  }
+
+  /// 选择并上传营业执照，接口返回 fileName 后保存到 licenseImages。
+  Future<void> pickBusinessLicense() async {
+    if (businessLicensePath.value.isNotEmpty) return;
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1800,
+    );
+    if (image == null) return;
+
+    LoadingUtil.showSafe();
+    try {
+      final fileName = await ApiRequest.uploadFile(filePath: image.path);
+      if (fileName == null || fileName.isEmpty) return;
+      businessLicensePath.value = image.path;
+      businessLicenseFileName.value = fileName;
+    } finally {
+      LoadingUtil.dismissSafe();
+    }
+  }
+
+  /// 删除营业执照图片，删除后再次点击上传框才会重新选择图片。
+  void removeBusinessLicense() {
+    businessLicensePath.value = '';
+    businessLicenseFileName.value = '';
   }
 
   /// 准备地址选择器数据。
@@ -253,13 +281,6 @@ class MerchantOnboardingController extends GetxController {
     }
   }
 
-  /// 模拟上传资质文件。
-  void uploadLicense(String label) {
-    if (!uploadedLicenses.contains(label)) {
-      uploadedLicenses.add(label);
-    }
-  }
-
   Future<void> submit(BuildContext context) async {
     final l10n = context.l10n;
     if (storeNameController.text.trim().isEmpty ||
@@ -312,14 +333,27 @@ class MerchantOnboardingController extends GetxController {
         businessEndTime: businessEndTimeController.text.trim(),
         shopLogo: shopLogoFileName.value,
         shopImgs: interiorImageFileNames.join(','),
-        licenseImages: uploadedLicenses.join(','),
+        licenseImages: businessLicenseFileName.value,
       );
       final success = shopId == null
           ? await ApiRequest.addMerchant(request: request)
           : await ApiRequest.updateMerchant(request: request);
       if (!success) return;
+
+      /// 入驻/修改成功后刷新用户信息，后端若已把 isMerchant 更新为 1，
+      /// 我的页面会立即从“商户入驻”切换为“我的商户”。
+      if (userInfo != null) {
+        final latest = await ApiRequest.userInfo(userId: userInfo.id);
+        if (latest != null) {
+          await SessionController.current.updateLoginInfo(latest);
+        }
+      }
       errorMessage.value = null;
-      if (context.mounted) Get.back();
+
+      await Future.delayed(const Duration(milliseconds: 150));
+      if (Get.key.currentState?.canPop() ?? false) {
+        Get.back(result: true);
+      }
     } finally {
       isSubmitting.value = false;
     }

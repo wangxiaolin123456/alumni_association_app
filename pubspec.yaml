@@ -60,6 +60,8 @@ dependencies:
   url_launcher: ^6.3.2
   # 国际化和日期格式化
   intl: ^0.20.2
+  # 刷新
+  easy_refresh: ^3.5.1
   # 屏幕适配
   flutter_screenutil: ^5.9.3
   # Flutter 官方多语言支持

@@ -66,7 +66,7 @@ class MerchantOnboardingRequest {
       'shopLogo': shopLogo,
       'shopImgs': shopImgs,
       'licenseImages': licenseImages,
-      'shopStatus': 0,
+      'shopStatus': 1,
       'createTime': '',
       'updateTime': '',
       'isDeleted': 0,
