@@ -19,7 +19,6 @@ class ProfilePage extends StatelessWidget {
       if (!session.isAuthenticated.value) return const _GuestProfileView();
       final userInfo = session.userInfo.value;
       return _MemberMineView(
-
         userInfo: userInfo,
 
         isMerchant: userInfo?.merchant ?? session.isMerchant,
@@ -27,7 +26,6 @@ class ProfilePage extends StatelessWidget {
         onRefresh: () async {
           await SessionController.current.refreshUserInfo();
         },
-
       );
     });
   }
@@ -102,7 +100,7 @@ class _MemberMineView extends StatelessWidget {
         avatarIcon: Icons.apartment_rounded,
         roleTag: isMerchant ? l10n.merchant : l10n.campus,
         name:
-        userInfo?.displayName ??
+            userInfo?.displayName ??
             (isMerchant ? l10n.merchantProfileName : l10n.profileName),
         badge: isMerchant ? l10n.verifiedMerchant : l10n.verified,
         subline: _profileSubline(
@@ -121,24 +119,24 @@ class _MemberMineView extends StatelessWidget {
             _ActionItem(
               Icons.assignment_add,
               l10n.myOrders,
-                  () => Get.toNamed(Pages.myOrdersPage),
+              () => Get.toNamed(Pages.myOrdersPage),
             ),
             _ActionItem(
               Icons.payments_rounded,
               l10n.registrationRecords,
-                  () => Get.toNamed(Pages.memberRegistrationRecords),
+              () => Get.toNamed(Pages.memberRegistrationRecords),
               color: const Color(0xFFFF6B3D),
             ),
             _ActionItem(
               Icons.storefront_rounded,
               l10n.favoriteMerchants,
-                  () => Get.toNamed(Pages.memberFavoriteMerchants),
+              () => Get.toNamed(Pages.memberFavoriteMerchants),
               color: AppColors.success,
             ),
             _ActionItem(
               Icons.schedule_rounded,
               l10n.browsingRecords,
-                  () => Get.toNamed(Pages.memberBrowsingRecords),
+              () => Get.toNamed(Pages.memberBrowsingRecords),
             ),
           ],
         ),
@@ -148,38 +146,42 @@ class _MemberMineView extends StatelessWidget {
             _ActionItem(
               Icons.verified_user_rounded,
               l10n.alumniCertification,
-                  () => Get.toNamed(Pages.memberCertification),
+              () => Get.toNamed(Pages.memberCertification),
             ),
             _ActionItem(
               Icons.business_center_rounded,
               l10n.opportunityManagement,
-                  () => Get.toNamed(Pages.opportunityManagementPage),
+              () => Get.toNamed(Pages.opportunityManagementPage),
             ),
             _ActionItem(
               Icons.event_available_rounded,
               l10n.activityManagement,
-                  () => Get.toNamed(Pages.activityManagementPage),
+              () => Get.toNamed(Pages.activityManagementPage),
             ),
             _ActionItem(
               Icons.confirmation_number_rounded,
               l10n.myCoupons,
-                  () => Get.toNamed(Pages.myBenefits),
+              () => Get.toNamed(Pages.myBenefits),
             ),
             _ActionItem(
               Icons.storefront_rounded,
               isMerchant ? l10n.myMerchant : l10n.merchantOnboarding,
-                  () => Get.toNamed(Pages.merchantOnboardingPage),
+              () => Get.toNamed(
+                isMerchant
+                    ? Pages.myMerchantPage
+                    : Pages.merchantOnboardingPage,
+              ),
               isNew: !isMerchant,
             ),
             _ActionItem(
               Icons.support_agent_rounded,
               l10n.helpCenter,
-                  () => Get.toNamed(Pages.helpCenter),
+              () => Get.toNamed(Pages.helpCenter),
             ),
             _ActionItem(
               Icons.chat_rounded,
               l10n.feedback,
-                  () => Get.toNamed(Pages.feedback),
+              () => Get.toNamed(Pages.feedback),
             ),
           ],
         ),
@@ -212,10 +214,7 @@ class _MineScaffold extends StatelessWidget {
         noMoreText: '没有更多数据',
         failedText: '刷新失败',
         messageText: '最后更新于 %T',
-        iconTheme: IconThemeData(
-          color: AppColors.primary,
-          size: 22.sp,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primary, size: 22.sp),
         textStyle: TextStyle(
           color: AppColors.primary,
           fontSize: 13.sp,
@@ -505,7 +504,11 @@ class _ActionTile extends StatelessWidget {
                   item.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14.sp,color: AppColors.textPrimary,fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

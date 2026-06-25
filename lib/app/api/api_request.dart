@@ -55,6 +55,9 @@ class URL {
 
   /// 商户列表
   static const String merchantList = "/api/merchant/merchantList";
+
+  /// 我的商户列表
+  static const String myMerchantList = "/api/merchant/myMerchantList";
 }
 
 class ApiRequest {
@@ -506,6 +509,38 @@ class ApiRequest {
       return response.data;
     } catch (e) {
       return null;
+    }
+  }
+
+  /// 我的商户列表。
+  ///
+  /// 后端直接返回数组，不分页；这里从原始 data 中解析，避免泛型 List
+  /// 在 FactoryModel 中没有注册时解析失败。
+  static Future<List<StoreResponse>> myMerchantList() async {
+    try {
+      final response = await HttpManager.get<dynamic>(
+        URL.myMerchantList,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return [];
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! List) return [];
+
+      return rawData
+          .whereType<Map>()
+          .map(
+            (item) => StoreResponse.fromJson(Map<String, dynamic>.from(item)),
+          )
+          .where((item) => item.shopId > 0 && item.isDeleted == 0)
+          .toList();
+    } catch (e) {
+      ToastUtils.showToast(message: "我的商户获取失败", type: ToastType.error);
+      return [];
     }
   }
 }

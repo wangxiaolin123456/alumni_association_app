@@ -1447,6 +1447,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get viewMerchant => '查看商户';
 
   @override
+  String get inOperation => '营业中';
+
+  @override
+  String get pendingReview => '待审核';
+
+  @override
+  String get noMerchantYet => '暂无商户';
+
+  @override
+  String get noMerchantYetDesc => '点击右上角添加商户，提交后可在这里查看和管理。';
+
+  @override
   String get entryRecords => '入单记录';
 
   @override

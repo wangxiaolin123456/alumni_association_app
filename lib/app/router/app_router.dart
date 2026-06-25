@@ -2,8 +2,6 @@ import 'package:alumni_association_app/features/auth/presentation/login_page.dar
 import 'package:alumni_association_app/features/auth/presentation/forgot_password_page.dart';
 import 'package:alumni_association_app/features/auth/presentation/account_bind_page.dart';
 import 'package:alumni_association_app/features/activity/presentation/activity_detail_page.dart';
-import 'package:alumni_association_app/features/auth/model/response/login_response.dart';
-import 'package:alumni_association_app/features/auth/model/request/bind_mobile_source.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_amount_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_coupon_page.dart';
 import 'package:alumni_association_app/features/consumption/presentation/consumption_merchant_page.dart';
@@ -19,6 +17,7 @@ import 'package:alumni_association_app/features/member/member_card/presentation/
 import 'package:alumni_association_app/features/member/messages/presentation/member_messages_page.dart';
 import 'package:alumni_association_app/features/member/record_center/presentation/member_record_pages.dart';
 import 'package:alumni_association_app/features/member/presentation/member_search_page.dart';
+import 'package:alumni_association_app/features/merchant/presentation/my_merchant_page.dart';
 import 'package:alumni_association_app/features/opportunity/presentation/opportunity_detail_page.dart';
 import 'package:alumni_association_app/features/opportunity/presentation/opportunity_publish_page.dart';
 import 'package:alumni_association_app/features/profile/presentation/language_page.dart';
@@ -39,6 +38,8 @@ import 'package:alumni_association_app/features/store/presentation/store_reserva
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../features/merchant/presentation/merchant_dashboard_page.dart';
+
 class Pages {
   static const String home = '/';
 
@@ -50,6 +51,8 @@ class Pages {
   static const String settingsLanguage = '/settings/language';
   static const String personalInfo = '/profile/personal-info';
   static const String merchantOnboardingPage = '/profile/merchant-onboarding';
+  static const String myMerchantPage = '/merchant/my';
+  static const merchantDashboard = '/merchant-dashboard';
 
   static const String memberSearch = '/member/search';
   static const String storeDetail = '/member/stores/detail';
@@ -103,6 +106,7 @@ class Pages {
 }
 
 class AppPages {
+  // ignore: constant_identifier_names
   static const String INIT_ROUTER = Pages.home;
   static final List<GetPage> routes = [
     GetPage(name: Pages.home, page: () => const _SessionGate()),
@@ -131,6 +135,13 @@ class AppPages {
     GetPage(
       name: Pages.merchantOnboardingPage,
       page: () => const MerchantOnboardingPage(),
+    ),
+
+    GetPage(name: Pages.myMerchantPage, page: () => const MyMerchantPage()),
+
+    GetPage(
+      name: Pages.merchantDashboard,
+      page: () => const MerchantDashboardPage(),
     ),
 
     GetPage(name: Pages.memberSearch, page: () => const MemberSearchPage()),

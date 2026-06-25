@@ -1450,6 +1450,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get viewMerchant => '店舗を見る';
 
   @override
+  String get inOperation => '営業中';
+
+  @override
+  String get pendingReview => '審査待ち';
+
+  @override
+  String get noMerchantYet => '店舗はまだありません';
+
+  @override
+  String get noMerchantYetDesc => '右上の追加ボタンから店舗を登録すると、ここで確認・管理できます。';
+
+  @override
   String get entryRecords => '登録履歴';
 
   @override

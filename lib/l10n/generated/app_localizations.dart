@@ -2938,6 +2938,30 @@ abstract class AppLocalizations {
   /// **'查看商户'**
   String get viewMerchant;
 
+  /// No description provided for @inOperation.
+  ///
+  /// In zh, this message translates to:
+  /// **'营业中'**
+  String get inOperation;
+
+  /// No description provided for @pendingReview.
+  ///
+  /// In zh, this message translates to:
+  /// **'待审核'**
+  String get pendingReview;
+
+  /// No description provided for @noMerchantYet.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无商户'**
+  String get noMerchantYet;
+
+  /// No description provided for @noMerchantYetDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'点击右上角添加商户，提交后可在这里查看和管理。'**
+  String get noMerchantYetDesc;
+
   /// No description provided for @entryRecords.
   ///
   /// In zh, this message translates to:

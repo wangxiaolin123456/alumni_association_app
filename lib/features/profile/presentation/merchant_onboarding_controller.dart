@@ -351,9 +351,7 @@ class MerchantOnboardingController extends GetxController {
       errorMessage.value = null;
 
       await Future.delayed(const Duration(milliseconds: 150));
-      if (Get.key.currentState?.canPop() ?? false) {
-        Get.back(result: true);
-      }
+      Get.back();
     } finally {
       isSubmitting.value = false;
     }

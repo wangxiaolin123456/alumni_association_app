@@ -1490,6 +1490,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewMerchant => 'View Merchant';
 
   @override
+  String get inOperation => 'Open';
+
+  @override
+  String get pendingReview => 'Pending';
+
+  @override
+  String get noMerchantYet => 'No merchants yet';
+
+  @override
+  String get noMerchantYetDesc =>
+      'Tap the plus button to add a merchant. Submitted stores will appear here.';
+
+  @override
   String get entryRecords => 'Entry Records';
 
   @override
