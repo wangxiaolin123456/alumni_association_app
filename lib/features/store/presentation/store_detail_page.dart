@@ -31,10 +31,8 @@ class StoreDetailPage extends StatelessWidget {
                 if (store.coupons.isNotEmpty) ...[
                   _BenefitCard(
                     store: store,
-                    onUseOffer: (index) {
-                      controller.selectOffer(index);
-                      Get.toNamed(Pages.storeOffer);
-                    },
+                    selectedIndex: controller.selectedOfferIndex.value,
+                    onSelectCoupon: controller.selectOffer,
                   ),
                   SizedBox(height: 14.h),
                 ],
@@ -371,15 +369,17 @@ class _StoreTitleRow extends StatelessWidget {
 }
 
 
-///会员优惠
+/// 会员优惠
 class _BenefitCard extends StatelessWidget {
   const _BenefitCard({
     required this.store,
-    required this.onUseOffer,
+    required this.selectedIndex,
+    required this.onSelectCoupon,
   });
 
   final StoreResponse store;
-  final ValueChanged<int> onUseOffer;
+  final int selectedIndex;
+  final ValueChanged<int> onSelectCoupon;
 
   @override
   Widget build(BuildContext context) {
@@ -396,11 +396,16 @@ class _BenefitCard extends StatelessWidget {
           _SectionTitle(title: context.l10n.memberBenefitsTitle),
           SizedBox(height: 14.h),
           ...store.coupons.asMap().entries.map(
-                (entry) => _CouponItem(
-              coupon: entry.value,
-              selected: entry.key == 0,
-              onTap: () => onUseOffer(entry.key),
-            ),
+                (entry) {
+              final index = entry.key;
+              final coupon = entry.value;
+
+              return _CouponItem(
+                coupon: coupon,
+                selected: index == selectedIndex,
+                onTap: () => onSelectCoupon(index),
+              );
+            },
           ),
         ],
       ),

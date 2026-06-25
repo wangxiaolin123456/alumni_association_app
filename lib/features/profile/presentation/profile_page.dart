@@ -146,42 +146,61 @@ class _MemberMineView extends StatelessWidget {
             _ActionItem(
               Icons.verified_user_rounded,
               l10n.alumniCertification,
-              () => Get.toNamed(Pages.memberCertification),
+                  () => Get.toNamed(Pages.memberCertification),
+              gradientColors: const [
+                Color(0xFF3B82F6),
+                Color(0xFF0B5CFF),
+              ],
             ),
             _ActionItem(
-              Icons.business_center_rounded,
+              Icons.work_history_rounded,
               l10n.opportunityManagement,
-              () => Get.toNamed(Pages.opportunityManagementPage),
+                  () => Get.toNamed(Pages.opportunityManagementPage),
+              gradientColors: const [
+                Color(0xFFFF9F43),
+                Color(0xFFFF6B22),
+              ],
             ),
             _ActionItem(
               Icons.event_available_rounded,
               l10n.activityManagement,
-              () => Get.toNamed(Pages.activityManagementPage),
+                  () => Get.toNamed(Pages.activityManagementPage),
+              gradientColors: const [
+                Color(0xFF8B5CF6),
+                Color(0xFF6D28D9),
+              ],
             ),
             _ActionItem(
-              Icons.confirmation_number_rounded,
-              l10n.myCoupons,
-              () => Get.toNamed(Pages.myBenefits),
-            ),
-            _ActionItem(
-              Icons.storefront_rounded,
+              Icons.store_mall_directory_rounded,
               isMerchant ? l10n.myMerchant : l10n.merchantOnboarding,
-              () => Get.toNamed(
+                  () => Get.toNamed(
                 isMerchant
                     ? Pages.myMerchantPage
                     : Pages.merchantOnboardingPage,
               ),
               isNew: !isMerchant,
+              gradientColors: const [
+                Color(0xFF22C55E),
+                Color(0xFF16A34A),
+              ],
             ),
             _ActionItem(
-              Icons.support_agent_rounded,
+              Icons.headset_mic_rounded,
               l10n.helpCenter,
-              () => Get.toNamed(Pages.helpCenter),
+                  () => Get.toNamed(Pages.helpCenter),
+              gradientColors: const [
+                Color(0xFF06B6D4),
+                Color(0xFF0891B2),
+              ],
             ),
             _ActionItem(
-              Icons.chat_rounded,
+              Icons.rate_review_rounded,
               l10n.feedback,
-              () => Get.toNamed(Pages.feedback),
+                  () => Get.toNamed(Pages.feedback),
+              gradientColors: const [
+                Color(0xFF64748B),
+                Color(0xFF334155),
+              ],
             ),
           ],
         ),
@@ -523,17 +542,28 @@ class _ActionTile extends StatelessWidget {
 
 class _ActionItem {
   _ActionItem(
-    this.icon,
-    this.title,
-    this.onTap, {
-    this.isNew = false,
-    this.color = AppColors.primary,
-  });
+      this.icon,
+      this.title,
+      this.onTap, {
+        this.isNew = false,
+        this.color = AppColors.primary,
+        this.bgColor = const Color(0xFFEAF2FF),
+        this.gradientColors,
+      });
+
   final IconData icon;
   final String title;
   final VoidCallback onTap;
   final bool isNew;
+
+  /// 图标颜色，主要用于没有渐变背景时
   final Color color;
+
+  /// 图标背景色
+  final Color bgColor;
+
+  /// 渐变色，有值时优先使用渐变
+  final List<Color>? gradientColors;
 }
 
 class _Card extends StatelessWidget {
