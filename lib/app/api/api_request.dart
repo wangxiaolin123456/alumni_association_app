@@ -1,7 +1,7 @@
 import 'package:alumni_association_app/features/auth/model/response/login_response.dart';
-import 'package:alumni_association_app/features/profile/presentation/merchant_onboarding_request.dart';
-import 'package:alumni_association_app/features/profile/presentation/merchant_region_item.dart';
-import 'package:alumni_association_app/features/profile/presentation/merchant_type_item.dart';
+import 'package:alumni_association_app/features/profile/pages/merchant_onboarding_request.dart';
+import 'package:alumni_association_app/features/profile/pages/merchant_region_item.dart';
+import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:dio/dio.dart';
 import '../../features/auth/model/response/user_info_response.dart';
 import '../../features/merchant/coupon/model/request/coupon_request.dart';

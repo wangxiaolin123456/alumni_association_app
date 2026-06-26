@@ -1,5 +1,5 @@
 import 'package:alumni_association_app/app/api/api_request.dart';
-import 'package:alumni_association_app/features/profile/presentation/merchant_region_item.dart';
+import 'package:alumni_association_app/features/profile/pages/merchant_region_item.dart';
 import 'package:get/get.dart';
 
 /// 全局地址数据管理。
