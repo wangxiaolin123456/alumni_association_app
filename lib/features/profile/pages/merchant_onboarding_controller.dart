@@ -9,7 +9,6 @@ import 'package:alumni_association_app/util/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../util/toast_utils.dart';
 
 /// 商户入驻表单逻辑。

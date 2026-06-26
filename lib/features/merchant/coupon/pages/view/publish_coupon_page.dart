@@ -1,4 +1,5 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
+import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class PublishCouponPage extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          '新增优惠券',
+          context.l10n.addCouponTitle,
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w900,
@@ -71,28 +72,28 @@ class _CouponFormCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(14.w, 16.h, 14.w, 18.h),
+      padding: EdgeInsets.fromLTRB(10.w, 16.h, 10.w, 18.h),
       decoration: _cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _Field(
-            label: '优惠券名称 *',
-            hint: '请输入优惠券名称',
+            label: context.l10n.couponNameRequired,
+            hint: context.l10n.couponNameHint,
             controller: controller.nameController,
             maxLength: 20,
           ),
           SizedBox(height: 16.h),
           _DescriptionField(controller: controller),
           SizedBox(height: 20.h),
-          _RequiredLabel('优惠券类型 *'),
+          _RequiredLabel(context.l10n.couponTypeRequired),
           SizedBox(height: 14.h),
           _CouponTypeSelector(controller: controller),
           SizedBox(height: 18.h),
           _CouponAmountForms(controller: controller),
           SizedBox(height: 14.h),
           _StoreSelector(controller: controller),
-          SizedBox(height: 14.h),
+          SizedBox(height: 10.h),
           _ValidTimeRow(controller: controller),
           SizedBox(height: 18.h),
           _StatusRow(controller: controller),
@@ -118,36 +119,12 @@ class _DescriptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _RequiredLabel('优惠券描述 *'),
-        SizedBox(height: 12.h),
-        SizedBox(
-          height: 132.h,
-          child: ValueListenableBuilder<TextEditingValue>(
-            valueListenable: controller.descriptionController,
-            builder: (context, value, child) {
-              return TextField(
-                controller: controller.descriptionController,
-                maxLength: 500,
-                maxLines: null,
-                expands: true,
-                textAlignVertical: TextAlignVertical.top,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.textPrimary,
-                ),
-                decoration: _inputDecoration(
-                  hint: '请输入优惠券描述，例如：满299减30元，适用于店内所有商品，部分商品除外。',
-                  maxLength: 500,
-                  currentLength: value.text.length,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+    return _LargeTextField(
+      label: context.l10n.couponDescriptionRequired,
+      hint: context.l10n.couponDescriptionHint,
+      controller: controller.descriptionController,
+      maxLength: 500,
+      height: 132.h,
     );
   }
 }
@@ -168,9 +145,9 @@ class _CouponTypeSelector extends StatelessWidget {
               selected: controller.selectedType.value == 1,
               icon: Icons.confirmation_number_rounded,
               iconColor: AppColors.primary,
-              title: '固定金额引',
-              subtitle: '固定金额立减',
-              example: '如：满199减20元',
+              title: context.l10n.couponTypeFixedAmount,
+              subtitle: context.l10n.couponTypeFixedAmountSubtitle,
+              example: context.l10n.couponTypeFixedAmountExample,
               onTap: () => controller.selectCouponType(1),
             ),
           ),
@@ -180,9 +157,9 @@ class _CouponTypeSelector extends StatelessWidget {
               selected: controller.selectedType.value == 2,
               icon: Icons.percent_rounded,
               iconColor: const Color(0xFF667085),
-              title: '百分比折扣引',
-              subtitle: '按百分比折扣',
-              example: '如：全场9折',
+              title: context.l10n.couponTypePercentage,
+              subtitle: context.l10n.couponTypePercentageSubtitle,
+              example: context.l10n.couponTypePercentageExample,
               onTap: () => controller.selectCouponType(2),
             ),
           ),
@@ -192,9 +169,9 @@ class _CouponTypeSelector extends StatelessWidget {
               selected: controller.selectedType.value == 3,
               icon: Icons.local_offer_rounded,
               iconColor: const Color(0xFF667085),
-              title: '条件付割引',
-              subtitle: '满足指定条件享优惠',
-              example: '如：满299减30元',
+              title: context.l10n.couponTypeConditional,
+              subtitle: context.l10n.couponTypeConditionalSubtitle,
+              example: context.l10n.couponTypeConditionalExample,
               onTap: () => controller.selectCouponType(3),
             ),
           ),
@@ -261,7 +238,11 @@ class _TypeCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 30.sp, color: selected ? AppColors.primary : iconColor),
+                  Icon(
+                    icon,
+                    size: 30.sp,
+                    color: selected ? AppColors.primary : iconColor,
+                  ),
                   SizedBox(height: 10.h),
                   Text(
                     title,
@@ -316,38 +297,38 @@ class _CouponAmountForms extends StatelessWidget {
         children: [
           if (controller.isFixedAmount)
             _AmountSection(
-              title: '固定金额引',
+              title: context.l10n.couponTypeFixedAmount,
               icon: Icons.confirmation_number_rounded,
               iconColor: AppColors.primary,
               backgroundColor: const Color(0xFFF6F9FF),
               children: [
                 _Field(
-                  label: '门槛金额 *',
-                  hint: '请输入满减门槛金额',
+                  label: context.l10n.couponThresholdAmountRequired,
+                  hint: context.l10n.couponThresholdAmountHint,
                   controller: controller.fixedMinAmountController,
                   keyboardType: TextInputType.number,
-                  suffixText: '元',
+                  suffixText: context.l10n.yuan,
                 ),
                 _Field(
-                  label: '减免金额 *',
-                  hint: '请输入减免金额',
+                  label: context.l10n.couponDiscountAmountRequired,
+                  hint: context.l10n.couponDiscountAmountHint,
                   controller: controller.fixedDiscountAmountController,
                   keyboardType: TextInputType.number,
-                  suffixText: '元',
+                  suffixText: context.l10n.yuan,
                   bottomPadding: 0,
                 ),
               ],
             ),
           if (controller.isPercentageDiscount)
             _AmountSection(
-              title: '百分比折扣引',
+              title: context.l10n.couponTypePercentage,
               icon: Icons.percent_rounded,
               iconColor: AppColors.success,
               backgroundColor: const Color(0xFFF4FBF7),
               children: [
                 _Field(
-                  label: '折扣率 *',
-                  hint: '请输入折扣率',
+                  label: context.l10n.couponRateRequired,
+                  hint: context.l10n.couponRateHint,
                   controller: controller.discountRateController,
                   keyboardType: TextInputType.number,
                   suffixText: '%',
@@ -357,24 +338,24 @@ class _CouponAmountForms extends StatelessWidget {
             ),
           if (controller.isConditionDiscount)
             _AmountSection(
-              title: '条件付割引',
+              title: context.l10n.couponTypeConditional,
               icon: Icons.local_offer_rounded,
               iconColor: const Color(0xFFFF6B22),
               backgroundColor: const Color(0xFFFFF8F3),
               children: [
                 _Field(
-                  label: '门槛金额 *',
-                  hint: '请输入满足门槛金额',
+                  label: context.l10n.couponThresholdAmountRequired,
+                  hint: context.l10n.couponConditionAmountHint,
                   controller: controller.conditionMinAmountController,
                   keyboardType: TextInputType.number,
-                  suffixText: '元',
+                  suffixText: context.l10n.yuan,
                 ),
                 _Field(
-                  label: '减免金额 *',
-                  hint: '请输入减免金额',
+                  label: context.l10n.couponDiscountAmountRequired,
+                  hint: context.l10n.couponDiscountAmountHint,
                   controller: controller.conditionDiscountAmountController,
                   keyboardType: TextInputType.number,
-                  suffixText: '元',
+                  suffixText: context.l10n.yuan,
                   bottomPadding: 0,
                 ),
               ],
@@ -433,7 +414,6 @@ class _AmountSection extends StatelessWidget {
 }
 
 /// 适用门店
-/// 适用门店
 class _StoreSelector extends StatelessWidget {
   const _StoreSelector({required this.controller});
 
@@ -442,8 +422,8 @@ class _StoreSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Field(
-      label: '适用门店 *',
-      hint: '请选择适用的门店',
+      label: context.l10n.applicableStoresRequired,
+      hint: context.l10n.applicableStoresHint,
       controller: controller.shopTextController,
       readOnly: true,
       trailing: Icons.chevron_right_rounded,
@@ -495,7 +475,7 @@ class _StorePickerSheet extends StatelessWidget {
           Row(
             children: [
               Text(
-                '选择适用门店',
+                context.l10n.selectApplicableStores,
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w900,
@@ -513,7 +493,9 @@ class _StorePickerSheet extends StatelessWidget {
                       ? null
                       : controller.toggleSelectAllStores,
                   child: Text(
-                    allSelected ? '取消全选' : '全选',
+                    allSelected
+                        ? context.l10n.cancelSelectAll
+                        : context.l10n.selectAll,
                     style: TextStyle(
                       color: AppColors.primary,
                       fontSize: 14.sp,
@@ -546,8 +528,10 @@ class _StorePickerSheet extends StatelessWidget {
               ),
               child: Text(
                 controller.tempSelectedShopIds.isEmpty
-                    ? '请选择一个或多个门店'
-                    : '已选择 ${controller.tempSelectedShopIds.length} 家门店',
+                    ? context.l10n.pleaseSelectStores
+                    : context.l10n.selectedStoresCount(
+                  controller.tempSelectedShopIds.length,
+                ),
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 13.sp,
@@ -572,7 +556,7 @@ class _StorePickerSheet extends StatelessWidget {
               if (stores.isEmpty) {
                 return Center(
                   child: Text(
-                    '暂无可用门店',
+                    context.l10n.noAvailableStores,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 14.sp,
@@ -610,7 +594,7 @@ class _StorePickerSheet extends StatelessWidget {
             children: [
               Expanded(
                 child: _SheetCancelButton(
-                  text: '取消',
+                  text: context.l10n.cancel,
                   onTap: Get.back,
                 ),
               ),
@@ -618,7 +602,8 @@ class _StorePickerSheet extends StatelessWidget {
               Expanded(
                 child: Obx(
                       () => _SheetConfirmButton(
-                    text: '确认选择',
+
+                    text: context.l10n.confirmSelection,
                     disabled: controller.tempSelectedShopIds.isEmpty,
                     onTap: () {
                       controller.confirmSelectedStores();
@@ -634,7 +619,6 @@ class _StorePickerSheet extends StatelessWidget {
     );
   }
 }
-
 
 class _SheetCancelButton extends StatelessWidget {
   const _SheetCancelButton({
@@ -725,6 +709,7 @@ class _SheetConfirmButton extends StatelessWidget {
     );
   }
 }
+
 class _StorePickerItem extends StatelessWidget {
   const _StorePickerItem({
     required this.store,
@@ -738,8 +723,13 @@ class _StorePickerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final address = store.fullAddress.isEmpty ? '暂无地址' : store.fullAddress;
-    final phone = store.phone.isEmpty ? '暂无电话' : store.phone;
+    final address = store.fullAddress.isEmpty
+        ? context.l10n.noAddress
+        : store.fullAddress;
+    final phone = store.phone.isEmpty ? context.l10n.noPhone : store.phone;
+    final shopName = store.shopName.isEmpty
+        ? context.l10n.unnamedStore
+        : store.shopName;
 
     return InkWell(
       onTap: onTap,
@@ -784,7 +774,7 @@ class _StorePickerItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    store.shopName.isEmpty ? '未命名门店' : store.shopName,
+                    shopName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -832,7 +822,6 @@ class _StorePickerItem extends StatelessWidget {
 }
 
 /// 有效期
-/// 有效期
 class _ValidTimeRow extends StatelessWidget {
   const _ValidTimeRow({required this.controller});
 
@@ -840,24 +829,30 @@ class _ValidTimeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _RequiredLabel('有效期间范围'),
-        Expanded(
-          child: Obx(
-                () => _DateRangeBox(
-              startText: controller.startDate.value == null
-                  ? '开始日期'
-                  : controller.startDateText.value,
-              endText: controller.endDate.value == null
-                  ? '结束日期'
-                  : controller.endDateText.value,
-              startPlaceholder: controller.startDate.value == null,
-              endPlaceholder: controller.endDate.value == null,
-              onTapStart: () => controller.pickStartDate(context),
-              onTapEnd: () => controller.pickEndDate(context),
+        _RequiredLabel(context.l10n.couponValidPeriodRequired),
+        SizedBox(height: 10.h),
+        Row(
+          children: [
+            Expanded(
+              child: Obx(
+                    () => _DateRangeBox(
+                  startText: controller.startDate.value == null
+                      ? context.l10n.startDate
+                      : controller.startDateText.value,
+                  endText: controller.endDate.value == null
+                      ? context.l10n.endDate
+                      : controller.endDateText.value,
+                  startPlaceholder: controller.startDate.value == null,
+                  endPlaceholder: controller.endDate.value == null,
+                  onTapStart: () => controller.pickStartDate(context),
+                  onTapEnd: () => controller.pickEndDate(context),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -935,6 +930,14 @@ class _DateRangeBox extends StatelessWidget {
             ),
           ),
 
+          SizedBox(width: 10.w),
+          Icon(
+            Icons.access_time_rounded,
+            size: 15.sp,
+            color: const Color(0xFF9AA8BD),
+          ),
+          SizedBox(width: 8.w),
+
           /// 结束时间
           Expanded(
             child: InkWell(
@@ -972,19 +975,20 @@ class _StatusRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const _RequiredLabel('优惠券状态 *'),
+        _RequiredLabel(context.l10n.couponStatusRequired),
+        SizedBox(width: 12.w),
         Expanded(
           child: Obx(
                 () => Row(
               children: [
                 _RadioItem(
-                  text: '进行中',
+                  text: context.l10n.couponStatusActive,
                   selected: controller.disableStatus.value == 0,
                   onTap: () => controller.changeStatus(0),
                 ),
                 SizedBox(width: 32.w),
                 _RadioItem(
-                  text: '禁用',
+                  text: context.l10n.couponStatusDisabled,
                   selected: controller.disableStatus.value == 1,
                   onTap: () => controller.changeStatus(1),
                 ),
@@ -1043,13 +1047,71 @@ class _DisableReasonField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Field(
-      label: '禁用原因 *',
-      hint: '请选择禁用原因',
+    return _LargeTextField(
+      label: context.l10n.couponDisableReasonRequired,
+      hint: context.l10n.couponDisableReasonHint,
       controller: controller.disableReasonController,
-      trailing: Icons.keyboard_arrow_down_rounded,
-      readOnly: false,
-      bottomPadding: 0,
+      maxLength: 200,
+      height: 100.h,
+    );
+  }
+}
+
+/// 多行输入框
+class _LargeTextField extends StatelessWidget {
+  const _LargeTextField({
+    required this.label,
+    required this.hint,
+    required this.controller,
+    required this.maxLength,
+    required this.height,
+  });
+
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final int maxLength;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _RequiredLabel(label),
+        SizedBox(height: 10.h),
+        SizedBox(
+          height: height,
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (context, value, child) {
+              return TextField(
+                controller: controller,
+                maxLength: maxLength,
+                maxLines: null,
+                expands: true,
+                textAlignVertical: TextAlignVertical.top,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppColors.textPrimary,
+                ),
+                decoration: _inputDecoration(
+                  hint: hint,
+                  maxLength: maxLength,
+                  currentLength: value.text.length,
+                ).copyWith(
+                  contentPadding: EdgeInsets.fromLTRB(
+                    14.w,
+                    12.h,
+                    14.w,
+                    12.h,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -1067,49 +1129,12 @@ class _BottomActions extends StatelessWidget {
         children: [
           Expanded(
             child: _PrimaryActionButton(
-              text: '立即发布',
+              text: context.l10n.publishNow,
               disabled: controller.isSubmitting.value,
               onTap: () => controller.publish(context),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _OutlineActionButton extends StatelessWidget {
-  const _OutlineActionButton({
-    required this.text,
-    required this.disabled,
-    required this.onTap,
-  });
-
-  final String text;
-  final bool disabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: disabled ? null : onTap,
-      borderRadius: BorderRadius.circular(8.r),
-      child: Container(
-        height: 52.h,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: AppColors.primary, width: 1.2),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: AppColors.primary,
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
       ),
     );
   }
@@ -1199,7 +1224,7 @@ class _Field extends StatelessWidget {
       padding: EdgeInsets.only(bottom: bottomPadding.h),
       child: Row(
         children: [
-          _RequiredLabel(label),
+          _RequiredLabel(label, width: 92.w),
           Expanded(
             child: SizedBox(
               height: 45.h,
@@ -1235,9 +1260,13 @@ class _Field extends StatelessWidget {
 }
 
 class _RequiredLabel extends StatelessWidget {
-  const _RequiredLabel(this.text);
+  const _RequiredLabel(
+      this.text, {
+        this.width,
+      });
 
   final String text;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -1245,7 +1274,7 @@ class _RequiredLabel extends StatelessWidget {
     final cleanText = text.replaceAll('*', '').trimRight();
 
     return SizedBox(
-      width: 90.w,
+      width: width,
       child: Text.rich(
         TextSpan(
           text: cleanText,

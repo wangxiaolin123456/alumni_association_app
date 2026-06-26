@@ -1885,4 +1885,174 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get registerFailed => '登録に失敗しました。認証コードを確認するか、しばらくしてからもう一度お試しください';
+
+  @override
+  String get addCouponTitle => 'クーポン追加';
+
+  @override
+  String get couponNameRequired => 'クーポン名 *';
+
+  @override
+  String get couponNameHint => 'クーポン名を入力してください';
+
+  @override
+  String get couponDescriptionRequired => 'クーポン説明 *';
+
+  @override
+  String get couponDescriptionHint => '例：299元以上で30元割引。対象外商品がある場合があります。';
+
+  @override
+  String get couponTypeRequired => 'クーポン種類 *';
+
+  @override
+  String get couponTypeFixedAmount => '定額割引';
+
+  @override
+  String get couponTypeFixedAmountSubtitle => '固定金額を割引';
+
+  @override
+  String get couponTypeFixedAmountExample => '例：199元以上で20元割引';
+
+  @override
+  String get couponTypePercentage => '割合割引';
+
+  @override
+  String get couponTypePercentageSubtitle => 'パーセントで割引';
+
+  @override
+  String get couponTypePercentageExample => '例：全品10％割引';
+
+  @override
+  String get couponTypeConditional => '条件付き割引';
+
+  @override
+  String get couponTypeConditionalSubtitle => '条件達成で割引';
+
+  @override
+  String get couponTypeConditionalExample => '例：299元以上で30元割引';
+
+  @override
+  String get couponThresholdAmountRequired => '利用条件金額 *';
+
+  @override
+  String get couponThresholdAmountHint => '利用条件金額を入力してください';
+
+  @override
+  String get couponConditionAmountHint => '条件金額を入力してください';
+
+  @override
+  String get couponDiscountAmountRequired => '割引金額 *';
+
+  @override
+  String get couponDiscountAmountHint => '割引金額を入力してください';
+
+  @override
+  String get couponRateRequired => '割引率 *';
+
+  @override
+  String get couponRateHint => '割引率を入力してください';
+
+  @override
+  String get yuan => '元';
+
+  @override
+  String get applicableStoresRequired => '対象店舗 *';
+
+  @override
+  String get applicableStoresHint => '対象店舗を選択してください';
+
+  @override
+  String get selectApplicableStores => '対象店舗を選択';
+
+  @override
+  String get pleaseSelectStores => '1つ以上の店舗を選択してください';
+
+  @override
+  String selectedStoresCount(int count) {
+    return '$count店舗選択済み';
+  }
+
+  @override
+  String get selectAll => '全選択';
+
+  @override
+  String get cancelSelectAll => '全解除';
+
+  @override
+  String get confirmSelection => '選択を確定';
+
+  @override
+  String get noAvailableStores => '利用可能な店舗がありません';
+
+  @override
+  String get noAddress => '住所未設定';
+
+  @override
+  String get noPhone => '電話番号未設定';
+
+  @override
+  String get unnamedStore => '名称未設定の店舗';
+
+  @override
+  String get couponValidPeriodRequired => '有効期間 *';
+
+  @override
+  String get startDate => '開始日';
+
+  @override
+  String get endDate => '終了日';
+
+  @override
+  String get couponStatusRequired => 'クーポン状態 *';
+
+  @override
+  String get couponStatusActive => '有効';
+
+  @override
+  String get couponStatusDisabled => '無効';
+
+  @override
+  String get couponDisableReasonRequired => '無効理由 *';
+
+  @override
+  String get couponDisableReasonHint => '無効理由を入力してください。最大200文字';
+
+  @override
+  String get publishNow => '今すぐ公開';
+
+  @override
+  String get couponNameRequiredMessage => 'クーポン名を入力してください';
+
+  @override
+  String get couponDescriptionRequiredMessage => 'クーポン説明を入力してください';
+
+  @override
+  String get couponThresholdAmountRequiredMessage => '利用条件金額を入力してください';
+
+  @override
+  String get couponConditionAmountRequiredMessage => '条件金額を入力してください';
+
+  @override
+  String get couponDiscountAmountRequiredMessage => '割引金額を入力してください';
+
+  @override
+  String get couponDiscountCannotExceedThreshold => '割引金額は利用条件金額を超えることはできません';
+
+  @override
+  String get couponRateInvalidMessage => '正しい割引率を入力してください';
+
+  @override
+  String get applicableStoresRequiredMessage => '対象店舗を選択してください';
+
+  @override
+  String get startDateRequiredMessage => '開始日を選択してください';
+
+  @override
+  String get endDateRequiredMessage => '終了日を選択してください';
+
+  @override
+  String get endDateCannotBeforeStartDate => '終了時間は開始時間より前に設定できません';
+
+  @override
+  String get disableReasonRequiredMessage => '無効理由を入力してください';
 }

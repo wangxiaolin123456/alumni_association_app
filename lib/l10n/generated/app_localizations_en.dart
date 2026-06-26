@@ -1943,4 +1943,183 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get registerFailed =>
       'Registration failed. Please check the verification code or try again later.';
+
+  @override
+  String get addCouponTitle => 'Add Coupon';
+
+  @override
+  String get couponNameRequired => 'Coupon Name *';
+
+  @override
+  String get couponNameHint => 'Enter coupon name';
+
+  @override
+  String get couponDescriptionRequired => 'Coupon Description *';
+
+  @override
+  String get couponDescriptionHint =>
+      'Enter coupon description, e.g. Save 30 on orders over 299. Some items may be excluded.';
+
+  @override
+  String get couponTypeRequired => 'Coupon Type *';
+
+  @override
+  String get couponTypeFixedAmount => 'Fixed Discount';
+
+  @override
+  String get couponTypeFixedAmountSubtitle => 'Fixed amount off';
+
+  @override
+  String get couponTypeFixedAmountExample => 'E.g. 20 off over 199';
+
+  @override
+  String get couponTypePercentage => 'Percentage Discount';
+
+  @override
+  String get couponTypePercentageSubtitle => 'Discount by percentage';
+
+  @override
+  String get couponTypePercentageExample => 'E.g. 10% off';
+
+  @override
+  String get couponTypeConditional => 'Conditional Discount';
+
+  @override
+  String get couponTypeConditionalSubtitle => 'Discount after conditions';
+
+  @override
+  String get couponTypeConditionalExample => 'E.g. 30 off over 299';
+
+  @override
+  String get couponThresholdAmountRequired => 'Threshold *';
+
+  @override
+  String get couponThresholdAmountHint => 'Enter threshold amount';
+
+  @override
+  String get couponConditionAmountHint => 'Enter required amount';
+
+  @override
+  String get couponDiscountAmountRequired => 'Discount Amount *';
+
+  @override
+  String get couponDiscountAmountHint => 'Enter discount amount';
+
+  @override
+  String get couponRateRequired => 'Discount Rate *';
+
+  @override
+  String get couponRateHint => 'Enter discount rate';
+
+  @override
+  String get yuan => 'Yuan';
+
+  @override
+  String get applicableStoresRequired => 'Applicable Stores *';
+
+  @override
+  String get applicableStoresHint => 'Select applicable stores';
+
+  @override
+  String get selectApplicableStores => 'Select Applicable Stores';
+
+  @override
+  String get pleaseSelectStores => 'Select one or more stores';
+
+  @override
+  String selectedStoresCount(int count) {
+    return '$count stores selected';
+  }
+
+  @override
+  String get selectAll => 'Select All';
+
+  @override
+  String get cancelSelectAll => 'Deselect All';
+
+  @override
+  String get confirmSelection => 'Confirm';
+
+  @override
+  String get noAvailableStores => 'No available stores';
+
+  @override
+  String get noAddress => 'No address';
+
+  @override
+  String get noPhone => 'No phone number';
+
+  @override
+  String get unnamedStore => 'Unnamed Store';
+
+  @override
+  String get couponValidPeriodRequired => 'Valid Period *';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get couponStatusRequired => 'Coupon Status *';
+
+  @override
+  String get couponStatusActive => 'Active';
+
+  @override
+  String get couponStatusDisabled => 'Disabled';
+
+  @override
+  String get couponDisableReasonRequired => 'Disable Reason *';
+
+  @override
+  String get couponDisableReasonHint =>
+      'Enter disable reason, up to 200 characters';
+
+  @override
+  String get publishNow => 'Publish Now';
+
+  @override
+  String get couponNameRequiredMessage => 'Please enter coupon name';
+
+  @override
+  String get couponDescriptionRequiredMessage =>
+      'Please enter coupon description';
+
+  @override
+  String get couponThresholdAmountRequiredMessage =>
+      'Please enter threshold amount';
+
+  @override
+  String get couponConditionAmountRequiredMessage =>
+      'Please enter required amount';
+
+  @override
+  String get couponDiscountAmountRequiredMessage =>
+      'Please enter discount amount';
+
+  @override
+  String get couponDiscountCannotExceedThreshold =>
+      'Discount amount cannot exceed threshold amount';
+
+  @override
+  String get couponRateInvalidMessage => 'Please enter a valid discount rate';
+
+  @override
+  String get applicableStoresRequiredMessage =>
+      'Please select applicable stores';
+
+  @override
+  String get startDateRequiredMessage => 'Please select start date';
+
+  @override
+  String get endDateRequiredMessage => 'Please select end date';
+
+  @override
+  String get endDateCannotBeforeStartDate =>
+      'End time cannot be earlier than start time';
+
+  @override
+  String get disableReasonRequiredMessage => 'Please enter disable reason';
 }

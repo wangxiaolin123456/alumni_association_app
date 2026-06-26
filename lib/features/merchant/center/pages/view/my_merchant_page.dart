@@ -99,7 +99,7 @@ class _MerchantCard extends StatelessWidget {
       ),
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
-        padding: EdgeInsets.all(16.r),
+        padding: EdgeInsets.all(10.r),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
@@ -131,7 +131,7 @@ class _MerchantCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 17.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w900,
                             color: AppColors.textPrimary,
                           ),
@@ -158,7 +158,13 @@ class _MerchantCard extends StatelessWidget {
                           style: _metaStyle,
                         ),
                       ),
-                      SizedBox(width: 12.w),
+
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  Row(
+                    children: [
+
                       Icon(
                         Icons.phone_outlined,
                         size: 14.sp,
@@ -181,8 +187,8 @@ class _MerchantCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           store.fullAddress.replaceAll(' · ', ''),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          // maxLines: 1,
+                          // overflow: TextOverflow.ellipsis,
                           style: _metaStyle,
                         ),
                       ),
@@ -191,7 +197,7 @@ class _MerchantCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(width: 6.w),
+            // SizedBox(width: 6.w),
             Icon(
               Icons.chevron_right_rounded,
               size: 26.sp,

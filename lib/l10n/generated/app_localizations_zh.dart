@@ -1882,4 +1882,174 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get registerFailed => '注册失败，请检查验证码或稍后再试';
+
+  @override
+  String get addCouponTitle => '新增优惠券';
+
+  @override
+  String get couponNameRequired => '优惠券名称 *';
+
+  @override
+  String get couponNameHint => '请输入优惠券名称';
+
+  @override
+  String get couponDescriptionRequired => '优惠券描述 *';
+
+  @override
+  String get couponDescriptionHint => '请输入优惠券描述，例如：满299减30元，适用于店内所有商品，部分商品除外。';
+
+  @override
+  String get couponTypeRequired => '优惠券类型 *';
+
+  @override
+  String get couponTypeFixedAmount => '固定金额引';
+
+  @override
+  String get couponTypeFixedAmountSubtitle => '固定金额立减';
+
+  @override
+  String get couponTypeFixedAmountExample => '如：满199减20元';
+
+  @override
+  String get couponTypePercentage => '百分比折扣引';
+
+  @override
+  String get couponTypePercentageSubtitle => '按百分比折扣';
+
+  @override
+  String get couponTypePercentageExample => '如：全场9折';
+
+  @override
+  String get couponTypeConditional => '条件付割引';
+
+  @override
+  String get couponTypeConditionalSubtitle => '满足指定条件享优惠';
+
+  @override
+  String get couponTypeConditionalExample => '如：满299减30元';
+
+  @override
+  String get couponThresholdAmountRequired => '门槛金额 *';
+
+  @override
+  String get couponThresholdAmountHint => '请输入满减门槛金额';
+
+  @override
+  String get couponConditionAmountHint => '请输入满足门槛金额';
+
+  @override
+  String get couponDiscountAmountRequired => '减免金额 *';
+
+  @override
+  String get couponDiscountAmountHint => '请输入减免金额';
+
+  @override
+  String get couponRateRequired => '折扣率 *';
+
+  @override
+  String get couponRateHint => '请输入折扣率';
+
+  @override
+  String get yuan => '元';
+
+  @override
+  String get applicableStoresRequired => '适用门店 *';
+
+  @override
+  String get applicableStoresHint => '请选择适用的门店';
+
+  @override
+  String get selectApplicableStores => '选择适用门店';
+
+  @override
+  String get pleaseSelectStores => '请选择一个或多个门店';
+
+  @override
+  String selectedStoresCount(int count) {
+    return '已选择 $count 家门店';
+  }
+
+  @override
+  String get selectAll => '全选';
+
+  @override
+  String get cancelSelectAll => '取消全选';
+
+  @override
+  String get confirmSelection => '确认选择';
+
+  @override
+  String get noAvailableStores => '暂无可用门店';
+
+  @override
+  String get noAddress => '暂无地址';
+
+  @override
+  String get noPhone => '暂无电话';
+
+  @override
+  String get unnamedStore => '未命名门店';
+
+  @override
+  String get couponValidPeriodRequired => '有效期间范围 *';
+
+  @override
+  String get startDate => '开始日期';
+
+  @override
+  String get endDate => '结束日期';
+
+  @override
+  String get couponStatusRequired => '优惠券状态 *';
+
+  @override
+  String get couponStatusActive => '进行中';
+
+  @override
+  String get couponStatusDisabled => '禁用';
+
+  @override
+  String get couponDisableReasonRequired => '禁用原因 *';
+
+  @override
+  String get couponDisableReasonHint => '请输入禁用原因，最多200字';
+
+  @override
+  String get publishNow => '立即发布';
+
+  @override
+  String get couponNameRequiredMessage => '请输入优惠券名称';
+
+  @override
+  String get couponDescriptionRequiredMessage => '请输入优惠券描述';
+
+  @override
+  String get couponThresholdAmountRequiredMessage => '请输入门槛金额';
+
+  @override
+  String get couponConditionAmountRequiredMessage => '请输入满足门槛金额';
+
+  @override
+  String get couponDiscountAmountRequiredMessage => '请输入减免金额';
+
+  @override
+  String get couponDiscountCannotExceedThreshold => '减免金额不能大于门槛金额';
+
+  @override
+  String get couponRateInvalidMessage => '请输入正确的折扣率';
+
+  @override
+  String get applicableStoresRequiredMessage => '请选择适用门店';
+
+  @override
+  String get startDateRequiredMessage => '请选择开始日期';
+
+  @override
+  String get endDateRequiredMessage => '请选择结束日期';
+
+  @override
+  String get endDateCannotBeforeStartDate => '结束时间不能早于开始时间';
+
+  @override
+  String get disableReasonRequiredMessage => '请输入禁用原因';
 }

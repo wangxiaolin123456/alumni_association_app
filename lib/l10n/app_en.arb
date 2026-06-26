@@ -630,5 +630,77 @@
   "sendCodeFailed": "Failed to send the verification code. Please try again later.",
   "sendCodeSuccess": "Verification code sent. Please check your email.",
   "registerSuccess": "Registration successful. Please log in with your email and password.",
-  "registerFailed": "Registration failed. Please check the verification code or try again later."
+  "registerFailed": "Registration failed. Please check the verification code or try again later.",
+  "addCouponTitle": "Add Coupon",
+  "couponNameRequired": "Coupon Name *",
+  "couponNameHint": "Enter coupon name",
+  "couponDescriptionRequired": "Coupon Description *",
+  "couponDescriptionHint": "Enter coupon description, e.g. Save 30 on orders over 299. Some items may be excluded.",
+  "couponTypeRequired": "Coupon Type *",
+
+  "couponTypeFixedAmount": "Fixed Discount",
+  "couponTypeFixedAmountSubtitle": "Fixed amount off",
+  "couponTypeFixedAmountExample": "E.g. 20 off over 199",
+
+  "couponTypePercentage": "Percentage Discount",
+  "couponTypePercentageSubtitle": "Discount by percentage",
+  "couponTypePercentageExample": "E.g. 10% off",
+
+  "couponTypeConditional": "Conditional Discount",
+  "couponTypeConditionalSubtitle": "Discount after conditions",
+  "couponTypeConditionalExample": "E.g. 30 off over 299",
+
+  "couponThresholdAmountRequired": "Threshold *",
+  "couponThresholdAmountHint": "Enter threshold amount",
+  "couponConditionAmountHint": "Enter required amount",
+  "couponDiscountAmountRequired": "Discount Amount *",
+  "couponDiscountAmountHint": "Enter discount amount",
+  "couponRateRequired": "Discount Rate *",
+  "couponRateHint": "Enter discount rate",
+  "yuan": "Yuan",
+
+  "applicableStoresRequired": "Applicable Stores *",
+  "applicableStoresHint": "Select applicable stores",
+  "selectApplicableStores": "Select Applicable Stores",
+  "pleaseSelectStores": "Select one or more stores",
+  "selectedStoresCount": "{count} stores selected",
+  "@selectedStoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "Select All",
+  "cancelSelectAll": "Deselect All",
+  "confirmSelection": "Confirm",
+  "noAvailableStores": "No available stores",
+  "noAddress": "No address",
+  "noPhone": "No phone number",
+  "unnamedStore": "Unnamed Store",
+
+  "couponValidPeriodRequired": "Valid Period *",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+
+  "couponStatusRequired": "Coupon Status *",
+  "couponStatusActive": "Active",
+  "couponStatusDisabled": "Disabled",
+  "couponDisableReasonRequired": "Disable Reason *",
+  "couponDisableReasonHint": "Enter disable reason, up to 200 characters",
+
+  "publishNow": "Publish Now",
+
+  "couponNameRequiredMessage": "Please enter coupon name",
+  "couponDescriptionRequiredMessage": "Please enter coupon description",
+  "couponThresholdAmountRequiredMessage": "Please enter threshold amount",
+  "couponConditionAmountRequiredMessage": "Please enter required amount",
+  "couponDiscountAmountRequiredMessage": "Please enter discount amount",
+  "couponDiscountCannotExceedThreshold": "Discount amount cannot exceed threshold amount",
+  "couponRateInvalidMessage": "Please enter a valid discount rate",
+  "applicableStoresRequiredMessage": "Please select applicable stores",
+  "startDateRequiredMessage": "Please select start date",
+  "endDateRequiredMessage": "Please select end date",
+  "endDateCannotBeforeStartDate": "End time cannot be earlier than start time",
+  "disableReasonRequiredMessage": "Please enter disable reason"
 }

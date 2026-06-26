@@ -3807,6 +3807,342 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'注册失败，请检查验证码或稍后再试'**
   String get registerFailed;
+
+  /// No description provided for @addCouponTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'新增优惠券'**
+  String get addCouponTitle;
+
+  /// No description provided for @couponNameRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠券名称 *'**
+  String get couponNameRequired;
+
+  /// No description provided for @couponNameHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入优惠券名称'**
+  String get couponNameHint;
+
+  /// No description provided for @couponDescriptionRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠券描述 *'**
+  String get couponDescriptionRequired;
+
+  /// No description provided for @couponDescriptionHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入优惠券描述，例如：满299减30元，适用于店内所有商品，部分商品除外。'**
+  String get couponDescriptionHint;
+
+  /// No description provided for @couponTypeRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠券类型 *'**
+  String get couponTypeRequired;
+
+  /// No description provided for @couponTypeFixedAmount.
+  ///
+  /// In zh, this message translates to:
+  /// **'固定金额引'**
+  String get couponTypeFixedAmount;
+
+  /// No description provided for @couponTypeFixedAmountSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'固定金额立减'**
+  String get couponTypeFixedAmountSubtitle;
+
+  /// No description provided for @couponTypeFixedAmountExample.
+  ///
+  /// In zh, this message translates to:
+  /// **'如：满199减20元'**
+  String get couponTypeFixedAmountExample;
+
+  /// No description provided for @couponTypePercentage.
+  ///
+  /// In zh, this message translates to:
+  /// **'百分比折扣引'**
+  String get couponTypePercentage;
+
+  /// No description provided for @couponTypePercentageSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'按百分比折扣'**
+  String get couponTypePercentageSubtitle;
+
+  /// No description provided for @couponTypePercentageExample.
+  ///
+  /// In zh, this message translates to:
+  /// **'如：全场9折'**
+  String get couponTypePercentageExample;
+
+  /// No description provided for @couponTypeConditional.
+  ///
+  /// In zh, this message translates to:
+  /// **'条件付割引'**
+  String get couponTypeConditional;
+
+  /// No description provided for @couponTypeConditionalSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'满足指定条件享优惠'**
+  String get couponTypeConditionalSubtitle;
+
+  /// No description provided for @couponTypeConditionalExample.
+  ///
+  /// In zh, this message translates to:
+  /// **'如：满299减30元'**
+  String get couponTypeConditionalExample;
+
+  /// No description provided for @couponThresholdAmountRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'门槛金额 *'**
+  String get couponThresholdAmountRequired;
+
+  /// No description provided for @couponThresholdAmountHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入满减门槛金额'**
+  String get couponThresholdAmountHint;
+
+  /// No description provided for @couponConditionAmountHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入满足门槛金额'**
+  String get couponConditionAmountHint;
+
+  /// No description provided for @couponDiscountAmountRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'减免金额 *'**
+  String get couponDiscountAmountRequired;
+
+  /// No description provided for @couponDiscountAmountHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入减免金额'**
+  String get couponDiscountAmountHint;
+
+  /// No description provided for @couponRateRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'折扣率 *'**
+  String get couponRateRequired;
+
+  /// No description provided for @couponRateHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入折扣率'**
+  String get couponRateHint;
+
+  /// No description provided for @yuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'元'**
+  String get yuan;
+
+  /// No description provided for @applicableStoresRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'适用门店 *'**
+  String get applicableStoresRequired;
+
+  /// No description provided for @applicableStoresHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择适用的门店'**
+  String get applicableStoresHint;
+
+  /// No description provided for @selectApplicableStores.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择适用门店'**
+  String get selectApplicableStores;
+
+  /// No description provided for @pleaseSelectStores.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择一个或多个门店'**
+  String get pleaseSelectStores;
+
+  /// No description provided for @selectedStoresCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'已选择 {count} 家门店'**
+  String selectedStoresCount(int count);
+
+  /// No description provided for @selectAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'全选'**
+  String get selectAll;
+
+  /// No description provided for @cancelSelectAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消全选'**
+  String get cancelSelectAll;
+
+  /// No description provided for @confirmSelection.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认选择'**
+  String get confirmSelection;
+
+  /// No description provided for @noAvailableStores.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无可用门店'**
+  String get noAvailableStores;
+
+  /// No description provided for @noAddress.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无地址'**
+  String get noAddress;
+
+  /// No description provided for @noPhone.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无电话'**
+  String get noPhone;
+
+  /// No description provided for @unnamedStore.
+  ///
+  /// In zh, this message translates to:
+  /// **'未命名门店'**
+  String get unnamedStore;
+
+  /// No description provided for @couponValidPeriodRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'有效期间范围 *'**
+  String get couponValidPeriodRequired;
+
+  /// No description provided for @startDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始日期'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束日期'**
+  String get endDate;
+
+  /// No description provided for @couponStatusRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠券状态 *'**
+  String get couponStatusRequired;
+
+  /// No description provided for @couponStatusActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'进行中'**
+  String get couponStatusActive;
+
+  /// No description provided for @couponStatusDisabled.
+  ///
+  /// In zh, this message translates to:
+  /// **'禁用'**
+  String get couponStatusDisabled;
+
+  /// No description provided for @couponDisableReasonRequired.
+  ///
+  /// In zh, this message translates to:
+  /// **'禁用原因 *'**
+  String get couponDisableReasonRequired;
+
+  /// No description provided for @couponDisableReasonHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入禁用原因，最多200字'**
+  String get couponDisableReasonHint;
+
+  /// No description provided for @publishNow.
+  ///
+  /// In zh, this message translates to:
+  /// **'立即发布'**
+  String get publishNow;
+
+  /// No description provided for @couponNameRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入优惠券名称'**
+  String get couponNameRequiredMessage;
+
+  /// No description provided for @couponDescriptionRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入优惠券描述'**
+  String get couponDescriptionRequiredMessage;
+
+  /// No description provided for @couponThresholdAmountRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入门槛金额'**
+  String get couponThresholdAmountRequiredMessage;
+
+  /// No description provided for @couponConditionAmountRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入满足门槛金额'**
+  String get couponConditionAmountRequiredMessage;
+
+  /// No description provided for @couponDiscountAmountRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入减免金额'**
+  String get couponDiscountAmountRequiredMessage;
+
+  /// No description provided for @couponDiscountCannotExceedThreshold.
+  ///
+  /// In zh, this message translates to:
+  /// **'减免金额不能大于门槛金额'**
+  String get couponDiscountCannotExceedThreshold;
+
+  /// No description provided for @couponRateInvalidMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入正确的折扣率'**
+  String get couponRateInvalidMessage;
+
+  /// No description provided for @applicableStoresRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择适用门店'**
+  String get applicableStoresRequiredMessage;
+
+  /// No description provided for @startDateRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择开始日期'**
+  String get startDateRequiredMessage;
+
+  /// No description provided for @endDateRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择结束日期'**
+  String get endDateRequiredMessage;
+
+  /// No description provided for @endDateCannotBeforeStartDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束时间不能早于开始时间'**
+  String get endDateCannotBeforeStartDate;
+
+  /// No description provided for @disableReasonRequiredMessage.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入禁用原因'**
+  String get disableReasonRequiredMessage;
 }
 
 class _AppLocalizationsDelegate

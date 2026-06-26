@@ -629,5 +629,77 @@
   "accountVerifiedDesc": "请继续绑定手机号，完善账号安全信息",
   "sendCodeSuccess": "验证码已发送，请查收邮件",
   "registerSuccess": "注册成功，请使用邮箱和密码登录",
-  "registerFailed": "注册失败，请检查验证码或稍后再试"
+  "registerFailed": "注册失败，请检查验证码或稍后再试",
+    "addCouponTitle": "新增优惠券",
+    "couponNameRequired": "优惠券名称 *",
+    "couponNameHint": "请输入优惠券名称",
+    "couponDescriptionRequired": "优惠券描述 *",
+    "couponDescriptionHint": "请输入优惠券描述，例如：满299减30元，适用于店内所有商品，部分商品除外。",
+    "couponTypeRequired": "优惠券类型 *",
+
+    "couponTypeFixedAmount": "固定金额引",
+    "couponTypeFixedAmountSubtitle": "固定金额立减",
+    "couponTypeFixedAmountExample": "如：满199减20元",
+
+    "couponTypePercentage": "百分比折扣引",
+    "couponTypePercentageSubtitle": "按百分比折扣",
+    "couponTypePercentageExample": "如：全场9折",
+
+    "couponTypeConditional": "条件付割引",
+    "couponTypeConditionalSubtitle": "满足指定条件享优惠",
+    "couponTypeConditionalExample": "如：满299减30元",
+
+    "couponThresholdAmountRequired": "门槛金额 *",
+    "couponThresholdAmountHint": "请输入满减门槛金额",
+    "couponConditionAmountHint": "请输入满足门槛金额",
+    "couponDiscountAmountRequired": "减免金额 *",
+    "couponDiscountAmountHint": "请输入减免金额",
+    "couponRateRequired": "折扣率 *",
+    "couponRateHint": "请输入折扣率",
+    "yuan": "元",
+
+    "applicableStoresRequired": "适用门店 *",
+    "applicableStoresHint": "请选择适用的门店",
+    "selectApplicableStores": "选择适用门店",
+    "pleaseSelectStores": "请选择一个或多个门店",
+    "selectedStoresCount": "已选择 {count} 家门店",
+    "@selectedStoresCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "selectAll": "全选",
+    "cancelSelectAll": "取消全选",
+    "confirmSelection": "确认选择",
+    "noAvailableStores": "暂无可用门店",
+    "noAddress": "暂无地址",
+    "noPhone": "暂无电话",
+    "unnamedStore": "未命名门店",
+
+    "couponValidPeriodRequired": "有效期间范围 *",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+
+    "couponStatusRequired": "优惠券状态 *",
+    "couponStatusActive": "进行中",
+    "couponStatusDisabled": "禁用",
+    "couponDisableReasonRequired": "禁用原因 *",
+    "couponDisableReasonHint": "请输入禁用原因，最多200字",
+
+    "publishNow": "立即发布",
+
+    "couponNameRequiredMessage": "请输入优惠券名称",
+    "couponDescriptionRequiredMessage": "请输入优惠券描述",
+    "couponThresholdAmountRequiredMessage": "请输入门槛金额",
+    "couponConditionAmountRequiredMessage": "请输入满足门槛金额",
+    "couponDiscountAmountRequiredMessage": "请输入减免金额",
+    "couponDiscountCannotExceedThreshold": "减免金额不能大于门槛金额",
+    "couponRateInvalidMessage": "请输入正确的折扣率",
+    "applicableStoresRequiredMessage": "请选择适用门店",
+    "startDateRequiredMessage": "请选择开始日期",
+    "endDateRequiredMessage": "请选择结束日期",
+    "endDateCannotBeforeStartDate": "结束时间不能早于开始时间",
+    "disableReasonRequiredMessage": "请输入禁用原因"
 }

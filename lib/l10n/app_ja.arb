@@ -630,5 +630,77 @@
   "sendCodeFailed": "認証コードの送信に失敗しました。しばらくしてからもう一度お試しください",
   "sendCodeSuccess": "認証コードを送信しました。メールをご確認ください",
   "registerSuccess": "登録が完了しました。メールアドレスとパスワードでログインしてください",
-  "registerFailed": "登録に失敗しました。認証コードを確認するか、しばらくしてからもう一度お試しください"
+  "registerFailed": "登録に失敗しました。認証コードを確認するか、しばらくしてからもう一度お試しください",
+    "addCouponTitle": "クーポン追加",
+    "couponNameRequired": "クーポン名 *",
+    "couponNameHint": "クーポン名を入力してください",
+    "couponDescriptionRequired": "クーポン説明 *",
+    "couponDescriptionHint": "例：299元以上で30元割引。対象外商品がある場合があります。",
+    "couponTypeRequired": "クーポン種類 *",
+
+    "couponTypeFixedAmount": "定額割引",
+    "couponTypeFixedAmountSubtitle": "固定金額を割引",
+    "couponTypeFixedAmountExample": "例：199元以上で20元割引",
+
+    "couponTypePercentage": "割合割引",
+    "couponTypePercentageSubtitle": "パーセントで割引",
+    "couponTypePercentageExample": "例：全品10％割引",
+
+    "couponTypeConditional": "条件付き割引",
+    "couponTypeConditionalSubtitle": "条件達成で割引",
+    "couponTypeConditionalExample": "例：299元以上で30元割引",
+
+    "couponThresholdAmountRequired": "利用条件金額 *",
+    "couponThresholdAmountHint": "利用条件金額を入力してください",
+    "couponConditionAmountHint": "条件金額を入力してください",
+    "couponDiscountAmountRequired": "割引金額 *",
+    "couponDiscountAmountHint": "割引金額を入力してください",
+    "couponRateRequired": "割引率 *",
+    "couponRateHint": "割引率を入力してください",
+    "yuan": "元",
+
+    "applicableStoresRequired": "対象店舗 *",
+    "applicableStoresHint": "対象店舗を選択してください",
+    "selectApplicableStores": "対象店舗を選択",
+    "pleaseSelectStores": "1つ以上の店舗を選択してください",
+    "selectedStoresCount": "{count}店舗選択済み",
+    "@selectedStoresCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "selectAll": "全選択",
+    "cancelSelectAll": "全解除",
+    "confirmSelection": "選択を確定",
+    "noAvailableStores": "利用可能な店舗がありません",
+    "noAddress": "住所未設定",
+    "noPhone": "電話番号未設定",
+    "unnamedStore": "名称未設定の店舗",
+
+    "couponValidPeriodRequired": "有効期間 *",
+    "startDate": "開始日",
+    "endDate": "終了日",
+
+    "couponStatusRequired": "クーポン状態 *",
+    "couponStatusActive": "有効",
+    "couponStatusDisabled": "無効",
+    "couponDisableReasonRequired": "無効理由 *",
+    "couponDisableReasonHint": "無効理由を入力してください。最大200文字",
+
+    "publishNow": "今すぐ公開",
+
+    "couponNameRequiredMessage": "クーポン名を入力してください",
+    "couponDescriptionRequiredMessage": "クーポン説明を入力してください",
+    "couponThresholdAmountRequiredMessage": "利用条件金額を入力してください",
+    "couponConditionAmountRequiredMessage": "条件金額を入力してください",
+    "couponDiscountAmountRequiredMessage": "割引金額を入力してください",
+    "couponDiscountCannotExceedThreshold": "割引金額は利用条件金額を超えることはできません",
+    "couponRateInvalidMessage": "正しい割引率を入力してください",
+    "applicableStoresRequiredMessage": "対象店舗を選択してください",
+    "startDateRequiredMessage": "開始日を選択してください",
+    "endDateRequiredMessage": "終了日を選択してください",
+    "endDateCannotBeforeStartDate": "終了時間は開始時間より前に設定できません",
+    "disableReasonRequiredMessage": "無効理由を入力してください"
 }
