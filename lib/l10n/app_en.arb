@@ -97,7 +97,7 @@
   "education": "Education",
   "medical": "Health",
   "retail": "Retail",
-  "storeSearchHint": "Search merchants, products and services",
+  "storeSearchHint": "Please enter the merchant name",
   "allRegions": "All Areas",
   "sortBy": "Sort",
   "filter": "Filter",
@@ -485,6 +485,24 @@
   "noMerchantYet": "No merchants yet",
   "noMerchantYetDesc": "Tap the plus button to add a merchant. Submitted stores will appear here.",
   "entryRecords": "Entry Records",
+  "merchantDashboard": "Merchant Dashboard",
+  "notFilled": "Not filled",
+  "commonFunctions": "Common Actions",
+  "editMerchantInfo": "Edit Merchant",
+  "editMerchantInfoDesc": "Edit store profile",
+  "viewAllEntryRecords": "View all entries",
+  "businessDataOverview": "Business overview",
+  "manageCoupons": "Manage coupons",
+  "orderCount": "Orders",
+  "receivedAmountYuan": "Received (Yuan)",
+  "discountAmountYuan": "Discount (Yuan)",
+  "selectMonth": "Select Month",
+  "todayBusinessData": "Today Business Data",
+  "todayEntryTimes": "Today Entries",
+  "todayConsumeAmountYuan": "Today Consumption (Yuan)",
+  "todayGmvYuan": "Today GMV (Yuan)",
+  "todayDiscountAmountYuan": "Today Discount (Yuan)",
+  "merchantInfoUpdated": "Merchant information updated",
   "onboardingGuide": "Guide",
   "fillStoreInfo": "Fill in store information",
   "fillStoreInfoDesc": "Please submit accurate information for platform review",
@@ -702,5 +720,37 @@
   "startDateRequiredMessage": "Please select start date",
   "endDateRequiredMessage": "Please select end date",
   "endDateCannotBeforeStartDate": "End time cannot be earlier than start time",
-  "disableReasonRequiredMessage": "Please enter disable reason"
+  "disableReasonRequiredMessage": "Please enter disable reason",
+  "editCouponTitle": "Edit Coupon",
+  "addCouponButton": "Add Coupon",
+  "searchCouponName": "Search coupon name",
+  "couponTabActive": "Active",
+  "couponTabDisabled": "Offline",
+  "couponTabExpired": "Expired",
+  "noCouponData": "No coupons yet",
+  "disableCoupon": "Disable",
+  "enableCoupon": "Enable",
+  "copyPublish": "Copy",
+  "claimedCount": "Claimed {count}",
+  "@claimedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "usedCount": "Used {count}",
+  "@usedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicableStoreLabel": "Stores",
+  "validPeriodLabel": "Valid",
+  "allStores": "All stores",
+  "couponTypeFixedAmountShort": "Amount Off",
+  "couponTypePercentageShort": "Discount",
+  "couponTypeConditionalShort": "Amount Off"
 }

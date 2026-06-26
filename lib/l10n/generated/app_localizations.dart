@@ -679,7 +679,7 @@ abstract class AppLocalizations {
   /// No description provided for @storeSearchHint.
   ///
   /// In zh, this message translates to:
-  /// **'搜索商家、商品、服务'**
+  /// **'请输入商户名称'**
   String get storeSearchHint;
 
   /// No description provided for @allRegions.
@@ -2968,6 +2968,114 @@ abstract class AppLocalizations {
   /// **'入单记录'**
   String get entryRecords;
 
+  /// No description provided for @merchantDashboard.
+  ///
+  /// In zh, this message translates to:
+  /// **'商户工作台'**
+  String get merchantDashboard;
+
+  /// No description provided for @notFilled.
+  ///
+  /// In zh, this message translates to:
+  /// **'未填写'**
+  String get notFilled;
+
+  /// No description provided for @commonFunctions.
+  ///
+  /// In zh, this message translates to:
+  /// **'常用功能'**
+  String get commonFunctions;
+
+  /// No description provided for @editMerchantInfo.
+  ///
+  /// In zh, this message translates to:
+  /// **'修改商户信息'**
+  String get editMerchantInfo;
+
+  /// No description provided for @editMerchantInfoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑商户资料'**
+  String get editMerchantInfoDesc;
+
+  /// No description provided for @viewAllEntryRecords.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看所有入单'**
+  String get viewAllEntryRecords;
+
+  /// No description provided for @businessDataOverview.
+  ///
+  /// In zh, this message translates to:
+  /// **'经营数据概览'**
+  String get businessDataOverview;
+
+  /// No description provided for @manageCoupons.
+  ///
+  /// In zh, this message translates to:
+  /// **'管理优惠券'**
+  String get manageCoupons;
+
+  /// No description provided for @orderCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'订单数'**
+  String get orderCount;
+
+  /// No description provided for @receivedAmountYuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'实收金额(元)'**
+  String get receivedAmountYuan;
+
+  /// No description provided for @discountAmountYuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠金额(元)'**
+  String get discountAmountYuan;
+
+  /// No description provided for @selectMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择月份'**
+  String get selectMonth;
+
+  /// No description provided for @todayBusinessData.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日经营数据'**
+  String get todayBusinessData;
+
+  /// No description provided for @todayEntryTimes.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日入单次数'**
+  String get todayEntryTimes;
+
+  /// No description provided for @todayConsumeAmountYuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日消费金额(元)'**
+  String get todayConsumeAmountYuan;
+
+  /// No description provided for @todayGmvYuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日GMV(元)'**
+  String get todayGmvYuan;
+
+  /// No description provided for @todayDiscountAmountYuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日优惠金额(元)'**
+  String get todayDiscountAmountYuan;
+
+  /// No description provided for @merchantInfoUpdated.
+  ///
+  /// In zh, this message translates to:
+  /// **'商户资料已更新'**
+  String get merchantInfoUpdated;
+
   /// No description provided for @onboardingGuide.
   ///
   /// In zh, this message translates to:
@@ -4143,6 +4251,114 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'请输入禁用原因'**
   String get disableReasonRequiredMessage;
+
+  /// No description provided for @editCouponTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑优惠券'**
+  String get editCouponTitle;
+
+  /// No description provided for @addCouponButton.
+  ///
+  /// In zh, this message translates to:
+  /// **'新增优惠券'**
+  String get addCouponButton;
+
+  /// No description provided for @searchCouponName.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索优惠券名称'**
+  String get searchCouponName;
+
+  /// No description provided for @couponTabActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'生效中'**
+  String get couponTabActive;
+
+  /// No description provided for @couponTabDisabled.
+  ///
+  /// In zh, this message translates to:
+  /// **'已下架'**
+  String get couponTabDisabled;
+
+  /// No description provided for @couponTabExpired.
+  ///
+  /// In zh, this message translates to:
+  /// **'已过期'**
+  String get couponTabExpired;
+
+  /// No description provided for @noCouponData.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无优惠券'**
+  String get noCouponData;
+
+  /// No description provided for @disableCoupon.
+  ///
+  /// In zh, this message translates to:
+  /// **'下架'**
+  String get disableCoupon;
+
+  /// No description provided for @enableCoupon.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新上架'**
+  String get enableCoupon;
+
+  /// No description provided for @copyPublish.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制发布'**
+  String get copyPublish;
+
+  /// No description provided for @claimedCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'已领取 {count} 次'**
+  String claimedCount(int count);
+
+  /// No description provided for @usedCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'已使用 {count} 次'**
+  String usedCount(int count);
+
+  /// No description provided for @applicableStoreLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'适用门店'**
+  String get applicableStoreLabel;
+
+  /// No description provided for @validPeriodLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'有效期'**
+  String get validPeriodLabel;
+
+  /// No description provided for @allStores.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部门店'**
+  String get allStores;
+
+  /// No description provided for @couponTypeFixedAmountShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'满减券'**
+  String get couponTypeFixedAmountShort;
+
+  /// No description provided for @couponTypePercentageShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'折扣券'**
+  String get couponTypePercentageShort;
+
+  /// No description provided for @couponTypeConditionalShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'满减券'**
+  String get couponTypeConditionalShort;
 }
 
 class _AppLocalizationsDelegate

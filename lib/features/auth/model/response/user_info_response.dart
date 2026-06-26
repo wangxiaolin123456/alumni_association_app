@@ -1,5 +1,5 @@
 class UserInfoResponse {
-  final int id;
+  final int userId;
   final String email;
   final String nickname;
   final String avatar;
@@ -13,7 +13,7 @@ class UserInfoResponse {
   final int isMerchant;
 
   const UserInfoResponse({
-    required this.id,
+    required this.userId,
     this.email = '',
     this.nickname = '',
     this.avatar = '',
@@ -39,7 +39,7 @@ class UserInfoResponse {
 
   factory UserInfoResponse.fromJson(Map<String, dynamic> json) {
     return UserInfoResponse(
-      id: _parseInt(json['id']),
+      userId: _parseInt(json['userId'] ?? json['id']),
       email: json['email']?.toString() ?? '',
       nickname: json['nickname']?.toString() ?? '',
       avatar: json['avatar']?.toString() ?? '',
@@ -53,7 +53,7 @@ class UserInfoResponse {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'userId': userId,
       'email': email,
       'nickname': nickname,
       'avatar': avatar,
@@ -66,7 +66,7 @@ class UserInfoResponse {
   }
 
   UserInfoResponse copyWith({
-    int? id,
+    int? userId,
     String? email,
     String? nickname,
     String? avatar,
@@ -77,7 +77,7 @@ class UserInfoResponse {
     int? isMerchant,
   }) {
     return UserInfoResponse(
-      id: id ?? this.id,
+      userId: userId ?? this.userId,
       email: email ?? this.email,
       nickname: nickname ?? this.nickname,
       avatar: avatar ?? this.avatar,

@@ -1,6 +1,7 @@
-import 'package:alumni_association_app/features/profile/records/model/entry_record_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../model/entry_record_item.dart';
 
 /// 入单记录控制器。
 ///

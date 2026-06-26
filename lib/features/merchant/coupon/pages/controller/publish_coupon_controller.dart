@@ -10,6 +10,9 @@ import '../view/widget/second_time.dart';
 
 /// 发布优惠券 Controller
 class PublishCouponController extends GetxController {
+  /// 当前编辑的优惠券，空表示新增。
+  final editingCoupon = Rxn<StoreCouponResponse>();
+
   /// 优惠券名称
   final nameController = TextEditingController();
 
@@ -92,6 +95,56 @@ class PublishCouponController extends GetxController {
   /// 是否禁用
   bool get isDisabled => disableStatus.value == 1;
 
+  /// 是否编辑模式
+  bool get isEditMode => editingCoupon.value != null;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    /// 从管理列表点击编辑时，会把当前优惠券传进来。
+    final args = Get.arguments;
+    if (args is StoreCouponResponse) {
+      editingCoupon.value = args;
+      _fillFormByCoupon(args);
+    }
+  }
+
+  /// 编辑优惠券时，把接口返回字段回填到表单。
+  void _fillFormByCoupon(StoreCouponResponse coupon) {
+    nameController.text = coupon.name;
+    descriptionController.text = coupon.description;
+    selectedType.value = coupon.type == 0 ? 1 : coupon.type;
+    disableStatus.value = coupon.disableStatus;
+    disableReasonController.text = coupon.disableMsg;
+
+    if (coupon.type == 0) {
+      fixedMinAmountController.text = _formatNumber(coupon.minOrderAmount);
+      fixedDiscountAmountController.text = _formatNumber(coupon.value);
+    } else if (coupon.type == 1) {
+      discountRateController.text = _formatNumber(coupon.value);
+    } else if (coupon.type == 2) {
+      conditionMinAmountController.text = _formatNumber(coupon.minOrderAmount);
+      conditionDiscountAmountController.text = _formatNumber(coupon.value);
+    }
+
+    startDate.value = _parseDate(coupon.startTime);
+    endDate.value = _parseDate(coupon.endTime);
+    startDateText.value = _formatDateTime(startDate.value);
+    endDateText.value = _formatDateTime(endDate.value);
+
+    final ids = coupon.shopIds
+        .split(',')
+        .map((item) => int.tryParse(item.trim()) ?? 0)
+        .where((id) => id > 0)
+        .toList();
+    selectedShopIds.assignAll(ids);
+
+    if (ids.isNotEmpty) {
+      shopTextController.text = '已选择 ${ids.length} 家门店';
+    }
+  }
+
   /// 选择优惠券类型
   void selectCouponType(int type) {
     selectedType.value = type;
@@ -160,6 +213,7 @@ class PublishCouponController extends GetxController {
   /// 确认选择门店
   void confirmSelectedStores() {
     selectedShopIds.assignAll(tempSelectedShopIds);
+    print("selectedShopIds${selectedShopIds.toJson()}");
 
     if (selectedShopIds.isEmpty) {
       shopTextController.clear();
@@ -186,15 +240,8 @@ class PublishCouponController extends GetxController {
 
     final time = await _showSecondTimePicker(
       context,
-      initialTime: startDate.value ??
-          DateTime(
-            date.year,
-            date.month,
-            date.day,
-            0,
-            0,
-            0,
-          ),
+      initialTime:
+          startDate.value ?? DateTime(date.year, date.month, date.day, 0, 0, 0),
     );
 
     if (time == null) return;
@@ -230,15 +277,9 @@ class PublishCouponController extends GetxController {
 
     final time = await _showSecondTimePicker(
       context,
-      initialTime: endDate.value ??
-          DateTime(
-            date.year,
-            date.month,
-            date.day,
-            23,
-            59,
-            59,
-          ),
+      initialTime:
+          endDate.value ??
+          DateTime(date.year, date.month, date.day, 23, 59, 59),
     );
 
     if (time == null) return;
@@ -258,11 +299,10 @@ class PublishCouponController extends GetxController {
     errorMessage.value = null;
   }
 
-
   Future<SecondTime?> _showSecondTimePicker(
-      BuildContext context, {
-        required DateTime initialTime,
-      }) async {
+    BuildContext context, {
+    required DateTime initialTime,
+  }) async {
     int selectedHour = initialTime.hour;
     int selectedMinute = initialTime.minute;
     int selectedSecond = initialTime.second;
@@ -277,9 +317,7 @@ class PublishCouponController extends GetxController {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(24),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             children: [
@@ -367,7 +405,6 @@ class PublishCouponController extends GetxController {
     );
   }
 
-
   /// 保存草稿
   Future<void> saveDraft(BuildContext context) async {
     await submit(context, isDraft: true);
@@ -379,10 +416,7 @@ class PublishCouponController extends GetxController {
   }
 
   /// 提交
-  Future<void> submit(
-      BuildContext context, {
-        required bool isDraft,
-      }) async {
+  Future<void> submit(BuildContext context, {required bool isDraft}) async {
     if (!_validate(isDraft: isDraft)) return;
 
     if (isSubmitting.value) return;
@@ -392,14 +426,19 @@ class PublishCouponController extends GetxController {
     try {
       final request = _buildRequest(isDraft: isDraft);
 
-      final success = await ApiRequest.addCoupons(request: request);
+      final success = isEditMode
+          ? await ApiRequest.updateCoupons(request: request)
+          : await ApiRequest.addCoupons(request: request);
 
       if (!success) return;
 
       errorMessage.value = null;
 
-      Get.back();
-      ToastUtils.showToast(message: "优惠券发布成功。",type: ToastType.success);
+      Get.back(result: true);
+      ToastUtils.showToast(
+        message: isEditMode ? "优惠券修改成功。" : "优惠券发布成功。",
+        type: ToastType.success,
+      );
     } finally {
       isSubmitting.value = false;
     }
@@ -421,23 +460,14 @@ class PublishCouponController extends GetxController {
     }
 
     if (isFixedAmount) {
-      final minAmount = _doubleValue(fixedMinAmountController.text);
       final discountAmount = _doubleValue(fixedDiscountAmountController.text);
-
-      if (minAmount <= 0) {
-        errorMessage.value = '请输入门槛金额';
-        return false;
-      }
 
       if (discountAmount <= 0) {
         errorMessage.value = '请输入减免金额';
         return false;
       }
 
-      if (discountAmount > minAmount) {
-        errorMessage.value = '减免金额不能大于门槛金额';
-        return false;
-      }
+
     }
 
     if (isPercentageDiscount) {
@@ -451,7 +481,9 @@ class PublishCouponController extends GetxController {
 
     if (isConditionDiscount) {
       final minAmount = _doubleValue(conditionMinAmountController.text);
-      final discountAmount = _doubleValue(conditionDiscountAmountController.text);
+      final discountAmount = _doubleValue(
+        conditionDiscountAmountController.text,
+      );
 
       if (minAmount <= 0) {
         errorMessage.value = '请输入满足门槛金额';
@@ -501,16 +533,15 @@ class PublishCouponController extends GetxController {
   /// 构建接口入参
   CouponRequest _buildRequest({required bool isDraft}) {
     final type = selectedType.value;
-
     double value = 0;
     double minOrderAmount = 0;
     double maxDiscountAmount = 0;
 
     if (type == 1) {
       /// 固定金额引
-      minOrderAmount = _doubleValue(fixedMinAmountController.text);
       value = _doubleValue(fixedDiscountAmountController.text);
-      maxDiscountAmount = value;
+      minOrderAmount = 0;
+      maxDiscountAmount = 0;
     } else if (type == 2) {
       /// 百分比折扣引
       value = _doubleValue(discountRateController.text);
@@ -518,28 +549,25 @@ class PublishCouponController extends GetxController {
       maxDiscountAmount = 0;
     } else if (type == 3) {
       /// 条件付割引
-      minOrderAmount = _doubleValue(conditionMinAmountController.text);
-      value = _doubleValue(conditionDiscountAmountController.text);
-      maxDiscountAmount = value;
+      minOrderAmount = _doubleValue(conditionDiscountAmountController.text);
+      maxDiscountAmount = _doubleValue(conditionMinAmountController.text);
+      value = 0;
     }
 
-    final userId = SessionController.current.userInfo.value?.id ?? 0;
+    final userId = SessionController.current.userInfo.value?.userId ?? 0;
 
     return CouponRequest(
-      couponId: 0,
+      couponId: editingCoupon.value?.couponId ?? 0,
       userId: userId,
       name: nameController.text.trim(),
       description: descriptionController.text.trim(),
-      type: type,
+      type: type-1,
       value: value,
       minOrderAmount: minOrderAmount,
       maxDiscountAmount: maxDiscountAmount,
       startTime: _formatDateTime(startDate.value),
       endTime: _formatDateTime(endDate.value),
 
-      /// 保存草稿时这里先按禁用处理。
-      ///
-      /// 如果后端后续有 draftStatus 字段，再单独传草稿状态。
       disableStatus: isDraft ? 1 : disableStatus.value,
       disableMsg: isDisabled || isDraft
           ? disableReasonController.text.trim()
@@ -567,6 +595,20 @@ class PublishCouponController extends GetxController {
     final s = date.second.toString().padLeft(2, '0');
 
     return '$y-$m-$d $h:$min:$s';
+  }
+
+  /// 后端时间字符串转 DateTime。
+  DateTime? _parseDate(String value) {
+    final text = value.trim();
+    if (text.isEmpty) return null;
+    return DateTime.tryParse(text);
+  }
+
+  /// 数字回填输入框时去掉多余的 .0。
+  String _formatNumber(double value) {
+    if (value == 0) return '';
+    if (value % 1 == 0) return value.toInt().toString();
+    return value.toString();
   }
 
   @override

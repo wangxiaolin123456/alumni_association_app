@@ -303,7 +303,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retail => 'Retail';
 
   @override
-  String get storeSearchHint => 'Search merchants, products and services';
+  String get storeSearchHint => 'Please enter the merchant name';
 
   @override
   String get allRegions => 'All Areas';
@@ -1506,6 +1506,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get entryRecords => 'Entry Records';
 
   @override
+  String get merchantDashboard => 'Merchant Dashboard';
+
+  @override
+  String get notFilled => 'Not filled';
+
+  @override
+  String get commonFunctions => 'Common Actions';
+
+  @override
+  String get editMerchantInfo => 'Edit Merchant';
+
+  @override
+  String get editMerchantInfoDesc => 'Edit store profile';
+
+  @override
+  String get viewAllEntryRecords => 'View all entries';
+
+  @override
+  String get businessDataOverview => 'Business overview';
+
+  @override
+  String get manageCoupons => 'Manage coupons';
+
+  @override
+  String get orderCount => 'Orders';
+
+  @override
+  String get receivedAmountYuan => 'Received (Yuan)';
+
+  @override
+  String get discountAmountYuan => 'Discount (Yuan)';
+
+  @override
+  String get selectMonth => 'Select Month';
+
+  @override
+  String get todayBusinessData => 'Today Business Data';
+
+  @override
+  String get todayEntryTimes => 'Today Entries';
+
+  @override
+  String get todayConsumeAmountYuan => 'Today Consumption (Yuan)';
+
+  @override
+  String get todayGmvYuan => 'Today GMV (Yuan)';
+
+  @override
+  String get todayDiscountAmountYuan => 'Today Discount (Yuan)';
+
+  @override
+  String get merchantInfoUpdated => 'Merchant information updated';
+
+  @override
   String get onboardingGuide => 'Guide';
 
   @override
@@ -2122,4 +2176,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disableReasonRequiredMessage => 'Please enter disable reason';
+
+  @override
+  String get editCouponTitle => 'Edit Coupon';
+
+  @override
+  String get addCouponButton => 'Add Coupon';
+
+  @override
+  String get searchCouponName => 'Search coupon name';
+
+  @override
+  String get couponTabActive => 'Active';
+
+  @override
+  String get couponTabDisabled => 'Offline';
+
+  @override
+  String get couponTabExpired => 'Expired';
+
+  @override
+  String get noCouponData => 'No coupons yet';
+
+  @override
+  String get disableCoupon => 'Disable';
+
+  @override
+  String get enableCoupon => 'Enable';
+
+  @override
+  String get copyPublish => 'Copy';
+
+  @override
+  String claimedCount(int count) {
+    return 'Claimed $count';
+  }
+
+  @override
+  String usedCount(int count) {
+    return 'Used $count';
+  }
+
+  @override
+  String get applicableStoreLabel => 'Stores';
+
+  @override
+  String get validPeriodLabel => 'Valid';
+
+  @override
+  String get allStores => 'All stores';
+
+  @override
+  String get couponTypeFixedAmountShort => 'Amount Off';
+
+  @override
+  String get couponTypePercentageShort => 'Discount';
+
+  @override
+  String get couponTypeConditionalShort => 'Amount Off';
 }

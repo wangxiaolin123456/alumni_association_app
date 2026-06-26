@@ -4,10 +4,11 @@ import 'package:alumni_association_app/core/config/app_config.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:alumni_association_app/features/store/pages/store_controller.dart';
-import 'package:alumni_association_app/features/store/pages/store_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../consumption/pages/consumption_entry_controller.dart';
 
 ///商家详情
 class StoreDetailPage extends StatelessWidget {
@@ -27,6 +28,7 @@ class StoreDetailPage extends StatelessWidget {
               children: [
                 _HeroInfoCard(store: store),
                 SizedBox(height: 14.h),
+
                 ///会员优惠
                 if (store.coupons.isNotEmpty) ...[
                   _BenefitCard(
@@ -39,12 +41,13 @@ class StoreDetailPage extends StatelessWidget {
                 const _IntroCard(),
               ],
             ),
+
             ///头布局
             _FloatingTopBar(controller: controller),
           ],
         );
       }),
-      bottomNavigationBar: const _BottomBar(),
+      bottomNavigationBar: _BottomBar(controller: controller),
     );
   }
 }
@@ -68,7 +71,7 @@ class _FloatingTopBar extends StatelessWidget {
             ),
             const Spacer(),
             Obx(
-                  () => GestureDetector(
+              () => GestureDetector(
                 onTap: controller.toggleFavorite,
                 child: Container(
                   height: 38.h,
@@ -138,9 +141,7 @@ class _HeroInfoCard extends StatelessWidget {
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
-                  children: [
-                    _CategoryChip(text: store.typeName),
-                  ],
+                  children: [_CategoryChip(text: store.typeName)],
                 ),
                 SizedBox(height: 12.h),
                 _InfoLine(
@@ -157,7 +158,6 @@ class _HeroInfoCard extends StatelessWidget {
                         text: store.fullAddress,
                       ),
                     ),
-
                   ],
                 ),
               ],
@@ -221,7 +221,7 @@ class _StoreImageState extends State<_StoreImage> {
           children: [
             if (images.isEmpty)
               Image.asset(
-               "assets/default_image.png",
+                "assets/default_image.png",
                 width: double.infinity,
                 height: 192.h,
               )
@@ -246,13 +246,13 @@ class _StoreImageState extends State<_StoreImage> {
                       return Container(
                         alignment: Alignment.center,
                         // decoration: BoxDecoration(
-                          // gradient: LinearGradient(
-                          //   begin: Alignment.topLeft,
-                          //   end: Alignment.bottomRight,
-                            // colors: widget.store.accentColors
-                            //     .map((color) => Color(color))
-                            //     .toList(),
-                          // ),
+                        // gradient: LinearGradient(
+                        //   begin: Alignment.topLeft,
+                        //   end: Alignment.bottomRight,
+                        // colors: widget.store.accentColors
+                        //     .map((color) => Color(color))
+                        //     .toList(),
+                        // ),
                         // ),
                         child: SizedBox(
                           width: 22.r,
@@ -265,7 +265,7 @@ class _StoreImageState extends State<_StoreImage> {
                       );
                     },
                     errorBuilder: (context, error, stackTrace) {
-                      return  Image.asset(
+                      return Image.asset(
                         "assets/default_image.png",
                         width: double.infinity,
                         height: 192.h,
@@ -303,9 +303,7 @@ class _StoreImageState extends State<_StoreImage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     images.length,
-                        (index) => _BannerDot(
-                      selected: index == _currentIndex,
-                    ),
+                    (index) => _BannerDot(selected: index == _currentIndex),
                   ),
                 ),
               ),
@@ -368,7 +366,6 @@ class _StoreTitleRow extends StatelessWidget {
   }
 }
 
-
 /// 会员优惠
 class _BenefitCard extends StatelessWidget {
   const _BenefitCard({
@@ -395,18 +392,16 @@ class _BenefitCard extends StatelessWidget {
         children: [
           _SectionTitle(title: context.l10n.memberBenefitsTitle),
           SizedBox(height: 14.h),
-          ...store.coupons.asMap().entries.map(
-                (entry) {
-              final index = entry.key;
-              final coupon = entry.value;
+          ...store.coupons.asMap().entries.map((entry) {
+            final index = entry.key;
+            final coupon = entry.value;
 
-              return _CouponItem(
-                coupon: coupon,
-                selected: index == selectedIndex,
-                onTap: () => onSelectCoupon(index),
-              );
-            },
-          ),
+            return _CouponItem(
+              coupon: coupon,
+              selected: index == selectedIndex,
+              onTap: () => onSelectCoupon(index),
+            );
+          }),
         ],
       ),
     );
@@ -426,8 +421,7 @@ class _CouponItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-    selected ? const Color(0xFFFFB088) : Colors.transparent;
+    final borderColor = selected ? const Color(0xFFFFB088) : Colors.transparent;
 
     return GestureDetector(
       onTap: onTap,
@@ -459,12 +453,12 @@ class _CouponItem extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    coupon.displayDescription,
+                    coupon.description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: const Color(0xFF596273),
-                      fontSize: 12.5.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -521,7 +515,11 @@ class _IntroCard extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar();
+  const _BottomBar({
+    required this.controller,
+  });
+
+  final StoreController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -569,7 +567,7 @@ class _BottomBar extends StatelessWidget {
               child: SizedBox(
                 height: 52.h,
                 child: FilledButton(
-                  onPressed: () => Get.toNamed(Pages.storeOffer),
+                  onPressed: () => _goToConsumptionAmount(context),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     elevation: 0,
@@ -593,13 +591,41 @@ class _BottomBar extends StatelessWidget {
       ),
     );
   }
+
+  void _goToConsumptionAmount(BuildContext context) {
+    final store = controller.selectedStore;
+
+    final consumptionController = Get.isRegistered<ConsumptionEntryController>()
+        ? Get.find<ConsumptionEntryController>()
+        : Get.put(ConsumptionEntryController());
+
+    /// 保存当前商户
+    consumptionController.selectStoreMerchant(store);
+
+    /// 保存当前选中的优惠券
+    if (store.coupons.isNotEmpty &&
+        controller.selectedOfferIndex.value >= 0 &&
+        controller.selectedOfferIndex.value < store.coupons.length) {
+      consumptionController.selectStoreCoupon(
+        store: store,
+        index: controller.selectedOfferIndex.value,
+      );
+    } else {
+      consumptionController.clearStoreCoupon();
+    }
+
+    /// 清空金额，避免上一次金额残留
+    consumptionController.amount.value = 0;
+    consumptionController.amountController.clear();
+    consumptionController.noteController.clear();
+
+    /// 跳转到消费入单金额页
+    Get.toNamed(Pages.consumptionAmount);
+  }
 }
 
 class _CircleIconButton extends StatelessWidget {
-  const _CircleIconButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _CircleIconButton({required this.icon, required this.onTap});
 
   final IconData icon;
   final VoidCallback onTap;
@@ -617,11 +643,7 @@ class _CircleIconButton extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: _softShadow,
         ),
-        child: Icon(
-          icon,
-          size: 19.r,
-          color: const Color(0xFF111827),
-        ),
+        child: Icon(icon, size: 19.r, color: const Color(0xFF111827)),
       ),
     );
   }
@@ -681,20 +703,6 @@ class _MemberBadge extends StatelessWidget {
   }
 }
 
-class _VerticalDivider extends StatelessWidget {
-  const _VerticalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1.w,
-      height: 13.h,
-      margin: EdgeInsets.symmetric(horizontal: 11.w),
-      color: const Color(0xFFE2E6EF),
-    );
-  }
-}
-
 class _CategoryChip extends StatelessWidget {
   const _CategoryChip({required this.text});
 
@@ -721,10 +729,7 @@ class _CategoryChip extends StatelessWidget {
 }
 
 class _InfoLine extends StatelessWidget {
-  const _InfoLine({
-    required this.icon,
-    required this.text,
-  });
+  const _InfoLine({required this.icon, required this.text});
 
   final IconData icon;
   final String text;
@@ -733,11 +738,7 @@ class _InfoLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 19.r,
-          color: const Color(0xFF6B7280),
-        ),
+        Icon(icon, size: 19.r, color: const Color(0xFF6B7280)),
         SizedBox(width: 8.w),
         Expanded(
           child: Text(
@@ -773,11 +774,11 @@ class _RadioCircle extends StatelessWidget {
       ),
       child: selected
           ? Container(
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Color(0xFFFF6A1A),
-        ),
-      )
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFFFF6A1A),
+              ),
+            )
           : null,
     );
   }

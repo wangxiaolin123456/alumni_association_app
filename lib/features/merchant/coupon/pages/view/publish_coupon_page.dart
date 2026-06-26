@@ -30,12 +30,16 @@ class PublishCouponPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        title: Text(
-          context.l10n.addCouponTitle,
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
+        title: Obx(
+          () => Text(
+            controller.isEditMode
+                ? context.l10n.editCouponTitle
+                : context.l10n.addCouponTitle,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w900,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
       ),
@@ -45,16 +49,13 @@ class PublishCouponPage extends StatelessWidget {
           _CouponFormCard(controller: controller),
           SizedBox(height: 16.h),
           Obx(
-                () => controller.errorMessage.value == null
+            () => controller.errorMessage.value == null
                 ? const SizedBox.shrink()
                 : Text(
-              controller.errorMessage.value!,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.danger,
-                fontSize: 12.sp,
-              ),
-            ),
+                    controller.errorMessage.value!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.danger, fontSize: 12.sp),
+                  ),
           ),
           SizedBox(height: 14.h),
           _BottomActions(controller: controller),
@@ -98,11 +99,11 @@ class _CouponFormCard extends StatelessWidget {
           SizedBox(height: 18.h),
           _StatusRow(controller: controller),
           Obx(
-                () => controller.isDisabled
+            () => controller.isDisabled
                 ? Padding(
-              padding: EdgeInsets.only(top: 14.h),
-              child: _DisableReasonField(controller: controller),
-            )
+                    padding: EdgeInsets.only(top: 14.h),
+                    child: _DisableReasonField(controller: controller),
+                  )
                 : const SizedBox.shrink(),
           ),
         ],
@@ -137,53 +138,59 @@ class _CouponTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Row(
+    return Obx(() {
+      final disabled = controller.isEditMode;
+
+      return Row(
         children: [
           Expanded(
             child: _TypeCard(
               selected: controller.selectedType.value == 1,
+              disabled: disabled,
               icon: Icons.confirmation_number_rounded,
               iconColor: AppColors.primary,
               title: context.l10n.couponTypeFixedAmount,
               subtitle: context.l10n.couponTypeFixedAmountSubtitle,
               example: context.l10n.couponTypeFixedAmountExample,
-              onTap: () => controller.selectCouponType(1),
+              onTap: disabled ? null : () => controller.selectCouponType(1),
             ),
           ),
           SizedBox(width: 12.w),
           Expanded(
             child: _TypeCard(
               selected: controller.selectedType.value == 2,
+              disabled: disabled,
               icon: Icons.percent_rounded,
               iconColor: const Color(0xFF667085),
               title: context.l10n.couponTypePercentage,
               subtitle: context.l10n.couponTypePercentageSubtitle,
               example: context.l10n.couponTypePercentageExample,
-              onTap: () => controller.selectCouponType(2),
+              onTap: disabled ? null : () => controller.selectCouponType(2),
             ),
           ),
           SizedBox(width: 12.w),
           Expanded(
             child: _TypeCard(
               selected: controller.selectedType.value == 3,
+              disabled: disabled,
               icon: Icons.local_offer_rounded,
               iconColor: const Color(0xFF667085),
               title: context.l10n.couponTypeConditional,
               subtitle: context.l10n.couponTypeConditionalSubtitle,
               example: context.l10n.couponTypeConditionalExample,
-              onTap: () => controller.selectCouponType(3),
+              onTap: disabled ? null : () => controller.selectCouponType(3),
             ),
           ),
         ],
-      ),
-    );
+      );
+    });
   }
 }
 
 class _TypeCard extends StatelessWidget {
   const _TypeCard({
     required this.selected,
+    required this.disabled,
     required this.icon,
     required this.iconColor,
     required this.title,
@@ -193,91 +200,130 @@ class _TypeCard extends StatelessWidget {
   });
 
   final bool selected;
+  final bool disabled;
   final IconData icon;
   final Color iconColor;
   final String title;
   final String subtitle;
   final String example;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final activeColor = selected ? AppColors.primary : const Color(0xFF667085);
 
+    final backgroundColor = disabled
+        ? selected
+        ? const Color(0xFFF1F5F9)
+        : const Color(0xFFF8FAFC)
+        : selected
+        ? const Color(0xFFF3F8FF)
+        : Colors.white;
+
+    final borderColor = disabled
+        ? selected
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFFE2E8F0)
+        : selected
+        ? AppColors.primary
+        : const Color(0xFFDDE6F6);
+
+    final contentOpacity = disabled && !selected ? 0.45 : 1.0;
+
+    final currentIconColor = disabled
+        ? selected
+        ? const Color(0xFF64748B)
+        : const Color(0xFF94A3B8)
+        : selected
+        ? AppColors.primary
+        : iconColor;
+
     return InkWell(
-      onTap: onTap,
+      onTap: disabled ? null : onTap,
       borderRadius: BorderRadius.circular(12.r),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
         height: 128.h,
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFF3F8FF) : Colors.white,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: selected ? AppColors.primary : const Color(0xFFDDE6F6),
+            color: borderColor,
             width: selected ? 1.4 : 1,
           ),
         ),
-        child: Stack(
-          children: [
-            if (selected)
-              Positioned(
-                right: 0,
-                top: 0,
-                child: CircleAvatar(
-                  radius: 12.r,
-                  backgroundColor: AppColors.primary,
-                  child: Icon(
-                    Icons.check_rounded,
-                    size: 15.sp,
-                    color: Colors.white,
+        child: Opacity(
+          opacity: contentOpacity,
+          child: Stack(
+            children: [
+              if (selected)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: CircleAvatar(
+                    radius: 12.r,
+                    backgroundColor:
+                    disabled ? const Color(0xFF94A3B8) : AppColors.primary,
+                    child: Icon(
+                      disabled ? Icons.lock_rounded : Icons.check_rounded,
+                      size: 14.sp,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 30.sp,
+                      color: currentIconColor,
+                    ),
+                    SizedBox(height: 10.h),
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: disabled
+                            ? const Color(0xFF64748B)
+                            : activeColor,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: disabled
+                            ? const Color(0xFF64748B)
+                            : AppColors.textPrimary,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      example,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: disabled
+                            ? const Color(0xFF94A3B8)
+                            : AppColors.textSecondary,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    icon,
-                    size: 30.sp,
-                    color: selected ? AppColors.primary : iconColor,
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: activeColor,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 11.sp,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    example,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 10.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -293,6 +339,7 @@ class _CouponAmountForms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final disabled = controller.isEditMode;
       return Column(
         children: [
           if (controller.isFixedAmount)
@@ -303,19 +350,13 @@ class _CouponAmountForms extends StatelessWidget {
               backgroundColor: const Color(0xFFF6F9FF),
               children: [
                 _Field(
-                  label: context.l10n.couponThresholdAmountRequired,
-                  hint: context.l10n.couponThresholdAmountHint,
-                  controller: controller.fixedMinAmountController,
-                  keyboardType: TextInputType.number,
-                  suffixText: context.l10n.yuan,
-                ),
-                _Field(
                   label: context.l10n.couponDiscountAmountRequired,
                   hint: context.l10n.couponDiscountAmountHint,
                   controller: controller.fixedDiscountAmountController,
                   keyboardType: TextInputType.number,
                   suffixText: context.l10n.yuan,
                   bottomPadding: 0,
+                  readOnly: disabled,
                 ),
               ],
             ),
@@ -333,6 +374,7 @@ class _CouponAmountForms extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   suffixText: '%',
                   bottomPadding: 0,
+                  readOnly: disabled,
                 ),
               ],
             ),
@@ -349,6 +391,7 @@ class _CouponAmountForms extends StatelessWidget {
                   controller: controller.conditionMinAmountController,
                   keyboardType: TextInputType.number,
                   suffixText: context.l10n.yuan,
+                  readOnly: disabled,
                 ),
                 _Field(
                   label: context.l10n.couponDiscountAmountRequired,
@@ -357,6 +400,7 @@ class _CouponAmountForms extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   suffixText: context.l10n.yuan,
                   bottomPadding: 0,
+                  readOnly: disabled,
                 ),
               ],
             ),
@@ -455,9 +499,7 @@ class _StorePickerSheet extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(18.w, 12.h, 18.w, 20.h),
       decoration: BoxDecoration(
         color: const Color(0xFFF7FAFF),
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24.r),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       child: Column(
         children: [
@@ -484,7 +526,8 @@ class _StorePickerSheet extends StatelessWidget {
               ),
               const Spacer(),
               Obx(() {
-                final allSelected = controller.myStores.isNotEmpty &&
+                final allSelected =
+                    controller.myStores.isNotEmpty &&
                     controller.tempSelectedShopIds.length ==
                         controller.myStores.length;
 
@@ -519,7 +562,7 @@ class _StorePickerSheet extends StatelessWidget {
 
           /// 已选提示
           Obx(
-                () => Container(
+            () => Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
@@ -530,8 +573,8 @@ class _StorePickerSheet extends StatelessWidget {
                 controller.tempSelectedShopIds.isEmpty
                     ? context.l10n.pleaseSelectStores
                     : context.l10n.selectedStoresCount(
-                  controller.tempSelectedShopIds.length,
-                ),
+                        controller.tempSelectedShopIds.length,
+                      ),
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 13.sp,
@@ -546,9 +589,7 @@ class _StorePickerSheet extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoadingStores.value) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
 
               final stores = controller.myStores;
@@ -573,8 +614,9 @@ class _StorePickerSheet extends StatelessWidget {
                   final store = stores[index];
 
                   return Obx(() {
-                    final selected =
-                    controller.tempSelectedShopIds.contains(store.shopId);
+                    final selected = controller.tempSelectedShopIds.contains(
+                      store.shopId,
+                    );
 
                     return _StorePickerItem(
                       store: store,
@@ -601,8 +643,7 @@ class _StorePickerSheet extends StatelessWidget {
               SizedBox(width: 12.w),
               Expanded(
                 child: Obx(
-                      () => _SheetConfirmButton(
-
+                  () => _SheetConfirmButton(
                     text: context.l10n.confirmSelection,
                     disabled: controller.tempSelectedShopIds.isEmpty,
                     onTap: () {
@@ -621,10 +662,7 @@ class _StorePickerSheet extends StatelessWidget {
 }
 
 class _SheetCancelButton extends StatelessWidget {
-  const _SheetCancelButton({
-    required this.text,
-    required this.onTap,
-  });
+  const _SheetCancelButton({required this.text, required this.onTap});
 
   final String text;
   final VoidCallback onTap;
@@ -640,10 +678,7 @@ class _SheetCancelButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: const Color(0xFFDDE6F6),
-            width: 1,
-          ),
+          border: Border.all(color: const Color(0xFFDDE6F6), width: 1),
         ),
         child: Text(
           text,
@@ -681,11 +716,8 @@ class _SheetConfirmButton extends StatelessWidget {
           gradient: disabled
               ? null
               : const LinearGradient(
-            colors: [
-              Color(0xFF0B5CFF),
-              Color(0xFF0052F5),
-            ],
-          ),
+                  colors: [Color(0xFF0B5CFF), Color(0xFF0052F5)],
+                ),
           color: disabled ? const Color(0xFFB8C5D8) : null,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
@@ -838,7 +870,7 @@ class _ValidTimeRow extends StatelessWidget {
           children: [
             Expanded(
               child: Obx(
-                    () => _DateRangeBox(
+                () => _DateRangeBox(
                   startText: controller.startDate.value == null
                       ? context.l10n.startDate
                       : controller.startDateText.value,
@@ -883,10 +915,7 @@ class _DateRangeBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5.r),
-        border: Border.all(
-          color: const Color(0xFFDDE6F6),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFFDDE6F6), width: 1),
       ),
       child: Row(
         children: [
@@ -911,8 +940,9 @@ class _DateRangeBox extends StatelessWidget {
                   color: startPlaceholder
                       ? const Color(0xFF9AA8BD)
                       : const Color(0xFF4D5872),
-                  fontWeight:
-                  startPlaceholder ? FontWeight.w400 : FontWeight.w500,
+                  fontWeight: startPlaceholder
+                      ? FontWeight.w400
+                      : FontWeight.w500,
                 ),
               ),
             ),
@@ -952,8 +982,9 @@ class _DateRangeBox extends StatelessWidget {
                   color: endPlaceholder
                       ? const Color(0xFF9AA8BD)
                       : const Color(0xFF4D5872),
-                  fontWeight:
-                  endPlaceholder ? FontWeight.w400 : FontWeight.w500,
+                  fontWeight: endPlaceholder
+                      ? FontWeight.w400
+                      : FontWeight.w500,
                 ),
               ),
             ),
@@ -979,7 +1010,7 @@ class _StatusRow extends StatelessWidget {
         SizedBox(width: 12.w),
         Expanded(
           child: Obx(
-                () => Row(
+            () => Row(
               children: [
                 _RadioItem(
                   text: context.l10n.couponStatusActive,
@@ -1020,7 +1051,9 @@ class _RadioItem extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+            selected
+                ? Icons.radio_button_checked
+                : Icons.radio_button_unchecked,
             color: selected ? AppColors.primary : const Color(0xFFB5C0D0),
             size: 20.sp,
           ),
@@ -1091,22 +1124,20 @@ class _LargeTextField extends StatelessWidget {
                 maxLines: null,
                 expands: true,
                 textAlignVertical: TextAlignVertical.top,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.textPrimary,
-                ),
-                decoration: _inputDecoration(
-                  hint: hint,
-                  maxLength: maxLength,
-                  currentLength: value.text.length,
-                ).copyWith(
-                  contentPadding: EdgeInsets.fromLTRB(
-                    14.w,
-                    12.h,
-                    14.w,
-                    12.h,
-                  ),
-                ),
+                style: TextStyle(fontSize: 14.sp, color: AppColors.textPrimary),
+                decoration:
+                    _inputDecoration(
+                      hint: hint,
+                      maxLength: maxLength,
+                      currentLength: value.text.length,
+                    ).copyWith(
+                      contentPadding: EdgeInsets.fromLTRB(
+                        14.w,
+                        12.h,
+                        14.w,
+                        12.h,
+                      ),
+                    ),
               );
             },
           ),
@@ -1125,11 +1156,13 @@ class _BottomActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Row(
+      () => Row(
         children: [
           Expanded(
             child: _PrimaryActionButton(
-              text: context.l10n.publishNow,
+              text: controller.isEditMode
+                  ? context.l10n.save
+                  : context.l10n.publishNow,
               disabled: controller.isSubmitting.value,
               onTap: () => controller.publish(context),
             ),
@@ -1163,11 +1196,8 @@ class _PrimaryActionButton extends StatelessWidget {
           gradient: disabled
               ? null
               : const LinearGradient(
-            colors: [
-              Color(0xFF0B5CFF),
-              Color(0xFF0052F5),
-            ],
-          ),
+                  colors: [Color(0xFF0B5CFF), Color(0xFF0052F5)],
+                ),
           color: disabled ? const Color(0xFFB8C5D8) : null,
           borderRadius: BorderRadius.circular(8.r),
           boxShadow: [
@@ -1260,10 +1290,7 @@ class _Field extends StatelessWidget {
 }
 
 class _RequiredLabel extends StatelessWidget {
-  const _RequiredLabel(
-      this.text, {
-        this.width,
-      });
+  const _RequiredLabel(this.text, {this.width});
 
   final String text;
   final double? width;
@@ -1313,48 +1340,38 @@ InputDecoration _inputDecoration({
     filled: true,
     fillColor: Colors.white,
     contentPadding: EdgeInsets.symmetric(horizontal: 14.w),
-    hintStyle: TextStyle(
-      fontSize: 13.sp,
-      color: const Color(0xFF9AA8BD),
-    ),
-    suffixIconConstraints: BoxConstraints(
-      minWidth: 48.w,
-      minHeight: 45.h,
-    ),
+    hintStyle: TextStyle(fontSize: 13.sp, color: const Color(0xFF9AA8BD)),
+    suffixIconConstraints: BoxConstraints(minWidth: 48.w, minHeight: 45.h),
     suffixIcon: trailing != null
-        ? Icon(
-      trailing,
-      color: AppColors.textSecondary,
-      size: 22.sp,
-    )
+        ? Icon(trailing, color: AppColors.textSecondary, size: 22.sp)
         : maxLength != null
         ? Padding(
-      padding: EdgeInsets.only(right: 12.w),
-      child: Center(
-        widthFactor: 1,
-        child: Text(
-          '$currentLength/$maxLength',
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: const Color(0xFF8B98AA),
-          ),
-        ),
-      ),
-    )
+            padding: EdgeInsets.only(right: 12.w),
+            child: Center(
+              widthFactor: 1,
+              child: Text(
+                '$currentLength/$maxLength',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: const Color(0xFF8B98AA),
+                ),
+              ),
+            ),
+          )
         : suffixText != null
         ? Padding(
-      padding: EdgeInsets.only(right: 12.w),
-      child: Center(
-        widthFactor: 1,
-        child: Text(
-          suffixText,
-          style: TextStyle(
-            fontSize: 13.sp,
-            color: const Color(0xFF7E8DA3),
-          ),
-        ),
-      ),
-    )
+            padding: EdgeInsets.only(right: 12.w),
+            child: Center(
+              widthFactor: 1,
+              child: Text(
+                suffixText,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: const Color(0xFF7E8DA3),
+                ),
+              ),
+            ),
+          )
         : null,
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(9.r),
@@ -1371,10 +1388,7 @@ InputDecoration _inputDecoration({
 BoxDecoration get _cardDecoration => BoxDecoration(
   color: Colors.white,
   borderRadius: BorderRadius.circular(16.r),
-  border: Border.all(
-    color: const Color(0xFFEAF0F7),
-    width: 1,
-  ),
+  border: Border.all(color: const Color(0xFFEAF0F7), width: 1),
   boxShadow: [
     BoxShadow(
       color: const Color(0xFF1E5AA8).withValues(alpha: 0.045),

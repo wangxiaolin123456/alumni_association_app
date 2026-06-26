@@ -65,6 +65,12 @@ class URL {
 
   /// 新增优惠券
   static const String addCoupons = "/api/coupons/addCoupons";
+
+  /// 我的优惠券
+  static const String myCoupons = "/api/coupons/myCoupons";
+
+  /// 修改优惠券
+  static const String updateCoupons = "/api/coupons/updateCoupons";
 }
 
 class ApiRequest {
@@ -573,9 +579,7 @@ class ApiRequest {
   }
 
   /// 新增优惠券
-  static Future<bool> addCoupons({
-    required CouponRequest request,
-  }) async {
+  static Future<bool> addCoupons({required CouponRequest request}) async {
     try {
       final response = await HttpManager.post(
         URL.addCoupons,
@@ -583,10 +587,6 @@ class ApiRequest {
       );
 
       if (response.code == 200) {
-        ToastUtils.showToast(
-          message: response.msg.isNotEmpty ? response.msg : "优惠券发布成功",
-          type: ToastType.success,
-        );
         return true;
       }
 
@@ -594,6 +594,85 @@ class ApiRequest {
       return false;
     } catch (e) {
       ToastUtils.showToast(message: "优惠券发布失败", type: ToastType.error);
+      return false;
+    }
+  }
+
+  /// 我的优惠券列表。
+  ///
+  /// disableStatus：
+  /// 0 = 全部，不传 disableStatus
+  /// 1 = 进行中，传 disableStatus = 0
+  /// 2 = 禁用，传 disableStatus = 1
+  static Future<List<StoreCouponResponse>> myCoupons({
+    required String couponName,
+    required int disableStatus,
+  }) async {
+    try {
+      final params = <String, dynamic>{};
+
+      if (couponName.trim().isNotEmpty) {
+        params["couponName"] = couponName.trim();
+      }
+
+      /// 前端 Tab 和后端参数转换
+      if (disableStatus == 1) {
+        /// 进行中
+        params["disableStatus"] = 0;
+      } else if (disableStatus == 2) {
+        /// 禁用
+        params["disableStatus"] = 1;
+      }else if (disableStatus == 3) {
+        /// 过期
+        params["disableStatus"] = 2;
+      }
+
+      final response = await HttpManager.get<dynamic>(
+        URL.myCoupons,
+        params: params,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return [];
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! List) return [];
+
+      return rawData
+          .whereType<Map>()
+          .map(
+            (item) =>
+            StoreCouponResponse.fromJson(Map<String, dynamic>.from(item)),
+      )
+          .where((item) => item.isDeleted == 0)
+          .toList();
+    } catch (e) {
+      ToastUtils.showToast(message: "优惠券获取失败", type: ToastType.error);
+      return [];
+    }
+  }
+
+  /// 修改优惠券。
+  ///
+  /// 新增和修改共用表单，修改接口比新增多传 couponId。
+  static Future<bool> updateCoupons({required CouponRequest request}) async {
+    try {
+      final response = await HttpManager.post(
+        URL.updateCoupons,
+        data: request.toJson(),
+      );
+
+      if (response.code == 200) {
+        return true;
+      }
+
+      ToastUtils.showToast(message: response.msg, type: ToastType.error);
+      return false;
+    } catch (e) {
+      ToastUtils.showToast(message: "优惠券修改失败", type: ToastType.error);
       return false;
     }
   }

@@ -299,7 +299,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get retail => '小売';
 
   @override
-  String get storeSearchHint => '店舗・商品・サービスを検索';
+  String get storeSearchHint => '店舗名を入力してください';
 
   @override
   String get allRegions => '全エリア';
@@ -1465,6 +1465,60 @@ class AppLocalizationsJa extends AppLocalizations {
   String get entryRecords => '登録履歴';
 
   @override
+  String get merchantDashboard => '店舗ダッシュボード';
+
+  @override
+  String get notFilled => '未入力';
+
+  @override
+  String get commonFunctions => 'よく使う機能';
+
+  @override
+  String get editMerchantInfo => '店舗情報を編集';
+
+  @override
+  String get editMerchantInfoDesc => '店舗プロフィールを編集';
+
+  @override
+  String get viewAllEntryRecords => 'すべての入金を見る';
+
+  @override
+  String get businessDataOverview => '営業データ概要';
+
+  @override
+  String get manageCoupons => 'クーポンを管理';
+
+  @override
+  String get orderCount => '注文数';
+
+  @override
+  String get receivedAmountYuan => '実収金額(元)';
+
+  @override
+  String get discountAmountYuan => '割引金額(元)';
+
+  @override
+  String get selectMonth => '月を選択';
+
+  @override
+  String get todayBusinessData => '本日の営業データ';
+
+  @override
+  String get todayEntryTimes => '本日の入金回数';
+
+  @override
+  String get todayConsumeAmountYuan => '本日の消費金額(元)';
+
+  @override
+  String get todayGmvYuan => '本日のGMV(元)';
+
+  @override
+  String get todayDiscountAmountYuan => '本日の割引金額(元)';
+
+  @override
+  String get merchantInfoUpdated => '店舗情報を更新しました';
+
+  @override
   String get onboardingGuide => '登録ガイド';
 
   @override
@@ -2055,4 +2109,62 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get disableReasonRequiredMessage => '無効理由を入力してください';
+
+  @override
+  String get editCouponTitle => 'クーポン編集';
+
+  @override
+  String get addCouponButton => 'クーポン追加';
+
+  @override
+  String get searchCouponName => 'クーポン名を検索';
+
+  @override
+  String get couponTabActive => '有効中';
+
+  @override
+  String get couponTabDisabled => '停止中';
+
+  @override
+  String get couponTabExpired => '期限切れ';
+
+  @override
+  String get noCouponData => 'クーポンはありません';
+
+  @override
+  String get disableCoupon => '停止';
+
+  @override
+  String get enableCoupon => '再公開';
+
+  @override
+  String get copyPublish => 'コピー';
+
+  @override
+  String claimedCount(int count) {
+    return '取得済み $count 回';
+  }
+
+  @override
+  String usedCount(int count) {
+    return '使用済み $count 回';
+  }
+
+  @override
+  String get applicableStoreLabel => '対象店舗';
+
+  @override
+  String get validPeriodLabel => '有効期間';
+
+  @override
+  String get allStores => '全店舗';
+
+  @override
+  String get couponTypeFixedAmountShort => '割引券';
+
+  @override
+  String get couponTypePercentageShort => '割引率';
+
+  @override
+  String get couponTypeConditionalShort => '割引券';
 }

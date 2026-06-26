@@ -97,7 +97,7 @@
   "education": "教育培训",
   "medical": "医疗健康",
   "retail": "零售百货",
-  "storeSearchHint": "搜索商家、商品、服务",
+  "storeSearchHint": "请输入商户名称",
   "allRegions": "全部区域",
   "sortBy": "综合排序",
   "filter": "筛选",
@@ -485,6 +485,24 @@
   "noMerchantYet": "暂无商户",
   "noMerchantYetDesc": "点击右上角添加商户，提交后可在这里查看和管理。",
   "entryRecords": "入单记录",
+  "merchantDashboard": "商户工作台",
+  "notFilled": "未填写",
+  "commonFunctions": "常用功能",
+  "editMerchantInfo": "修改商户信息",
+  "editMerchantInfoDesc": "编辑商户资料",
+  "viewAllEntryRecords": "查看所有入单",
+  "businessDataOverview": "经营数据概览",
+  "manageCoupons": "管理优惠券",
+  "orderCount": "订单数",
+  "receivedAmountYuan": "实收金额(元)",
+  "discountAmountYuan": "优惠金额(元)",
+  "selectMonth": "选择月份",
+  "todayBusinessData": "今日经营数据",
+  "todayEntryTimes": "今日入单次数",
+  "todayConsumeAmountYuan": "今日消费金额(元)",
+  "todayGmvYuan": "今日GMV(元)",
+  "todayDiscountAmountYuan": "今日优惠金额(元)",
+  "merchantInfoUpdated": "商户资料已更新",
   "onboardingGuide": "入驻指南",
   "fillStoreInfo": "请填写店铺信息",
   "fillStoreInfoDesc": "请如实填写以下信息，提交后将由平台进行审核",
@@ -701,5 +719,37 @@
     "startDateRequiredMessage": "请选择开始日期",
     "endDateRequiredMessage": "请选择结束日期",
     "endDateCannotBeforeStartDate": "结束时间不能早于开始时间",
-    "disableReasonRequiredMessage": "请输入禁用原因"
+    "disableReasonRequiredMessage": "请输入禁用原因",
+    "editCouponTitle": "编辑优惠券",
+    "addCouponButton": "新增优惠券",
+    "searchCouponName": "搜索优惠券名称",
+    "couponTabActive": "生效中",
+    "couponTabDisabled": "已下架",
+    "couponTabExpired": "已过期",
+    "noCouponData": "暂无优惠券",
+    "disableCoupon": "下架",
+    "enableCoupon": "重新上架",
+    "copyPublish": "复制发布",
+    "claimedCount": "已领取 {count} 次",
+    "@claimedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "usedCount": "已使用 {count} 次",
+    "@usedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "applicableStoreLabel": "适用门店",
+    "validPeriodLabel": "有效期",
+    "allStores": "全部门店",
+    "couponTypeFixedAmountShort": "满减券",
+    "couponTypePercentageShort": "折扣券",
+    "couponTypeConditionalShort": "满减券"
 }

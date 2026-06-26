@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alumni_association_app/app/theme/app_theme.dart';
+import 'package:alumni_association_app/core/config/app_config.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_onboarding_controller.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_region_item.dart';
@@ -873,11 +874,7 @@ class _InteriorImagesGrid extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
           clipBehavior: Clip.hardEdge,
-          padding: EdgeInsets.only(
-            top: 2.h,
-            right: 2.w,
-            bottom: 2.h,
-          ),
+          padding: EdgeInsets.only(top: 2.h, right: 2.w, bottom: 2.h),
           itemCount: itemCount,
           separatorBuilder: (_, _) => SizedBox(width: 8.w),
           itemBuilder: (context, index) {
@@ -922,10 +919,7 @@ class _SingleImagePickerTile extends StatelessWidget {
 }
 
 class _ImageThumb extends StatelessWidget {
-  const _ImageThumb({
-    required this.path,
-    required this.onRemove,
-  });
+  const _ImageThumb({required this.path, required this.onRemove});
 
   final String path;
   final VoidCallback onRemove;
@@ -941,12 +935,7 @@ class _ImageThumb extends StatelessWidget {
             onTap: () => _showImagePreview(context, path),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
-              child: Image.file(
-                File(path),
-                width: 64.w,
-                height: 64.w,
-                fit: BoxFit.cover,
-              ),
+              child: _buildImage(path, fit: BoxFit.cover),
             ),
           ),
           Positioned(
@@ -960,10 +949,7 @@ class _ImageThumb extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.danger,
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 1.2,
-                  ),
+                  border: Border.all(color: Colors.white, width: 1.2),
                 ),
                 child: Icon(
                   Icons.close_rounded,
@@ -988,7 +974,12 @@ class _ImageThumb extends StatelessWidget {
             InteractiveViewer(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: Image.file(File(path), fit: BoxFit.contain),
+                child: _buildImage(
+                  path,
+                  fit: BoxFit.contain,
+                  width: 320.w,
+                  height: 520.h,
+                ),
               ),
             ),
             Positioned(
@@ -1001,6 +992,67 @@ class _ImageThumb extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 图片展示统一入口。
+  ///
+  /// 新上传的图片是本地文件路径；编辑已有商户时，后端返回 `/profile/...`
+  /// 这种相对地址。这里统一判断并拼接接口域名，避免页面把远程图当成本地文件读取。
+  Widget _buildImage(
+    String path, {
+    required BoxFit fit,
+    double? width,
+    double? height,
+  }) {
+    if (_isRemoteImage(path)) {
+      return Image.network(
+        _imageUrl(path),
+        width: width ?? 64.w,
+        height: height ?? 64.w,
+        fit: fit,
+        errorBuilder: (_, _, _) => _imageFallback(),
+      );
+    }
+
+    return Image.file(
+      File(path),
+      width: width ?? 64.w,
+      height: height ?? 64.w,
+      fit: fit,
+      errorBuilder: (_, _, _) => _imageFallback(),
+    );
+  }
+
+  bool _isRemoteImage(String path) {
+    return path.startsWith('http://') ||
+        path.startsWith('https://') ||
+        path.startsWith('/profile/') ||
+        path.startsWith('profile/');
+  }
+
+  String _imageUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    final base = AppConfig.apiBaseUrl;
+    final cleanBase = base.endsWith('/')
+        ? base.substring(0, base.length - 1)
+        : base;
+    final cleanPath = path.startsWith('/') ? path : '/$path';
+    return '$cleanBase$cleanPath';
+  }
+
+  Widget _imageFallback() {
+    return Container(
+      width: 64.w,
+      height: 64.w,
+      color: const Color(0xFFF1F5FB),
+      child: Icon(
+        Icons.broken_image_outlined,
+        size: 22.sp,
+        color: AppColors.textSecondary,
       ),
     );
   }

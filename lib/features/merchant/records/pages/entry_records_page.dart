@@ -1,10 +1,11 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/profile/records/model/entry_record_item.dart';
-import 'package:alumni_association_app/features/profile/records/pages/entry_records_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../model/entry_record_item.dart';
+import 'entry_records_controller.dart';
 
 ///入单记录
 class EntryRecordsPage extends StatelessWidget {
@@ -83,10 +84,12 @@ class EntryRecordsPage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: Obx(() => _SummaryBar(controller: controller)),
+
     );
   }
 }
+
+
 
 class _EntryRecordCard extends StatelessWidget {
   const _EntryRecordCard({required this.item});
@@ -173,46 +176,7 @@ class _EntryRecordCard extends StatelessWidget {
   }
 }
 
-class _SummaryBar extends StatelessWidget {
-  const _SummaryBar({required this.controller});
-  final EntryRecordsController controller;
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        margin: EdgeInsets.all(12.r),
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-        decoration: _cardDecoration,
-        child: Row(
-          children: [
-            _SummaryItem(
-              icon: Icons.receipt_long_rounded,
-              title: context.l10n.todayEntryCount,
-              value: '${controller.records.length}${context.l10n.recordUnit}',
-              color: AppColors.primary,
-            ),
-            _DividerLine(),
-            _SummaryItem(
-              icon: Icons.account_balance_wallet_rounded,
-              title: context.l10n.receivableTotal,
-              value: '¥${controller.receivableTotal.toStringAsFixed(0)}',
-              color: const Color(0xFFFF6A00),
-            ),
-            _DividerLine(),
-            _SummaryItem(
-              icon: Icons.check_circle_rounded,
-              title: context.l10n.paidTotal,
-              value: '¥${controller.paidTotal.toStringAsFixed(0)}',
-              color: AppColors.success,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _SummaryItem extends StatelessWidget {
   const _SummaryItem({

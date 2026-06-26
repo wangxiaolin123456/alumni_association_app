@@ -94,7 +94,7 @@ class SessionController extends GetxController {
     isRefreshingUserInfo.value = true;
 
     try {
-      final latest = await ApiRequest.userInfo(userId: currentUser.id);
+      final latest = await ApiRequest.userInfo(userId: currentUser.userId);
 
       if (latest != null) {
         await updateLoginInfo(latest);

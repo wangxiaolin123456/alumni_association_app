@@ -99,7 +99,7 @@ class SettingsPage extends StatelessWidget {
 /// 调用退出登录接口，并清理本地登录态。
 Future<void> _handleSignOut() async {
   final session = Get.find<SessionController>();
-  final userId = session.userInfo.value?.id ?? 0;
+  final userId = session.userInfo.value?.userId ?? 0;
 
   if (userId > 0) {
     await ApiRequest.loginOut(userId: userId);

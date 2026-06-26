@@ -3,7 +3,6 @@ import 'package:alumni_association_app/features/auth/pages/forgot_password_page.
 import 'package:alumni_association_app/features/auth/pages/account_bind_page.dart';
 import 'package:alumni_association_app/features/activity/pages/activity_detail_page.dart';
 import 'package:alumni_association_app/features/consumption/pages/consumption_amount_page.dart';
-import 'package:alumni_association_app/features/consumption/pages/consumption_coupon_page.dart';
 import 'package:alumni_association_app/features/consumption/pages/consumption_merchant_page.dart';
 import 'package:alumni_association_app/features/consumption/pages/consumption_success_page.dart';
 import 'package:alumni_association_app/features/home/pages/role_home_page.dart';
@@ -29,7 +28,6 @@ import 'package:alumni_association_app/features/profile/management/pages/opportu
 import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
 import 'package:alumni_association_app/features/profile/orders/pages/my_orders_page.dart';
 import 'package:alumni_association_app/features/profile/orders/pages/order_detail_page.dart';
-import 'package:alumni_association_app/features/profile/records/pages/entry_records_page.dart';
 import 'package:alumni_association_app/features/profile/services/pages/profile_service_pages.dart';
 import 'package:alumni_association_app/features/store/pages/store_detail_page.dart';
 import 'package:alumni_association_app/features/store/pages/store_offer_page.dart';
@@ -39,7 +37,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../features/merchant/coupon/pages/view/publish_coupon_page.dart';
+import '../../features/merchant/coupon/pages/view/coupon_management_page.dart';
 import '../../features/merchant/center/pages/view/merchant_dashboard_page.dart';
+import '../../features/merchant/records/pages/entry_records_page.dart';
 
 class Pages {
   static const String home = '/';
@@ -68,7 +68,6 @@ class Pages {
   static const String opportunityPublish = '/member/opportunities/publish';
 
   static const String consumptionMerchant = '/member/consumption/merchant';
-  static const String consumptionCoupon = '/member/consumption/coupon';
   static const String consumptionAmount = '/member/consumption/amount';
   static const String consumptionSuccess = '/member/consumption/success';
 
@@ -95,7 +94,6 @@ class Pages {
 
   static const String myOrdersPage = '/profile/orders';
   static const String orderDetail = '/profile/orders/detail';
-  static const String entryRecordsPage = '/profile/entry-records';
 
   static const String opportunityManagementPage =
       '/profile/opportunity-management';
@@ -104,8 +102,9 @@ class Pages {
   static const String contactService = '/member/profile/contact-service';
   static const String helpCenter = '/member/profile/help-center';
   static const String feedback = '/member/profile/feedback';
-
-  static const publishCoupon = '/publish/coupon';
+  static const String entryRecordsPage = '/merchant/records';
+  static const couponManagement = '/merchant/coupons';
+  static const publishCoupon = '/merchant/coupons/publish';
 }
 
 class AppPages {
@@ -178,11 +177,6 @@ class AppPages {
     GetPage(
       name: Pages.consumptionMerchant,
       page: () => const ConsumptionMerchantPage(),
-    ),
-
-    GetPage(
-      name: Pages.consumptionCoupon,
-      page: () => const ConsumptionCouponPage(),
     ),
 
     GetPage(
@@ -280,6 +274,11 @@ class AppPages {
     GetPage(name: Pages.entryRecordsPage, page: () => const EntryRecordsPage()),
 
     GetPage(
+      name: Pages.couponManagement,
+      page: () => const CouponManagementPage(),
+    ),
+
+    GetPage(
       name: Pages.opportunityManagementPage,
       page: () => const OpportunityManagementPage(),
     ),
@@ -295,10 +294,7 @@ class AppPages {
 
     GetPage(name: Pages.feedback, page: () => const FeedbackPage()),
 
-    GetPage(
-      name: Pages.publishCoupon,
-      page: () => const PublishCouponPage(),
-    ),
+    GetPage(name: Pages.publishCoupon, page: () => const PublishCouponPage()),
   ];
 }
 

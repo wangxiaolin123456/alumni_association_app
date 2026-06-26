@@ -26,7 +26,7 @@ class PersonalInfoController extends GetxController {
   /// 调用个人信息接口刷新页面数据，并同步全局登录用户信息。
   Future<void> refreshUserInfo() async {
     final current = SessionController.current.userInfo.value;
-    final userId = current?.id ?? 0;
+    final userId = current?.userId ?? 0;
     if (userId <= 0) return;
 
     isLoading.value = true;

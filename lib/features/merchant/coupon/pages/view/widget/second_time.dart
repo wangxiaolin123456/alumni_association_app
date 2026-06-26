@@ -14,6 +14,7 @@ class SecondTime {
 
 class TimePickerColumn extends StatelessWidget {
   const TimePickerColumn({
+    super.key,
     required this.title,
     required this.itemCount,
     required this.initialItem,
@@ -47,7 +48,7 @@ class TimePickerColumn extends StatelessWidget {
             onSelectedItemChanged: onSelectedItemChanged,
             children: List.generate(
               itemCount,
-                  (index) => Center(
+              (index) => Center(
                 child: Text(
                   index.toString().padLeft(2, '0'),
                   style: const TextStyle(

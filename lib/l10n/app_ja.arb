@@ -97,7 +97,7 @@
   "education": "教育",
   "medical": "医療",
   "retail": "小売",
-  "storeSearchHint": "店舗・商品・サービスを検索",
+  "storeSearchHint": "店舗名を入力してください",
   "allRegions": "全エリア",
   "sortBy": "並び替え",
   "filter": "絞り込み",
@@ -485,6 +485,24 @@
   "noMerchantYet": "店舗はまだありません",
   "noMerchantYetDesc": "右上の追加ボタンから店舗を登録すると、ここで確認・管理できます。",
   "entryRecords": "登録履歴",
+  "merchantDashboard": "店舗ダッシュボード",
+  "notFilled": "未入力",
+  "commonFunctions": "よく使う機能",
+  "editMerchantInfo": "店舗情報を編集",
+  "editMerchantInfoDesc": "店舗プロフィールを編集",
+  "viewAllEntryRecords": "すべての入金を見る",
+  "businessDataOverview": "営業データ概要",
+  "manageCoupons": "クーポンを管理",
+  "orderCount": "注文数",
+  "receivedAmountYuan": "実収金額(元)",
+  "discountAmountYuan": "割引金額(元)",
+  "selectMonth": "月を選択",
+  "todayBusinessData": "本日の営業データ",
+  "todayEntryTimes": "本日の入金回数",
+  "todayConsumeAmountYuan": "本日の消費金額(元)",
+  "todayGmvYuan": "本日のGMV(元)",
+  "todayDiscountAmountYuan": "本日の割引金額(元)",
+  "merchantInfoUpdated": "店舗情報を更新しました",
   "onboardingGuide": "登録ガイド",
   "fillStoreInfo": "店舗情報を入力",
   "fillStoreInfoDesc": "正確な情報を入力してください。送信後に審査されます",
@@ -702,5 +720,37 @@
     "startDateRequiredMessage": "開始日を選択してください",
     "endDateRequiredMessage": "終了日を選択してください",
     "endDateCannotBeforeStartDate": "終了時間は開始時間より前に設定できません",
-    "disableReasonRequiredMessage": "無効理由を入力してください"
+  "disableReasonRequiredMessage": "無効理由を入力してください",
+  "editCouponTitle": "クーポン編集",
+  "addCouponButton": "クーポン追加",
+  "searchCouponName": "クーポン名を検索",
+  "couponTabActive": "有効中",
+  "couponTabDisabled": "停止中",
+  "couponTabExpired": "期限切れ",
+  "noCouponData": "クーポンはありません",
+  "disableCoupon": "停止",
+  "enableCoupon": "再公開",
+  "copyPublish": "コピー",
+  "claimedCount": "取得済み {count} 回",
+  "@claimedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "usedCount": "使用済み {count} 回",
+  "@usedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicableStoreLabel": "対象店舗",
+  "validPeriodLabel": "有効期間",
+  "allStores": "全店舗",
+  "couponTypeFixedAmountShort": "割引券",
+  "couponTypePercentageShort": "割引率",
+  "couponTypeConditionalShort": "割引券"
 }

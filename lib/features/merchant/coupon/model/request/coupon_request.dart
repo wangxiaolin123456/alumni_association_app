@@ -1,3 +1,5 @@
+import 'package:alumni_association_app/features/store/model/response/store_response.dart';
+
 class CouponRequest {
   const CouponRequest({
     required this.couponId,
@@ -82,6 +84,34 @@ class CouponRequest {
 
   /// 适用门店ID，多个用逗号拼接
   final String shopIds;
+
+  /// 从优惠券详情构造请求对象。
+  ///
+  /// 修改、下架、重新上架、删除都需要带完整字段，避免后端把未传字段覆盖为空。
+  factory CouponRequest.fromCoupon(
+    StoreCouponResponse coupon, {
+    int? disableStatus,
+    int? isDeleted,
+  }) {
+    return CouponRequest(
+      couponId: coupon.couponId,
+      userId: coupon.userId,
+      name: coupon.name,
+      description: coupon.description,
+      type: coupon.type,
+      value: coupon.value,
+      minOrderAmount: coupon.minOrderAmount,
+      maxDiscountAmount: coupon.maxDiscountAmount,
+      startTime: coupon.startTime,
+      endTime: coupon.endTime,
+      disableStatus: disableStatus ?? coupon.disableStatus,
+      disableMsg: coupon.disableMsg,
+      createTime: coupon.createTime,
+      updateTime: coupon.updateTime,
+      isDeleted: isDeleted ?? coupon.isDeleted,
+      shopIds: coupon.shopIds,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

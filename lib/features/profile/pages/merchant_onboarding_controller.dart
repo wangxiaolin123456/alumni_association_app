@@ -5,6 +5,7 @@ import 'package:alumni_association_app/features/auth/domain/session_controller.d
 import 'package:alumni_association_app/features/profile/pages/merchant_onboarding_request.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_region_item.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
+import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:alumni_association_app/util/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,13 +48,79 @@ class MerchantOnboardingController extends GetxController {
   final AddressService _addressService = Get.find<AddressService>();
   final ImagePicker _imagePicker = ImagePicker();
   final int? shopId = _parseShopId(Get.arguments);
+  final StoreResponse? editingStore = _parseEditingStore(Get.arguments);
+
+  /// 是否是修改商户信息。
+  bool get isEditMode => shopId != null && shopId! > 0;
 
   /// 从路由参数中安全解析商户 id，兼容 int 和字符串两种传参。
   static int? _parseShopId(dynamic arguments) {
+    if (arguments is StoreResponse) return arguments.shopId;
     if (arguments is! Map) return null;
     final raw = arguments['shopId'];
     if (raw is int) return raw;
     return int.tryParse(raw?.toString() ?? '');
+  }
+
+  /// 从路由参数中解析完整商户对象，用于编辑页直接回填。
+  static StoreResponse? _parseEditingStore(dynamic arguments) {
+    if (arguments is StoreResponse) return arguments;
+    if (arguments is Map && arguments['store'] is StoreResponse) {
+      return arguments['store'] as StoreResponse;
+    }
+    return null;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    _fillEditingStore();
+  }
+
+  /// 修改商户资料时，把详情接口返回的数据回填到表单。
+  ///
+  /// 注意：图片入参需要保留后端返回的相对路径，不要拼接域名后再提交。
+  /// 页面展示时会自行拼接图片前缀。
+  void _fillEditingStore() {
+    final store = editingStore;
+    if (store == null) return;
+
+    storeNameController.text = store.shopName;
+    industryController.text = store.typeName;
+    selectedMerchantType.value = MerchantTypeItem(
+      id: store.typeId,
+      typeName: store.typeName,
+      isDeleted: 0,
+    );
+    provinceController.text = store.province;
+    cityController.text = store.city;
+    districtController.text = store.area;
+    addressController.text = store.address;
+    postalCodeController.text = store.postalCode;
+    businessStartTimeController.text = store.businessStartTime;
+    businessEndTimeController.text = store.businessEndTime;
+    contactController.text = store.names;
+    phoneController.text = store.phone;
+
+    final logo = store.shopLogo.trim();
+    if (logo.isNotEmpty) {
+      shopLogoPath.value = logo;
+      shopLogoFileName.value = logo;
+    }
+
+    final interiors = store.shopImgs
+        .split(',')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+    interiorImagePaths.assignAll(interiors);
+    interiorImageFileNames.assignAll(interiors);
+
+    final license = store.licenseImages.trim();
+    if (license.isNotEmpty) {
+      businessLicensePath.value = license;
+      businessLicenseFileName.value = license;
+    }
   }
 
   void toggleAgreement(bool? value) {
@@ -311,7 +378,7 @@ class MerchantOnboardingController extends GetxController {
     try {
       final userInfo = SessionController.current.userInfo.value;
       final request = MerchantOnboardingRequest(
-        userId: userInfo?.id ?? 0,
+        userId: userInfo?.userId ?? 0,
 
         ///不用传
         shopId: shopId,
@@ -344,16 +411,20 @@ class MerchantOnboardingController extends GetxController {
       /// 入驻/修改成功后刷新用户信息，后端若已把 isMerchant 更新为 1，
       /// 我的页面会立即从“商户入驻”切换为“我的商户”。
       if (userInfo != null) {
-        final latest = await ApiRequest.userInfo(userId: userInfo.id);
+        final latest = await ApiRequest.userInfo(userId: userInfo.userId);
         if (latest != null) {
           await SessionController.current.updateLoginInfo(latest);
         }
       }
       errorMessage.value = null;
 
-
       Get.back();
-      ToastUtils.showToast(message: "商户资料已提交。", type: ToastType.success);
+      ToastUtils.showToast(
+        message: isEditMode
+            ? l10n.merchantInfoUpdated
+            : l10n.merchantOnboardingSubmitted,
+        type: ToastType.success,
+      );
     } finally {
       isSubmitting.value = false;
     }

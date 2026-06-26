@@ -1,6 +1,6 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/consumption/model/response/consumption_entry_response.dart';
+import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,155 +19,7 @@ BoxDecoration get consumptionCardDecoration => BoxDecoration(
   ],
 );
 
-/// 消费入单流程步骤指示器。
-///
-/// 当前流程一共分为 4 步：
-/// 1. 选择商家
-/// 2. 选择优惠券
-/// 3. 输入消费金额
-/// 4. 确认并提交
-///
-/// [currentStep] 表示当前所在步骤，从 1 开始。
-class ConsumptionStepIndicator extends StatelessWidget {
-  const ConsumptionStepIndicator({required this.currentStep, super.key});
 
-  /// 当前所在步骤，从 1 开始。
-  ///
-  /// 小于当前步骤的节点显示完成状态，等于当前步骤的节点高亮显示。
-  final int currentStep;
-
-  @override
-  Widget build(BuildContext context) {
-    final labels = [
-      context.l10n.selectMerchant,
-      context.l10n.selectCoupon,
-      context.l10n.enterAmount,
-      context.l10n.confirmSubmit,
-    ];
-
-    return Center(
-      child: SizedBox(
-        width: 340.w,
-        height: 62.h,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final totalWidth = constraints.maxWidth;
-
-            final circleSize = 35.r;
-            final labelWidth = 74.w;
-            final circleRadius = circleSize / 2;
-
-            // 第一个圆和最后一个圆的中心点。
-            final startX = circleRadius;
-            final endX = totalWidth - circleRadius;
-
-            // 4 个步骤之间的间距。
-            final stepSpace = (endX - startX) / (labels.length - 1);
-
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // 圆圈之间的横线。
-                Positioned(
-                  top: circleRadius - 0.5,
-                  left: startX,
-                  right: startX,
-                  child: Row(
-                    children: List.generate(labels.length - 1, (index) {
-                      final lineCompleted = currentStep > index + 1;
-
-                      return Expanded(
-                        child: Container(
-                          height: 1,
-                          color: lineCompleted
-                              ? AppColors.primary
-                              : const Color(0xFFD5DCE8),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-
-                // 4 个圆圈。
-                ...List.generate(labels.length, (index) {
-                  final step = index + 1;
-                  final active = currentStep == step;
-                  final completed = currentStep > step;
-
-                  final centerX = startX + stepSpace * index;
-
-                  return Positioned(
-                    left: centerX - circleRadius,
-                    top: 0,
-                    child: Container(
-                      width: circleSize,
-                      height: circleSize,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: active ? AppColors.primary : Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: completed || active
-                              ? AppColors.primary
-                              : const Color(0xFFD5DCE8),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: completed
-                          ? Icon(
-                        Icons.check_rounded,
-                        color: AppColors.primary,
-                        size: 21.sp,
-                      )
-                          : Text(
-                        '$step',
-                        style: TextStyle(
-                          color: active
-                              ? Colors.white
-                              : AppColors.textSecondary,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-
-                // 4 个文字，和圆圈使用同一个 centerX，所以文字会正好在圆圈下面。
-                ...List.generate(labels.length, (index) {
-                  final step = index + 1;
-                  final active = currentStep == step;
-
-                  final centerX = startX + stepSpace * index;
-
-                  return Positioned(
-                    left: centerX - labelWidth / 2,
-                    top: 43.h,
-                    width: labelWidth,
-                    child: Text(
-                      labels[index],
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: active
-                            ? AppColors.primary
-                            : AppColors.textSecondary,
-                        fontWeight:
-                        active ? FontWeight.w700 : FontWeight.w500,
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
 
 /// 商家视觉展示组件。
 ///
@@ -182,7 +34,7 @@ class ConsumptionMerchantVisual extends StatelessWidget {
   });
 
   /// 商家数据，主要用于读取商家的主题色等展示信息。
-  final ConsumptionMerchantResponse merchant;
+  final StoreResponse merchant;
 
   /// 组件宽度，不传时由父组件约束决定。
   final double? width;
@@ -196,10 +48,6 @@ class ConsumptionMerchantVisual extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        // 使用商家配置的强调色生成渐变背景，让不同商家有轻微区分。
-        gradient: LinearGradient(
-          colors: merchant.accentColors.map(Color.new).toList(),
-        ),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Icon(Icons.storefront_rounded, color: Colors.white, size: 34.sp),
@@ -219,7 +67,7 @@ class SelectedMerchantCard extends StatelessWidget {
   });
 
   /// 当前已选中的商家信息。
-  final ConsumptionMerchantResponse merchant;
+  final StoreResponse merchant;
 
   /// 重新选择商家的点击回调。
   ///
@@ -244,7 +92,7 @@ class SelectedMerchantCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  merchant.name,
+                  merchant.names,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -253,8 +101,7 @@ class SelectedMerchantCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 5.h),
-                Text(merchant.category, style: consumptionSecondaryText),
-                Text(merchant.distance, style: consumptionSecondaryText),
+                Text(merchant.typeName, style: consumptionSecondaryText),
               ],
             ),
           ),

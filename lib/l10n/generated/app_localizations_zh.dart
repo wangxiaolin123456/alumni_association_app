@@ -299,7 +299,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get retail => '零售百货';
 
   @override
-  String get storeSearchHint => '搜索商家、商品、服务';
+  String get storeSearchHint => '请输入商户名称';
 
   @override
   String get allRegions => '全部区域';
@@ -1462,6 +1462,60 @@ class AppLocalizationsZh extends AppLocalizations {
   String get entryRecords => '入单记录';
 
   @override
+  String get merchantDashboard => '商户工作台';
+
+  @override
+  String get notFilled => '未填写';
+
+  @override
+  String get commonFunctions => '常用功能';
+
+  @override
+  String get editMerchantInfo => '修改商户信息';
+
+  @override
+  String get editMerchantInfoDesc => '编辑商户资料';
+
+  @override
+  String get viewAllEntryRecords => '查看所有入单';
+
+  @override
+  String get businessDataOverview => '经营数据概览';
+
+  @override
+  String get manageCoupons => '管理优惠券';
+
+  @override
+  String get orderCount => '订单数';
+
+  @override
+  String get receivedAmountYuan => '实收金额(元)';
+
+  @override
+  String get discountAmountYuan => '优惠金额(元)';
+
+  @override
+  String get selectMonth => '选择月份';
+
+  @override
+  String get todayBusinessData => '今日经营数据';
+
+  @override
+  String get todayEntryTimes => '今日入单次数';
+
+  @override
+  String get todayConsumeAmountYuan => '今日消费金额(元)';
+
+  @override
+  String get todayGmvYuan => '今日GMV(元)';
+
+  @override
+  String get todayDiscountAmountYuan => '今日优惠金额(元)';
+
+  @override
+  String get merchantInfoUpdated => '商户资料已更新';
+
+  @override
   String get onboardingGuide => '入驻指南';
 
   @override
@@ -2052,4 +2106,62 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get disableReasonRequiredMessage => '请输入禁用原因';
+
+  @override
+  String get editCouponTitle => '编辑优惠券';
+
+  @override
+  String get addCouponButton => '新增优惠券';
+
+  @override
+  String get searchCouponName => '搜索优惠券名称';
+
+  @override
+  String get couponTabActive => '生效中';
+
+  @override
+  String get couponTabDisabled => '已下架';
+
+  @override
+  String get couponTabExpired => '已过期';
+
+  @override
+  String get noCouponData => '暂无优惠券';
+
+  @override
+  String get disableCoupon => '下架';
+
+  @override
+  String get enableCoupon => '重新上架';
+
+  @override
+  String get copyPublish => '复制发布';
+
+  @override
+  String claimedCount(int count) {
+    return '已领取 $count 次';
+  }
+
+  @override
+  String usedCount(int count) {
+    return '已使用 $count 次';
+  }
+
+  @override
+  String get applicableStoreLabel => '适用门店';
+
+  @override
+  String get validPeriodLabel => '有效期';
+
+  @override
+  String get allStores => '全部门店';
+
+  @override
+  String get couponTypeFixedAmountShort => '满减券';
+
+  @override
+  String get couponTypePercentageShort => '折扣券';
+
+  @override
+  String get couponTypeConditionalShort => '满减券';
 }

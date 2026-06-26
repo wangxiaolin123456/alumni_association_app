@@ -76,13 +76,7 @@ class StoreController extends GetxController {
   Timer? _searchDebounce;
 
   /// 预约日期
-  final reservationDates = const [
-    '05-20',
-    '05-21',
-    '05-22',
-    '05-23',
-    '05-24',
-  ];
+  final reservationDates = const ['05-20', '05-21', '05-22', '05-23', '05-24'];
 
   /// 预约时间
   final reservationTimes = const [
@@ -173,6 +167,7 @@ class StoreController extends GetxController {
 
     return fakeOffers[index];
   }
+
   @override
   void onInit() {
     super.onInit();
@@ -195,11 +190,7 @@ class StoreController extends GetxController {
     final result = await ApiRequest.merchantTypes();
 
     merchantTypes.assignAll([
-      const MerchantTypeItem(
-        id: 0,
-        typeName: '全部',
-        isDeleted: 0,
-      ),
+      const MerchantTypeItem(id: 0, typeName: '全部', isDeleted: 0),
       ...result,
     ]);
 
@@ -228,9 +219,7 @@ class StoreController extends GetxController {
 
   /// 进入详情前选中商户
   void selectStore(StoreResponse store) {
-    final index = storeList.indexWhere(
-          (item) => item.shopId == store.shopId,
-    );
+    final index = storeList.indexWhere((item) => item.shopId == store.shopId);
 
     selectedStoreIndex.value = index < 0 ? 0 : index;
     selectedOfferIndex.value = 0;
@@ -367,15 +356,7 @@ class StoreController extends GetxController {
 
   /// 自定义日期星期
   String customWeekday(DateTime date) {
-    const weekdays = [
-      '周一',
-      '周二',
-      '周三',
-      '周四',
-      '周五',
-      '周六',
-      '周日',
-    ];
+    const weekdays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     return weekdays[date.weekday - 1];
   }
 

@@ -1,4 +1,5 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
+import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,7 +32,7 @@ class MerchantDashboardPage extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          '商户工作台',
+          context.l10n.merchantDashboard,
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w900,
@@ -74,17 +75,17 @@ class MerchantDashboardPage extends StatelessWidget {
 
 /// 商户信息卡片
 class _MerchantInfoCard extends StatelessWidget {
-  const _MerchantInfoCard({
-    required this.store,
-    required this.onTap,
-  });
+  const _MerchantInfoCard({required this.store, required this.onTap});
 
   final StoreResponse store;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final statusText = store.shopStatus == 1 ? '营业中' : '待审核';
+    final l10n = context.l10n;
+    final statusText = store.shopStatus == 1
+        ? l10n.inOperation
+        : l10n.pendingReview;
 
     return InkWell(
       onTap: onTap,
@@ -109,7 +110,9 @@ class _MerchantInfoCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            store.shopName.isEmpty ? '暂无商户名称' : store.shopName,
+                            store.shopName.isEmpty
+                                ? l10n.unnamedStore
+                                : store.shopName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -126,18 +129,19 @@ class _MerchantInfoCard extends StatelessWidget {
                     SizedBox(height: 16.h),
                     _InfoLine(
                       icon: Icons.person_outline_rounded,
-                      text: '联系人：${store.names.isEmpty ? '未填写' : store.names}',
+                      text:
+                          '${l10n.contact}: ${store.names.isEmpty ? l10n.notFilled : store.names}',
                     ),
                     SizedBox(height: 10.h),
                     _InfoLine(
                       icon: Icons.phone_outlined,
-                      text: store.phone.isEmpty ? '未填写手机号' : store.phone,
+                      text: store.phone.isEmpty ? l10n.noPhone : store.phone,
                     ),
                     SizedBox(height: 10.h),
                     _InfoLine(
                       icon: Icons.location_on_outlined,
                       text: store.fullAddress.isEmpty
-                          ? '未填写地址'
+                          ? l10n.noAddress
                           : store.fullAddress,
                     ),
                   ],
@@ -202,9 +206,13 @@ class _MerchantImage extends StatelessWidget {
   }
 
   String _imageUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
     final base = AppConfig.apiBaseUrl;
-    final cleanBase =
-    base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    final cleanBase = base.endsWith('/')
+        ? base.substring(0, base.length - 1)
+        : base;
     final cleanPath = path.startsWith('/') ? path : '/$path';
     return '$cleanBase$cleanPath';
   }
@@ -212,10 +220,7 @@ class _MerchantImage extends StatelessWidget {
 
 /// 信息行
 class _InfoLine extends StatelessWidget {
-  const _InfoLine({
-    required this.icon,
-    required this.text,
-  });
+  const _InfoLine({required this.icon, required this.text});
 
   final IconData icon;
   final String text;
@@ -224,11 +229,7 @@ class _InfoLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 18.sp,
-          color: const Color(0xFF59627D),
-        ),
+        Icon(icon, size: 18.sp, color: const Color(0xFF59627D)),
         SizedBox(width: 10.w),
         Expanded(
           child: Text(
@@ -287,7 +288,7 @@ class _CommonFunctionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('常用功能', style: _sectionTitleStyle),
+          Text(context.l10n.commonFunctions, style: _sectionTitleStyle),
           SizedBox(height: 20.h),
           Row(
             children: [
@@ -295,8 +296,8 @@ class _CommonFunctionCard extends StatelessWidget {
                 child: _FunctionItem(
                   icon: Icons.edit_note_rounded,
                   iconColor: AppColors.primary,
-                  title: '修改商户信息',
-                  subtitle: '编辑商户资料',
+                  title: context.l10n.editMerchantInfo,
+                  subtitle: context.l10n.editMerchantInfoDesc,
                   onTap: controller.editMerchantInfo,
                 ),
               ),
@@ -305,8 +306,8 @@ class _CommonFunctionCard extends StatelessWidget {
                 child: _FunctionItem(
                   icon: Icons.assignment_turned_in_rounded,
                   iconColor: AppColors.success,
-                  title: '入单记录',
-                  subtitle: '查看所有入单',
+                  title: context.l10n.entryRecords,
+                  subtitle: context.l10n.viewAllEntryRecords,
                   onTap: controller.openEntryRecords,
                 ),
               ),
@@ -315,8 +316,8 @@ class _CommonFunctionCard extends StatelessWidget {
                 child: _FunctionItem(
                   icon: Icons.pie_chart_rounded,
                   iconColor: const Color(0xFF7C4DFF),
-                  title: '数据统计',
-                  subtitle: '经营数据概览',
+                  title: context.l10n.dataStatistics,
+                  subtitle: context.l10n.businessDataOverview,
                   onTap: controller.openStatistics,
                 ),
               ),
@@ -325,8 +326,8 @@ class _CommonFunctionCard extends StatelessWidget {
                 child: _FunctionItem(
                   icon: Icons.confirmation_number_rounded,
                   iconColor: const Color(0xFFFF7A1A),
-                  title: '优惠券管理',
-                  subtitle: '管理优惠券',
+                  title: context.l10n.couponManage,
+                  subtitle: context.l10n.manageCoupons,
                   onTap: controller.openCouponManagement,
                 ),
               ),
@@ -379,10 +380,7 @@ class _FunctionItem extends StatelessWidget {
               subtitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11.sp,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 11.sp, color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -394,11 +392,7 @@ class _FunctionItem extends StatelessWidget {
 class _VerticalDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 98.h,
-      color: const Color(0xFFE7ECF5),
-    );
+    return Container(width: 1, height: 98.h, color: const Color(0xFFE7ECF5));
   }
 }
 
@@ -422,7 +416,7 @@ class _OverviewCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('经营概览', style: _sectionTitleStyle),
+                Text(context.l10n.businessOverview, style: _sectionTitleStyle),
                 const Spacer(),
 
                 /// 改成一个年月选择按钮
@@ -436,7 +430,7 @@ class _OverviewCard extends StatelessWidget {
                   child: _OverviewMetricCard(
                     icon: Icons.assignment_rounded,
                     iconColor: AppColors.primary,
-                    title: '订单数',
+                    title: context.l10n.orderCount,
                     value: '${overview.orderCount}',
                     backgroundColor: const Color(0xFFF6F8FF),
                   ),
@@ -446,7 +440,7 @@ class _OverviewCard extends StatelessWidget {
                   child: _OverviewMetricCard(
                     icon: Icons.savings_rounded,
                     iconColor: const Color(0xFFFF4F2E),
-                    title: '实收金额(元)',
+                    title: context.l10n.receivedAmountYuan,
                     value: _money(overview.receiveAmount),
                     backgroundColor: const Color(0xFFFFF8F3),
                   ),
@@ -456,7 +450,7 @@ class _OverviewCard extends StatelessWidget {
                   child: _OverviewMetricCard(
                     icon: Icons.local_atm_rounded,
                     iconColor: const Color(0xFF8A4DFF),
-                    title: '优惠金额(元)',
+                    title: context.l10n.discountAmountYuan,
                     value: _money(overview.discountAmount),
                     backgroundColor: const Color(0xFFF8F6FF),
                   ),
@@ -470,7 +464,6 @@ class _OverviewCard extends StatelessWidget {
   }
 }
 
-
 class _MonthPickerButton extends StatelessWidget {
   const _MonthPickerButton({required this.controller});
 
@@ -479,7 +472,7 @@ class _MonthPickerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => InkWell(
+      () => InkWell(
         onTap: () => _showMonthPicker(context),
         borderRadius: BorderRadius.circular(999.r),
         child: Container(
@@ -488,10 +481,7 @@ class _MonthPickerButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFFF1F4F9),
             borderRadius: BorderRadius.circular(999.r),
-            border: Border.all(
-              color: const Color(0xFFE4EAF3),
-              width: 1,
-            ),
+            border: Border.all(color: const Color(0xFFE4EAF3), width: 1),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -503,7 +493,9 @@ class _MonthPickerButton extends StatelessWidget {
               ),
               SizedBox(width: 6.w),
               Text(
-                controller.selectedMonthText,
+                controller.hasSelectedMonth.value
+                    ? _monthLabel(controller.selectedMonth.value)
+                    : context.l10n.thisMonth,
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w800,
@@ -530,9 +522,7 @@ class _MonthPickerButton extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(18.w, 12.h, 18.w, 20.h),
         decoration: BoxDecoration(
           color: const Color(0xFFF7FAFF),
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(24.r),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         child: Column(
           children: [
@@ -548,7 +538,7 @@ class _MonthPickerButton extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '选择月份',
+                  context.l10n.selectMonth,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w900,
@@ -581,11 +571,11 @@ class _MonthPickerButton extends StatelessWidget {
                     final month = months[index];
                     final isSelected =
                         selected.year == month.year &&
-                            selected.month == month.month;
+                        selected.month == month.month;
 
                     final isCurrentMonth =
                         month.year == DateTime.now().year &&
-                            month.month == DateTime.now().month;
+                        month.month == DateTime.now().month;
 
                     return InkWell(
                       onTap: () {
@@ -596,9 +586,7 @@ class _MonthPickerButton extends StatelessWidget {
                       child: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primary
-                              : Colors.white,
+                          color: isSelected ? AppColors.primary : Colors.white,
                           borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: isSelected
@@ -608,8 +596,9 @@ class _MonthPickerButton extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF1E5AA8)
-                                  .withValues(alpha: 0.045),
+                              color: const Color(
+                                0xFF1E5AA8,
+                              ).withValues(alpha: 0.045),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -617,8 +606,8 @@ class _MonthPickerButton extends StatelessWidget {
                         ),
                         child: Text(
                           isCurrentMonth
-                              ? '本月'
-                              : '${month.year}年${month.month.toString().padLeft(2, '0')}月',
+                              ? context.l10n.thisMonth
+                              : _monthLabel(month),
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w800,
@@ -641,7 +630,6 @@ class _MonthPickerButton extends StatelessWidget {
     );
   }
 }
-
 
 class _OverviewMetricCard extends StatelessWidget {
   const _OverviewMetricCard({
@@ -675,10 +663,7 @@ class _OverviewMetricCard extends StatelessWidget {
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: const Color(0xFF4E5874),
-            ),
+            style: TextStyle(fontSize: 12.sp, color: const Color(0xFF4E5874)),
           ),
           SizedBox(height: 7.h),
           Text(
@@ -714,20 +699,20 @@ class _BusinessDataCard extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('今日经营数据', style: _sectionTitleStyle),
+            Text(context.l10n.todayBusinessData, style: _sectionTitleStyle),
             SizedBox(height: 18.h),
             Row(
               children: [
                 Expanded(
                   child: _DataTile(
-                    title: '今日入单次数',
+                    title: context.l10n.todayEntryTimes,
                     value: '${data.todayVerifyCount}',
                   ),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: _DataTile(
-                    title: '今日消费金额(元)',
+                    title: context.l10n.todayConsumeAmountYuan,
                     value: _money(data.todayConsumeAmount),
                   ),
                 ),
@@ -738,14 +723,14 @@ class _BusinessDataCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _DataTile(
-                    title: '今日GMV(元)',
+                    title: context.l10n.todayGmvYuan,
                     value: _money(data.monthGmv),
                   ),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: _DataTile(
-                    title: '今日优惠金额(元)',
+                    title: context.l10n.todayDiscountAmountYuan,
                     value: _money(data.monthDiscountAmount),
                   ),
                 ),
@@ -759,10 +744,7 @@ class _BusinessDataCard extends StatelessWidget {
 }
 
 class _DataTile extends StatelessWidget {
-  const _DataTile({
-    required this.title,
-    required this.value,
-  });
+  const _DataTile({required this.title, required this.value});
 
   final String title;
   final String value;
@@ -806,8 +788,6 @@ class _DataTile extends StatelessWidget {
   }
 }
 
-
-
 /// 金额格式
 String _money(double value) {
   final text = value.toStringAsFixed(2);
@@ -829,14 +809,16 @@ String _money(double value) {
   return '${buffer.toString()}.$decimal';
 }
 
+/// 月份展示文本。
+String _monthLabel(DateTime date) {
+  return '${date.year}-${date.month.toString().padLeft(2, '0')}';
+}
+
 /// 卡片样式
 BoxDecoration get _cardDecoration => BoxDecoration(
   color: Colors.white,
   borderRadius: BorderRadius.circular(18.r),
-  border: Border.all(
-    color: const Color(0xFFEAF0F7),
-    width: 1,
-  ),
+  border: Border.all(color: const Color(0xFFEAF0F7), width: 1),
   boxShadow: [
     BoxShadow(
       color: const Color(0xFF1E5AA8).withValues(alpha: 0.045),

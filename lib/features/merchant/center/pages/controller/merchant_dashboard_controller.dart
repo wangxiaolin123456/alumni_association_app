@@ -1,9 +1,15 @@
 import 'package:alumni_association_app/app/router/app_router.dart';
+import 'package:alumni_association_app/app/api/api_request.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:get/get.dart';
 
 /// 商户工作台 Controller
 class MerchantDashboardController extends GetxController {
+  /// 路由传入的商户 id。
+  ///
+  /// 从“我的商户”列表进入时会传 shopId；如果没有传，则兜底取我的商户列表第一条。
+  late final int? shopId = _parseShopId(Get.arguments);
+
   /// 当前商户
   final currentStore = Rxn<StoreResponse>();
 
@@ -30,6 +36,15 @@ class MerchantDashboardController extends GetxController {
     final month = date.month.toString().padLeft(2, '0');
 
     return '$year年$month月';
+  }
+
+  /// 从路由参数中解析 shopId，兼容 int / String / StoreResponse 三种形态。
+  static int? _parseShopId(dynamic arguments) {
+    if (arguments is StoreResponse) return arguments.shopId;
+    if (arguments is! Map) return null;
+    final raw = arguments['shopId'];
+    if (raw is int) return raw;
+    return int.tryParse(raw?.toString() ?? '');
   }
 
   /// 可选月份列表
@@ -79,8 +94,6 @@ class MerchantDashboardController extends GetxController {
   /// 经营数据
   final businessData = MerchantBusinessData.empty().obs;
 
-
-
   @override
   void onInit() {
     super.onInit();
@@ -92,36 +105,10 @@ class MerchantDashboardController extends GetxController {
     isLoading.value = true;
 
     try {
-      /// TODO: 后续这里替换成真实接口
-      /// 例如：
-      /// final store = await ApiRequest.myMerchantDetail();
-      /// final stats = await ApiRequest.merchantStatistics(...);
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      currentStore.value = const StoreResponse(
-        shopId: 1,
-        userId: 1,
-        shopName: '创享餐饮商会',
-        typeId: 1,
-        typeName: '餐饮美食',
-        names: '张经理',
-        phone: '138****5678',
-        postalCode: '100000',
-        province: '上海市',
-        city: '上海市',
-        area: '静安区',
-        address: '南京西路123号',
-        businessStartTime: '09:00',
-        businessEndTime: '22:00',
-        shopLogo: '',
-        shopImgs: '',
-        licenseImages: '',
-        shopStatus: 1,
-        createTime: '',
-        updateTime: '',
-        isDeleted: 0,
-      );
+      final store = await _loadStore();
+      if (store != null) {
+        currentStore.value = store;
+      }
 
       overview.value = const MerchantOverviewData(
         orderCount: 56,
@@ -140,11 +127,28 @@ class MerchantDashboardController extends GetxController {
     }
   }
 
+  /// 获取当前工作台对应的商户信息。
+  ///
+  /// 1. 有 shopId：直接请求商户详情接口；
+  /// 2. 无 shopId：取我的商户列表第一条，再请求详情，保证图片和优惠券等字段完整。
+  Future<StoreResponse?> _loadStore() async {
+    final targetShopId = shopId;
+    if (targetShopId != null && targetShopId > 0) {
+      return ApiRequest.merchantInfo(shopId: targetShopId);
+    }
+
+    final stores = await ApiRequest.myMerchantList();
+    if (stores.isEmpty) return null;
+
+    final first = stores.first;
+    if (first.shopId <= 0) return first;
+    return await ApiRequest.merchantInfo(shopId: first.shopId) ?? first;
+  }
+
   /// 下拉刷新
   Future<void> refreshDashboard() async {
     await loadDashboard();
   }
-
 
   /// 新增商户
   void addMerchant() {
@@ -153,14 +157,23 @@ class MerchantDashboardController extends GetxController {
 
   /// 修改商户信息
   void editMerchantInfo() {
-    /// TODO: 换成你的商户信息编辑页
-    Get.toNamed(Pages.merchantOnboardingPage);
+    final store = currentStore.value;
+    if (store == null || store.shopId <= 0) {
+      Get.toNamed(Pages.merchantOnboardingPage);
+      return;
+    }
+
+    /// 复用商户入驻页面作为编辑页。
+    /// 这里把完整 StoreResponse 传进去，编辑页可以直接回填字段和图片入参。
+    Get.toNamed(
+      Pages.merchantOnboardingPage,
+      arguments: {'shopId': store.shopId, 'store': store},
+    );
   }
 
   /// 入单记录
   void openEntryRecords() {
-    /// TODO: 换成你的入单记录页面路由
-    // Get.toNamed(Pages.merchantEntryRecords);
+    Get.toNamed(Pages.entryRecordsPage);
   }
 
   /// 数据统计
@@ -171,7 +184,7 @@ class MerchantDashboardController extends GetxController {
 
   /// 优惠券管理
   void openCouponManagement() {
-    Get.toNamed(Pages.publishCoupon);
+    Get.toNamed(Pages.couponManagement);
   }
 
   /// 商户设置
@@ -199,7 +212,6 @@ class MerchantDashboardController extends GetxController {
     }
   }
 }
-
 
 /// 经营概览
 class MerchantOverviewData {

@@ -259,6 +259,7 @@ class StoreCouponResponse {
     required this.createTime,
     required this.updateTime,
     required this.isDeleted,
+    required this.isLose,
     required this.shopIds,
   });
 
@@ -307,6 +308,8 @@ class StoreCouponResponse {
   /// 是否删除
   final int isDeleted;
 
+  final int isLose;
+
   /// 适用商户ID集合，后端通常用逗号分隔
   final String shopIds;
 
@@ -327,6 +330,7 @@ class StoreCouponResponse {
       createTime: StoreResponse._stringValue(json['createTime']),
       updateTime: StoreResponse._stringValue(json['updateTime']),
       isDeleted: StoreResponse._intValue(json['isDeleted']),
+      isLose: StoreResponse._intValue(json['isLose']),
       shopIds: StoreResponse._stringValue(json['shopIds']),
     );
   }
@@ -348,6 +352,7 @@ class StoreCouponResponse {
       'createTime': createTime,
       'updateTime': updateTime,
       'isDeleted': isDeleted,
+      'isLose': isLose,
       'shopIds': shopIds,
     };
   }
@@ -358,20 +363,14 @@ class StoreCouponResponse {
   /// 页面展示用主文案
   String get displayTitle => name.trim().isEmpty ? '会员优惠' : name;
 
-  /// 页面展示用副文案
-  String get displayDescription {
-    if (description.trim().isNotEmpty) return description;
-    if (minOrderAmount > 0) return '满${_formatAmount(minOrderAmount)}元可用';
-    return '到店消费可使用';
-  }
 
   /// 页面展示用优惠值
   String get displayValue {
     if (type == 1) {
       return '${_formatAmount(value)}折';
     }
-    if (minOrderAmount > 0) {
-      return '满${_formatAmount(minOrderAmount)}减${_formatAmount(value)}';
+    if (type == 2 && minOrderAmount > 0&& maxDiscountAmount > 0) {
+      return '满${_formatAmount(maxDiscountAmount)}减${_formatAmount(minOrderAmount)}';
     }
     return '¥${_formatAmount(value)}';
   }
