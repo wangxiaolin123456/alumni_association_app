@@ -17,6 +17,7 @@ import 'package:alumni_association_app/features/member/messages/pages/member_mes
 import 'package:alumni_association_app/features/member/record_center/pages/member_record_pages.dart';
 import 'package:alumni_association_app/features/member/pages/member_search_page.dart';
 import 'package:alumni_association_app/features/merchant/center/pages/view/my_merchant_page.dart';
+import 'package:alumni_association_app/features/merchant/statistics/pages/merchant_statistics_page.dart';
 import 'package:alumni_association_app/features/opportunity/pages/opportunity_detail_page.dart';
 import 'package:alumni_association_app/features/opportunity/pages/opportunity_publish_page.dart';
 import 'package:alumni_association_app/features/profile/pages/language_page.dart';
@@ -103,6 +104,7 @@ class Pages {
   static const String helpCenter = '/member/profile/help-center';
   static const String feedback = '/member/profile/feedback';
   static const String entryRecordsPage = '/merchant/records';
+  static const String merchantStatistics = '/merchant/statistics';
   static const couponManagement = '/merchant/coupons';
   static const publishCoupon = '/merchant/coupons/publish';
 }
@@ -272,6 +274,11 @@ class AppPages {
     ),
 
     GetPage(name: Pages.entryRecordsPage, page: () => const EntryRecordsPage()),
+
+    GetPage(
+      name: Pages.merchantStatistics,
+      page: () => const MerchantStatisticsPage(),
+    ),
 
     GetPage(
       name: Pages.couponManagement,

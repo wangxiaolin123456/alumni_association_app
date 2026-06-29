@@ -260,7 +260,7 @@ class _CouponCard extends StatelessWidget {
     final status = _CouponUiStatus.fromCoupon(coupon);
     final canDisable = status == _CouponUiStatus.active;
     final canEnable = status == _CouponUiStatus.disabled;
-    final canDelete = status == _CouponUiStatus.expired;
+    final canEditOnly = status == _CouponUiStatus.expired;
 
     return Container(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 12.h),
@@ -326,37 +326,29 @@ class _CouponCard extends StatelessWidget {
           Row(
             children: [
               const Spacer(),
-              if (canDelete)
-                _OutlineAction(
-                  text: context.l10n.copyPublish,
-                  color: AppColors.primary,
-                  onTap: onEdit,
-                )
-              else
-                _OutlineAction(
-                  text: context.l10n.edit,
-                  color: AppColors.primary,
-                  onTap: onEdit,
-                ),
-              SizedBox(width: 10.w),
-              if (canDisable)
-                _OutlineAction(
-                  text: context.l10n.disableCoupon,
-                  color: AppColors.danger,
-                  onTap: onDisable,
-                )
-              else if (canEnable)
-                _OutlineAction(
-                  text: context.l10n.enableCoupon,
-                  color: AppColors.primary,
-                  onTap: onEnable,
-                )
-              else
-                _OutlineAction(
-                  text: context.l10n.delete,
-                  color: AppColors.danger,
-                  onTap: onDelete,
-                ),
+
+              _OutlineAction(
+                text: context.l10n.edit,
+                color: AppColors.primary,
+                onTap: onEdit,
+              ),
+
+              if (!canEditOnly) ...[
+                SizedBox(width: 10.w),
+
+                if (canDisable)
+                  _OutlineAction(
+                    text: context.l10n.disableCoupon,
+                    color: AppColors.danger,
+                    onTap: onDisable,
+                  )
+                else if (canEnable)
+                  _OutlineAction(
+                    text: context.l10n.enableCoupon,
+                    color: AppColors.primary,
+                    onTap: onEnable,
+                  ),
+              ],
             ],
           ),
         ],

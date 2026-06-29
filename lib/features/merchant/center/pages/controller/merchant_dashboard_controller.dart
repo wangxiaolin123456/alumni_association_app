@@ -178,8 +178,7 @@ class MerchantDashboardController extends GetxController {
 
   /// 数据统计
   void openStatistics() {
-    /// TODO: 换成你的数据统计页面路由
-    // Get.toNamed(Pages.merchantStatistics);
+    Get.toNamed(Pages.merchantStatistics);
   }
 
   /// 优惠券管理

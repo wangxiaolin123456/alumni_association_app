@@ -1666,6 +1666,12 @@ abstract class AppLocalizations {
   /// **'下一步：确认提交'**
   String get nextConfirmSubmit;
 
+  /// No description provided for @submitting.
+  ///
+  /// In zh, this message translates to:
+  /// **'提交中...'**
+  String get submitting;
+
   /// No description provided for @submissionSuccessful.
   ///
   /// In zh, this message translates to:
@@ -3040,6 +3046,114 @@ abstract class AppLocalizations {
   /// **'选择月份'**
   String get selectMonth;
 
+  /// No description provided for @previousMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'上个月'**
+  String get previousMonth;
+
+  /// No description provided for @nextMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'下个月'**
+  String get nextMonth;
+
+  /// No description provided for @coreDataOverview.
+  ///
+  /// In zh, this message translates to:
+  /// **'核心数据概览'**
+  String get coreDataOverview;
+
+  /// No description provided for @compareLastMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'与上月对比'**
+  String get compareLastMonth;
+
+  /// No description provided for @businessTrend.
+  ///
+  /// In zh, this message translates to:
+  /// **'经营趋势'**
+  String get businessTrend;
+
+  /// No description provided for @memberCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'会员人数'**
+  String get memberCount;
+
+  /// No description provided for @statisticsMonthlyTip.
+  ///
+  /// In zh, this message translates to:
+  /// **'* 数据统计包含本月每日累计数据'**
+  String get statisticsMonthlyTip;
+
+  /// No description provided for @dataDetail.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据明细'**
+  String get dataDetail;
+
+  /// No description provided for @monthOrderCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'本月订单数'**
+  String get monthOrderCount;
+
+  /// No description provided for @monthReceivedAmount.
+  ///
+  /// In zh, this message translates to:
+  /// **'本月实收金额(元)'**
+  String get monthReceivedAmount;
+
+  /// No description provided for @increaseComparedLastMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'较上月增长'**
+  String get increaseComparedLastMonth;
+
+  /// No description provided for @decreaseComparedLastMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'较上月减少'**
+  String get decreaseComparedLastMonth;
+
+  /// No description provided for @channelRatio.
+  ///
+  /// In zh, this message translates to:
+  /// **'渠道占比'**
+  String get channelRatio;
+
+  /// No description provided for @merchantHome.
+  ///
+  /// In zh, this message translates to:
+  /// **'商户首页'**
+  String get merchantHome;
+
+  /// No description provided for @merchantSettings.
+  ///
+  /// In zh, this message translates to:
+  /// **'商户设置'**
+  String get merchantSettings;
+
+  /// No description provided for @storeVerificationChannel.
+  ///
+  /// In zh, this message translates to:
+  /// **'到店核销'**
+  String get storeVerificationChannel;
+
+  /// No description provided for @memberReservationChannel.
+  ///
+  /// In zh, this message translates to:
+  /// **'会员预约'**
+  String get memberReservationChannel;
+
+  /// No description provided for @activityConversionChannel.
+  ///
+  /// In zh, this message translates to:
+  /// **'活动转化'**
+  String get activityConversionChannel;
+
   /// No description provided for @todayBusinessData.
   ///
   /// In zh, this message translates to:
@@ -3955,7 +4069,7 @@ abstract class AppLocalizations {
   /// No description provided for @couponTypeFixedAmount.
   ///
   /// In zh, this message translates to:
-  /// **'固定金额引'**
+  /// **'固定折扣'**
   String get couponTypeFixedAmount;
 
   /// No description provided for @couponTypeFixedAmountSubtitle.
@@ -3973,7 +4087,7 @@ abstract class AppLocalizations {
   /// No description provided for @couponTypePercentage.
   ///
   /// In zh, this message translates to:
-  /// **'百分比折扣引'**
+  /// **'百分比折扣'**
   String get couponTypePercentage;
 
   /// No description provided for @couponTypePercentageSubtitle.
@@ -3991,7 +4105,7 @@ abstract class AppLocalizations {
   /// No description provided for @couponTypeConditional.
   ///
   /// In zh, this message translates to:
-  /// **'条件付割引'**
+  /// **'满减折扣'**
   String get couponTypeConditional;
 
   /// No description provided for @couponTypeConditionalSubtitle.

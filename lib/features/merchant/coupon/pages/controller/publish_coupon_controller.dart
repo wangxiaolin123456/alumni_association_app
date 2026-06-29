@@ -42,10 +42,10 @@ class PublishCouponController extends GetxController {
 
   /// 优惠券类型
   ///
-  /// 1 = 固定金额引
-  /// 2 = 百分比折扣引
-  /// 3 = 条件付割引
-  final selectedType = 1.obs;
+  /// 0 = 固定金额引
+  /// 1 = 百分比折扣引
+  /// 2 = 条件付割引
+  final selectedType = 0.obs;
 
   /// 优惠券状态
   ///
@@ -84,13 +84,13 @@ class PublishCouponController extends GetxController {
   final errorMessage = RxnString();
 
   /// 是否是固定金额引
-  bool get isFixedAmount => selectedType.value == 1;
+  bool get isFixedAmount => selectedType.value == 0;
 
   /// 是否是百分比折扣引
-  bool get isPercentageDiscount => selectedType.value == 2;
+  bool get isPercentageDiscount => selectedType.value == 1;
 
   /// 是否是条件付割引
-  bool get isConditionDiscount => selectedType.value == 3;
+  bool get isConditionDiscount => selectedType.value == 2;
 
   /// 是否禁用
   bool get isDisabled => disableStatus.value == 1;
@@ -114,7 +114,7 @@ class PublishCouponController extends GetxController {
   void _fillFormByCoupon(StoreCouponResponse coupon) {
     nameController.text = coupon.name;
     descriptionController.text = coupon.description;
-    selectedType.value = coupon.type == 0 ? 1 : coupon.type;
+    selectedType.value = coupon.type;
     disableStatus.value = coupon.disableStatus;
     disableReasonController.text = coupon.disableMsg;
 
@@ -124,8 +124,8 @@ class PublishCouponController extends GetxController {
     } else if (coupon.type == 1) {
       discountRateController.text = _formatNumber(coupon.value);
     } else if (coupon.type == 2) {
-      conditionMinAmountController.text = _formatNumber(coupon.minOrderAmount);
-      conditionDiscountAmountController.text = _formatNumber(coupon.value);
+      conditionMinAmountController.text = _formatNumber(coupon.maxDiscountAmount);
+      conditionDiscountAmountController.text = _formatNumber(coupon.minOrderAmount);
     }
 
     startDate.value = _parseDate(coupon.startTime);
@@ -537,17 +537,17 @@ class PublishCouponController extends GetxController {
     double minOrderAmount = 0;
     double maxDiscountAmount = 0;
 
-    if (type == 1) {
+    if (type == 0) {
       /// 固定金额引
       value = _doubleValue(fixedDiscountAmountController.text);
       minOrderAmount = 0;
       maxDiscountAmount = 0;
-    } else if (type == 2) {
+    } else if (type == 1) {
       /// 百分比折扣引
       value = _doubleValue(discountRateController.text);
       minOrderAmount = 0;
       maxDiscountAmount = 0;
-    } else if (type == 3) {
+    } else if (type == 2) {
       /// 条件付割引
       minOrderAmount = _doubleValue(conditionDiscountAmountController.text);
       maxDiscountAmount = _doubleValue(conditionMinAmountController.text);
@@ -561,7 +561,7 @@ class PublishCouponController extends GetxController {
       userId: userId,
       name: nameController.text.trim(),
       description: descriptionController.text.trim(),
-      type: type-1,
+      type: type,
       value: value,
       minOrderAmount: minOrderAmount,
       maxDiscountAmount: maxDiscountAmount,

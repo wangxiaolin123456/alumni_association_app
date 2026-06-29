@@ -96,6 +96,37 @@ class ConsumptionAmountPage extends StatelessWidget {
 
           SizedBox(height: 14.h),
 
+          /// 创建订单返回的信息
+          Obx(() {
+            final order = controller.currentOrder.value;
+            if (order == null || order.orderId <= 0) {
+              return const SizedBox.shrink();
+            }
+
+            return Container(
+              margin: EdgeInsets.only(bottom: 14.h),
+              padding: EdgeInsets.all(14.r),
+              decoration: consumptionCardDecoration,
+              child: Column(
+                children: [
+                  _AmountRow(
+                    label: context.l10n.orderNumber,
+                    value: order.orderNum.isEmpty
+                        ? order.orderId.toString()
+                        : order.orderNum,
+                    color: AppColors.textPrimary,
+                  ),
+                  SizedBox(height: 12.h),
+                  _AmountRow(
+                    label: context.l10n.orderCreateTime,
+                    value: order.createTime.isEmpty ? '--' : order.createTime,
+                    color: AppColors.textPrimary,
+                  ),
+                ],
+              ),
+            );
+          }),
+
           /// 金额填写
           Container(
             padding: EdgeInsets.all(16.r),
@@ -160,7 +191,7 @@ class ConsumptionAmountPage extends StatelessWidget {
                 ),
 
                 Obx(
-                      () => ListTile(
+                  () => ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: CircleAvatar(
                       backgroundColor: const Color(0xFFFFF1E8),
@@ -192,19 +223,19 @@ class ConsumptionAmountPage extends StatelessWidget {
 
                 /// 优惠金额 / 应付金额
                 Obx(
-                      () => Column(
+                  () => Column(
                     children: [
                       _AmountRow(
                         label: context.l10n.discountAmount,
                         value:
-                        '- ¥${controller.discountAmount.toStringAsFixed(2)}',
+                            '- ¥${controller.discountAmount.toStringAsFixed(2)}',
                         color: const Color(0xFFFF5B22),
                       ),
                       SizedBox(height: 16.h),
                       _AmountRow(
                         label: context.l10n.payableAmount,
                         value:
-                        '¥ ${controller.payableAmount.toStringAsFixed(2)}',
+                            '¥ ${controller.payableAmount.toStringAsFixed(2)}',
                         color: Colors.red,
                         emphasized: true,
                       ),
@@ -237,14 +268,20 @@ class ConsumptionAmountPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 12.h),
           child: Obx(
-                () => FilledButton(
+            () => FilledButton(
               onPressed: controller.canContinueFromAmount
-                  ? () {
-                controller.submit();
-                Get.toNamed(Pages.consumptionSuccess);
-              }
+                  ? () async {
+                      final success = await controller.submitOrder();
+                      if (success) {
+                        Get.toNamed(Pages.consumptionSuccess);
+                      }
+                    }
                   : null,
-              child: Text(context.l10n.nextConfirmSubmit),
+              child: Text(
+                controller.isSubmittingOrder.value
+                    ? context.l10n.submitting
+                    : context.l10n.nextConfirmSubmit,
+              ),
             ),
           ),
         ),

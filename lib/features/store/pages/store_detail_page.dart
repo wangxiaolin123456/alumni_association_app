@@ -515,9 +515,7 @@ class _IntroCard extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar({
-    required this.controller,
-  });
+  const _BottomBar({required this.controller});
 
   final StoreController controller;
 
@@ -592,32 +590,19 @@ class _BottomBar extends StatelessWidget {
     );
   }
 
-  void _goToConsumptionAmount(BuildContext context) {
+  Future<void> _goToConsumptionAmount(BuildContext context) async {
     final store = controller.selectedStore;
+    if (store.shopId <= 0) return;
 
     final consumptionController = Get.isRegistered<ConsumptionEntryController>()
         ? Get.find<ConsumptionEntryController>()
         : Get.put(ConsumptionEntryController());
 
-    /// 保存当前商户
-    consumptionController.selectStoreMerchant(store);
-
-    /// 保存当前选中的优惠券
-    if (store.coupons.isNotEmpty &&
-        controller.selectedOfferIndex.value >= 0 &&
-        controller.selectedOfferIndex.value < store.coupons.length) {
-      consumptionController.selectStoreCoupon(
-        store: store,
-        index: controller.selectedOfferIndex.value,
-      );
-    } else {
-      consumptionController.clearStoreCoupon();
-    }
-
-    /// 清空金额，避免上一次金额残留
-    consumptionController.amount.value = 0;
-    consumptionController.amountController.clear();
-    consumptionController.noteController.clear();
+    final success = await consumptionController.prepareOrderFromStore(
+      store: store,
+      selectedCouponIndex: controller.selectedOfferIndex.value,
+    );
+    if (!success) return;
 
     /// 跳转到消费入单金额页
     Get.toNamed(Pages.consumptionAmount);

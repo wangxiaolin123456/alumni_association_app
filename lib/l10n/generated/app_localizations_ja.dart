@@ -808,6 +808,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get nextConfirmSubmit => '次へ：確認して送信';
 
   @override
+  String get submitting => '送信中...';
+
+  @override
   String get submissionSuccessful => '送信しました！';
 
   @override
@@ -1501,6 +1504,60 @@ class AppLocalizationsJa extends AppLocalizations {
   String get selectMonth => '月を選択';
 
   @override
+  String get previousMonth => '前月';
+
+  @override
+  String get nextMonth => '翌月';
+
+  @override
+  String get coreDataOverview => '主要データ概要';
+
+  @override
+  String get compareLastMonth => '前月比';
+
+  @override
+  String get businessTrend => '営業トレンド';
+
+  @override
+  String get memberCount => '会員数';
+
+  @override
+  String get statisticsMonthlyTip => '* データ統計には今月の日別累計データが含まれます';
+
+  @override
+  String get dataDetail => 'データ詳細';
+
+  @override
+  String get monthOrderCount => '今月の注文数';
+
+  @override
+  String get monthReceivedAmount => '今月の実収金額(元)';
+
+  @override
+  String get increaseComparedLastMonth => '前月より増加';
+
+  @override
+  String get decreaseComparedLastMonth => '前月より減少';
+
+  @override
+  String get channelRatio => 'チャネル比率';
+
+  @override
+  String get merchantHome => '店舗ホーム';
+
+  @override
+  String get merchantSettings => '店舗設定';
+
+  @override
+  String get storeVerificationChannel => '店頭利用';
+
+  @override
+  String get memberReservationChannel => '会員予約';
+
+  @override
+  String get activityConversionChannel => 'イベント転換';
+
+  @override
   String get todayBusinessData => '本日の営業データ';
 
   @override
@@ -1959,7 +2016,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get couponTypeRequired => 'クーポン種類 *';
 
   @override
-  String get couponTypeFixedAmount => '定額割引';
+  String get couponTypeFixedAmount => '固定額割引';
 
   @override
   String get couponTypeFixedAmountSubtitle => '固定金額を割引';

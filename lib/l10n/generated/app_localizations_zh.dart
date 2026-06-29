@@ -809,6 +809,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get nextConfirmSubmit => '下一步：确认提交';
 
   @override
+  String get submitting => '提交中...';
+
+  @override
   String get submissionSuccessful => '提交成功！';
 
   @override
@@ -1498,6 +1501,60 @@ class AppLocalizationsZh extends AppLocalizations {
   String get selectMonth => '选择月份';
 
   @override
+  String get previousMonth => '上个月';
+
+  @override
+  String get nextMonth => '下个月';
+
+  @override
+  String get coreDataOverview => '核心数据概览';
+
+  @override
+  String get compareLastMonth => '与上月对比';
+
+  @override
+  String get businessTrend => '经营趋势';
+
+  @override
+  String get memberCount => '会员人数';
+
+  @override
+  String get statisticsMonthlyTip => '* 数据统计包含本月每日累计数据';
+
+  @override
+  String get dataDetail => '数据明细';
+
+  @override
+  String get monthOrderCount => '本月订单数';
+
+  @override
+  String get monthReceivedAmount => '本月实收金额(元)';
+
+  @override
+  String get increaseComparedLastMonth => '较上月增长';
+
+  @override
+  String get decreaseComparedLastMonth => '较上月减少';
+
+  @override
+  String get channelRatio => '渠道占比';
+
+  @override
+  String get merchantHome => '商户首页';
+
+  @override
+  String get merchantSettings => '商户设置';
+
+  @override
+  String get storeVerificationChannel => '到店核销';
+
+  @override
+  String get memberReservationChannel => '会员预约';
+
+  @override
+  String get activityConversionChannel => '活动转化';
+
+  @override
   String get todayBusinessData => '今日经营数据';
 
   @override
@@ -1956,7 +2013,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get couponTypeRequired => '优惠券类型 *';
 
   @override
-  String get couponTypeFixedAmount => '固定金额引';
+  String get couponTypeFixedAmount => '固定折扣';
 
   @override
   String get couponTypeFixedAmountSubtitle => '固定金额立减';
@@ -1965,7 +2022,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get couponTypeFixedAmountExample => '如：满199减20元';
 
   @override
-  String get couponTypePercentage => '百分比折扣引';
+  String get couponTypePercentage => '百分比折扣';
 
   @override
   String get couponTypePercentageSubtitle => '按百分比折扣';
@@ -1974,7 +2031,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get couponTypePercentageExample => '如：全场9折';
 
   @override
-  String get couponTypeConditional => '条件付割引';
+  String get couponTypeConditional => '满减折扣';
 
   @override
   String get couponTypeConditionalSubtitle => '满足指定条件享优惠';

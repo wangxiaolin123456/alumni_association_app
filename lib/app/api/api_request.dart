@@ -3,6 +3,7 @@ import 'package:alumni_association_app/features/profile/pages/merchant_onboardin
 import 'package:alumni_association_app/features/profile/pages/merchant_region_item.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:dio/dio.dart';
+import '../../features/consumption/model/response/order_response.dart';
 import '../../features/auth/model/response/user_info_response.dart';
 import '../../features/merchant/coupon/model/request/coupon_request.dart';
 import '../../features/store/model/response/store_response.dart';
@@ -71,6 +72,12 @@ class URL {
 
   /// 修改优惠券
   static const String updateCoupons = "/api/coupons/updateCoupons";
+
+  /// 创建订单
+  static const String addOrder = "/api/order/addOrder";
+
+  /// 提交/确认订单
+  static const String confirmOrder = "/api/order/confirmOrder";
 }
 
 class ApiRequest {
@@ -622,7 +629,7 @@ class ApiRequest {
       } else if (disableStatus == 2) {
         /// 禁用
         params["disableStatus"] = 1;
-      }else if (disableStatus == 3) {
+      } else if (disableStatus == 3) {
         /// 过期
         params["disableStatus"] = 2;
       }
@@ -645,13 +652,95 @@ class ApiRequest {
           .whereType<Map>()
           .map(
             (item) =>
-            StoreCouponResponse.fromJson(Map<String, dynamic>.from(item)),
-      )
+                StoreCouponResponse.fromJson(Map<String, dynamic>.from(item)),
+          )
           .where((item) => item.isDeleted == 0)
           .toList();
     } catch (e) {
       ToastUtils.showToast(message: "优惠券获取失败", type: ToastType.error);
       return [];
+    }
+  }
+
+  /// 创建订单。
+  ///
+  /// 商户详情点击“立即使用”时先创建订单，后端返回订单对象，
+  /// 随后带着订单数据进入消费金额填写页。
+  static Future<OrderResponse?> addOrder({
+    required int shopId,
+    required int userId,
+    required int couponId,
+    required StoreCouponResponse? coupon,
+  }) async {
+    try {
+      final response = await HttpManager.post<dynamic>(
+        URL.addOrder,
+        data: {
+          "orderId": 0,
+          "shopId": shopId,
+          "userId": userId,
+          "orderNum": "",
+          "total": 0,
+          "actualTotal": 0,
+          "reduceAmount": 0,
+          "peopleNum": 1,
+          "orderType": 0,
+          "orderStatus": 0,
+          "coupontId": couponId,
+          "createTime": "",
+          "appointmentTime": "",
+          "finallyTime": "",
+          "cancelTime": "",
+          "remark": "",
+          "contactName": "",
+          "contactPhone": "",
+          "coupons": coupon?.toJson(),
+        },
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! Map) return null;
+
+      return OrderResponse.fromJson(Map<String, dynamic>.from(rawData));
+    } catch (e) {
+      ToastUtils.showToast(message: "订单创建失败", type: ToastType.error);
+      return null;
+    }
+  }
+
+  /// 提交订单。
+  ///
+  /// 后端接口为 form-url-encoded，参数：orderId、actualTotal、remark。
+  static Future<bool> confirmOrder({
+    required int orderId,
+    required double actualTotal,
+    required String remark,
+  }) async {
+    try {
+      final response = await HttpManager.post<dynamic>(
+        URL.confirmOrder,
+        params: {
+          "orderId": orderId,
+          "actualTotal": actualTotal,
+          "remark": remark,
+        },
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code == 200) {
+        return true;
+      }
+
+      ToastUtils.showToast(message: response.msg, type: ToastType.error);
+      return false;
+    } catch (e) {
+      ToastUtils.showToast(message: "订单提交失败", type: ToastType.error);
+      return false;
     }
   }
 

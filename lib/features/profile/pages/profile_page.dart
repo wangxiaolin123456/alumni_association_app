@@ -147,28 +147,25 @@ class _MemberMineView extends StatelessWidget {
               Icons.verified_user_rounded,
               l10n.alumniCertification,
                   () => Get.toNamed(Pages.memberCertification),
-              gradientColors: const [
-                Color(0xFF3B82F6),
-                Color(0xFF0B5CFF),
-              ],
+              color: Color(0xFF3B82F6),
             ),
             _ActionItem(
               Icons.work_history_rounded,
               l10n.opportunityManagement,
                   () => Get.toNamed(Pages.opportunityManagementPage),
-              gradientColors: const [
-                Color(0xFFFF9F43),
-                Color(0xFFFF6B22),
-              ],
+              color: Color(0xFFFF9F43),
             ),
             _ActionItem(
               Icons.event_available_rounded,
               l10n.activityManagement,
                   () => Get.toNamed(Pages.activityManagementPage),
-              gradientColors: const [
-                Color(0xFF8B5CF6),
-                Color(0xFF6D28D9),
-              ],
+              color: Color(0xFF8B5CF6),
+            ),
+            _ActionItem(
+              Icons.local_offer_rounded,
+              l10n.couponManage,
+                  () => Get.toNamed(Pages.couponManagement),
+              color: Color(0xFF14B8A6),
             ),
             _ActionItem(
               Icons.store_mall_directory_rounded,
@@ -179,28 +176,19 @@ class _MemberMineView extends StatelessWidget {
                     : Pages.merchantOnboardingPage,
               ),
               isNew: !isMerchant,
-              gradientColors: const [
-                Color(0xFF22C55E),
-                Color(0xFF16A34A),
-              ],
+              color:  Color(0xFF22C55E),
             ),
             _ActionItem(
               Icons.headset_mic_rounded,
               l10n.helpCenter,
                   () => Get.toNamed(Pages.helpCenter),
-              gradientColors: const [
-                Color(0xFF06B6D4),
-                Color(0xFF0891B2),
-              ],
+              color:  Color(0xFF06B6D4),
             ),
             _ActionItem(
               Icons.rate_review_rounded,
               l10n.feedback,
                   () => Get.toNamed(Pages.feedback),
-              gradientColors: const [
-                Color(0xFF64748B),
-                Color(0xFF334155),
-              ],
+              color: Color(0xFF64748B),
             ),
           ],
         ),

@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
+import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
+import 'package:alumni_association_app/util/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -28,12 +31,18 @@ class ConsumptionEntryController extends GetxController {
 
   /// 消费金额
   final amount = 0.0.obs;
+
+  /// 创建订单后接口返回的订单信息
+  final currentOrder = Rxn<OrderResponse>();
+
+  /// 提交订单中
+  final isSubmittingOrder = false.obs;
+
   /// 提交后的订单号
   final submittedOrderNumber = ''.obs;
 
   /// 提交时间
   final submittedAtText = ''.obs;
-
 
   /// 当前消费入单选中的商户
   final selectedStore = Rxn<StoreResponse>();
@@ -120,7 +129,11 @@ class ConsumptionEntryController extends GetxController {
   }
 
   /// 是否可以提交金额
-  bool get canContinueFromAmount => amount.value > 0;
+  bool get canContinueFromAmount =>
+      amount.value > 0 &&
+      currentOrder.value != null &&
+      currentOrder.value!.orderId > 0 &&
+      !isSubmittingOrder.value;
 
   /// 优惠金额
   double get discountAmount {
@@ -132,8 +145,7 @@ class ConsumptionEntryController extends GetxController {
     }
 
     /// 没达到最低消费金额，不优惠
-    if (coupon.minOrderAmount > 0 &&
-        currentAmount < coupon.minOrderAmount) {
+    if (coupon.minOrderAmount > 0 && currentAmount < coupon.minOrderAmount) {
       return 0;
     }
 
@@ -196,11 +208,7 @@ class ConsumptionEntryController extends GetxController {
     final result = await ApiRequest.merchantTypes();
 
     merchantTypes.assignAll([
-      const MerchantTypeItem(
-        id: 0,
-        typeName: '全部',
-        isDeleted: 0,
-      ),
+      const MerchantTypeItem(id: 0, typeName: '全部', isDeleted: 0),
       ...result,
     ]);
 
@@ -290,9 +298,7 @@ class ConsumptionEntryController extends GetxController {
 
   /// 兼容旧 String 分类选择
   void selectCategory(String category) {
-    final index = merchantTypes.indexWhere(
-          (item) => item.typeName == category,
-    );
+    final index = merchantTypes.indexWhere((item) => item.typeName == category);
 
     if (index >= 0) {
       selectCategoryByIndex(index);
@@ -302,7 +308,7 @@ class ConsumptionEntryController extends GetxController {
   /// 从商户列表选择商户
   void selectMerchant(StoreResponse merchant) {
     final index = merchants.indexWhere(
-          (item) => item.shopId == merchant.shopId,
+      (item) => item.shopId == merchant.shopId,
     );
 
     selectedMerchantIndex.value = index;
@@ -317,9 +323,7 @@ class ConsumptionEntryController extends GetxController {
   void selectStoreMerchant(StoreResponse store) {
     selectedStore.value = store;
 
-    final index = merchants.indexWhere(
-          (item) => item.shopId == store.shopId,
-    );
+    final index = merchants.indexWhere((item) => item.shopId == store.shopId);
 
     selectedMerchantIndex.value = index;
 
@@ -329,10 +333,7 @@ class ConsumptionEntryController extends GetxController {
   }
 
   /// 从商户详情选择优惠券
-  void selectStoreCoupon({
-    required StoreResponse store,
-    required int index,
-  }) {
+  void selectStoreCoupon({required StoreResponse store, required int index}) {
     selectedStore.value = store;
     selectedCouponIndex.value = index;
 
@@ -340,6 +341,64 @@ class ConsumptionEntryController extends GetxController {
       selectedStoreCoupon.value = store.coupons[index];
     } else {
       selectedStoreCoupon.value = null;
+    }
+  }
+
+  /// 从商户详情页进入“立即使用”。
+  ///
+  /// 页面层只负责把商户和优惠券下标传进来；创建订单、loading、
+  /// 返回订单保存、金额表单清空都统一放在 Controller 内处理。
+  Future<bool> prepareOrderFromStore({
+    required StoreResponse store,
+    required int selectedCouponIndex,
+  }) async {
+    if (store.shopId <= 0) return false;
+
+    selectStoreMerchant(store);
+
+    StoreCouponResponse? selectedCoupon;
+    if (selectedCouponIndex >= 0 &&
+        selectedCouponIndex < store.coupons.length) {
+      selectedCoupon = store.coupons[selectedCouponIndex];
+      selectStoreCoupon(store: store, index: selectedCouponIndex);
+    } else {
+      clearStoreCoupon();
+    }
+
+    /// 清空上一次填写的金额、备注和订单，避免跨商户残留。
+    amount.value = 0;
+    currentOrder.value = null;
+    amountController.clear();
+    noteController.clear();
+
+    LoadingUtil.showSafe();
+    try {
+      final userId = SessionController.current.userInfo.value?.userId ?? 0;
+      final order = await ApiRequest.addOrder(
+        shopId: store.shopId,
+        userId: userId,
+        couponId: selectedCoupon?.couponId ?? 0,
+        coupon: selectedCoupon,
+      );
+      if (order == null || order.orderId <= 0) return false;
+
+      setCreatedOrder(order);
+      return true;
+    } finally {
+      LoadingUtil.dismissSafe();
+    }
+  }
+
+  /// 保存创建订单接口返回的信息。
+  ///
+  /// 从商户详情点击“立即使用”时会先创建订单，再把返回值带到金额填写页。
+  void setCreatedOrder(OrderResponse order) {
+    currentOrder.value = order;
+    submittedOrderNumber.value = order.orderNum;
+    submittedAtText.value = order.createTime;
+
+    if (order.coupons != null) {
+      selectedStoreCoupon.value = order.coupons;
     }
   }
 
@@ -383,6 +442,8 @@ class ConsumptionEntryController extends GetxController {
     selectedMerchantIndex.value = -1;
     selectedCouponIndex.value = -1;
     amount.value = 0;
+    currentOrder.value = null;
+    isSubmittingOrder.value = false;
 
     selectedStore.value = null;
     selectedStoreCoupon.value = null;
@@ -394,20 +455,39 @@ class ConsumptionEntryController extends GetxController {
     await fetchInitial();
   }
 
-  /// 提交，后续替换成真实创建订单接口
-  void submit() {
-    if (!canContinueFromAmount) return;
+  /// 提交订单。
+  ///
+  /// 用户填写消费原价后，前端按优惠券规则计算 actualTotal，
+  /// 再调用 `/api/order/confirmOrder` 完成提交。
+  Future<bool> submitOrder() async {
+    final order = currentOrder.value;
+    if (order == null || order.orderId <= 0 || !canContinueFromAmount) {
+      return false;
+    }
 
-    /// TODO:
-    /// 后续这里调用真实提交接口。
-    /// 需要提交的核心字段：
-    ///
-    /// shopId: selectedMerchant.shopId
-    /// couponId: selectedStoreCoupon.value?.couponId ?? 0
-    /// originalAmount: amount.value
-    /// discountAmount: discountAmount
-    /// paidAmount: payableAmount
-    /// note: noteController.text.trim()
+    isSubmittingOrder.value = true;
+    LoadingUtil.showSafe();
+    try {
+      final success = await ApiRequest.confirmOrder(
+        orderId: order.orderId,
+        actualTotal: payableAmount,
+        remark: noteController.text.trim(),
+      );
+      if (!success) return false;
+
+      final now = DateTime.now();
+      submittedOrderNumber.value = order.orderNum.isEmpty
+          ? order.orderId.toString()
+          : order.orderNum;
+      submittedAtText.value = order.createTime.isEmpty
+          ? _formatDateTime(now)
+          : order.createTime;
+
+      return true;
+    } finally {
+      LoadingUtil.dismissSafe();
+      isSubmittingOrder.value = false;
+    }
   }
 
   @override
@@ -424,3 +504,14 @@ class ConsumptionEntryController extends GetxController {
 
 /// 金额保留两位小数
 double _roundMoney(double value) => (value * 100).roundToDouble() / 100;
+
+/// 本地提交时间展示。
+String _formatDateTime(DateTime value) {
+  final year = value.year.toString().padLeft(4, '0');
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+  final hour = value.hour.toString().padLeft(2, '0');
+  final minute = value.minute.toString().padLeft(2, '0');
+  final second = value.second.toString().padLeft(2, '0');
+  return '$year-$month-$day $hour:$minute:$second';
+}

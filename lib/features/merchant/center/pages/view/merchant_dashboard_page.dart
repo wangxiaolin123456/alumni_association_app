@@ -321,16 +321,6 @@ class _CommonFunctionCard extends StatelessWidget {
                   onTap: controller.openStatistics,
                 ),
               ),
-              _VerticalDivider(),
-              Expanded(
-                child: _FunctionItem(
-                  icon: Icons.confirmation_number_rounded,
-                  iconColor: const Color(0xFFFF7A1A),
-                  title: context.l10n.couponManage,
-                  subtitle: context.l10n.manageCoupons,
-                  onTap: controller.openCouponManagement,
-                ),
-              ),
             ],
           ),
         ],

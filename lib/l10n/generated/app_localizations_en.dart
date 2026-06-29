@@ -822,6 +822,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nextConfirmSubmit => 'Next: Confirm';
 
   @override
+  String get submitting => 'Submitting...';
+
+  @override
   String get submissionSuccessful => 'Submitted Successfully!';
 
   @override
@@ -1540,6 +1543,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectMonth => 'Select Month';
+
+  @override
+  String get previousMonth => 'Previous Month';
+
+  @override
+  String get nextMonth => 'Next Month';
+
+  @override
+  String get coreDataOverview => 'Core Overview';
+
+  @override
+  String get compareLastMonth => 'Compared with last month';
+
+  @override
+  String get businessTrend => 'Business Trend';
+
+  @override
+  String get memberCount => 'Members';
+
+  @override
+  String get statisticsMonthlyTip =>
+      '* Data includes cumulative daily totals for this month';
+
+  @override
+  String get dataDetail => 'Data Details';
+
+  @override
+  String get monthOrderCount => 'Monthly Orders';
+
+  @override
+  String get monthReceivedAmount => 'Monthly Received (Yuan)';
+
+  @override
+  String get increaseComparedLastMonth => 'Higher than last month';
+
+  @override
+  String get decreaseComparedLastMonth => 'Lower than last month';
+
+  @override
+  String get channelRatio => 'Channel Ratio';
+
+  @override
+  String get merchantHome => 'Merchant Home';
+
+  @override
+  String get merchantSettings => 'Merchant Settings';
+
+  @override
+  String get storeVerificationChannel => 'In-store Redemption';
+
+  @override
+  String get memberReservationChannel => 'Member Booking';
+
+  @override
+  String get activityConversionChannel => 'Activity Conversion';
 
   @override
   String get todayBusinessData => 'Today Business Data';
