@@ -779,5 +779,22 @@
   "couponMinusText": "Save",
   "couponDirectMinusPrefix": "Save",
   "couponDiscountPrefix": "Discount",
-  "couponMemberExclusive": "Members Only"
+  "couponMemberExclusive": "Members Only",
+  "hour": "Hour",
+  "minute": "Minute",
+  "second": "Second",
+  "couponUpdateSuccess": "Coupon updated successfully.",
+  "couponPublishSuccess": "Coupon published successfully.",
+  "pleaseInputCouponName": "Please enter the coupon name",
+  "pleaseInputCouponDescription": "Please enter the coupon description",
+  "pleaseInputDiscountAmount": "Please enter the discount amount",
+  "pleaseInputCorrectDiscountRate": "Please enter a valid discount rate",
+  "pleaseInputThresholdAmount": "Please enter the threshold amount",
+  "discountAmountCannotExceedThreshold": "The discount amount cannot exceed the threshold amount",
+  "pleaseSelectApplicableStores": "Please select applicable stores",
+  "pleaseSelectStartDate": "Please select the start date",
+  "pleaseSelectEndDate": "Please select the end date",
+  "endTimeCannotBeforeStartTime": "The end time cannot be earlier than the start time",
+  "pleaseInputDisableReason": "Please enter the disable reason",
+  "selectedStoresCount": "{count} stores selected"
 }

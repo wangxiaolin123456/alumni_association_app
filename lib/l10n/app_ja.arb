@@ -779,5 +779,22 @@
   "couponMinusText": "以上で",
   "couponDirectMinusPrefix": "",
   "couponDiscountPrefix": "割引",
-  "couponMemberExclusive": "会員限定"
+  "couponMemberExclusive": "会員限定",
+  "hour": "時",
+  "minute": "分",
+  "second": "秒",
+  "couponUpdateSuccess": "クーポンを更新しました。",
+  "couponPublishSuccess": "クーポンを公開しました。",
+  "pleaseInputCouponName": "クーポン名を入力してください",
+  "pleaseInputCouponDescription": "クーポン説明を入力してください",
+  "pleaseInputDiscountAmount": "割引金額を入力してください",
+  "pleaseInputCorrectDiscountRate": "正しい割引率を入力してください",
+  "pleaseInputThresholdAmount": "利用条件金額を入力してください",
+  "discountAmountCannotExceedThreshold": "割引金額は利用条件金額を超えることはできません",
+  "pleaseSelectApplicableStores": "対象店舗を選択してください",
+  "pleaseSelectStartDate": "開始日を選択してください",
+  "pleaseSelectEndDate": "終了日を選択してください",
+  "endTimeCannotBeforeStartTime": "終了時間は開始時間より前にできません",
+  "pleaseInputDisableReason": "停止理由を入力してください",
+  "selectedStoresCount": "{count} 店舗を選択済み"
 }

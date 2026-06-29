@@ -1,3 +1,4 @@
+import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:alumni_association_app/util/toast_utils.dart';
@@ -60,10 +61,10 @@ class PublishCouponController extends GetxController {
   final endDate = Rxn<DateTime>();
 
   /// 页面显示用开始时间
-  final startDateText = '开始日期'.obs;
+  final startDateText = ''.obs;
 
   /// 页面显示用结束时间
-  final endDateText = '结束日期'.obs;
+  final endDateText = ''.obs;
 
   /// 已确认选择的门店 ID
   final selectedShopIds = <int>[].obs;
@@ -141,8 +142,12 @@ class PublishCouponController extends GetxController {
     selectedShopIds.assignAll(ids);
 
     if (ids.isNotEmpty) {
-      shopTextController.text = '已选择 ${ids.length} 家门店';
+      shopTextController.text = Get.context?.l10n.selectedStoresCount(ids.length) ?? '';
     }
+  }
+
+  String selectedStoresText(BuildContext context, int count) {
+    return context.l10n.selectedStoresCount(count);
   }
 
   /// 选择优惠券类型
@@ -218,7 +223,8 @@ class PublishCouponController extends GetxController {
     if (selectedShopIds.isEmpty) {
       shopTextController.clear();
     } else {
-      shopTextController.text = '已选择 ${selectedShopIds.length} 家门店';
+      shopTextController.text =
+          Get.context?.l10n.selectedStoresCount(selectedShopIds.length) ?? '';
     }
 
     errorMessage.value = null;
@@ -332,8 +338,8 @@ class PublishCouponController extends GetxController {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const Text(
-                    '选择时间',
+                   Text(
+                    context.l10n.selectTime,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -367,7 +373,7 @@ class PublishCouponController extends GetxController {
                   children: [
                     Expanded(
                       child: TimePickerColumn(
-                        title: '时',
+                        title: context.l10n.hour,
                         itemCount: 24,
                         initialItem: selectedHour,
                         onSelectedItemChanged: (value) {
@@ -377,7 +383,7 @@ class PublishCouponController extends GetxController {
                     ),
                     Expanded(
                       child: TimePickerColumn(
-                        title: '分',
+                        title: context.l10n.minute,
                         itemCount: 60,
                         initialItem: selectedMinute,
                         onSelectedItemChanged: (value) {
@@ -387,7 +393,7 @@ class PublishCouponController extends GetxController {
                     ),
                     Expanded(
                       child: TimePickerColumn(
-                        title: '秒',
+                        title: context.l10n.second,
                         itemCount: 60,
                         initialItem: selectedSecond,
                         onSelectedItemChanged: (value) {
@@ -405,10 +411,7 @@ class PublishCouponController extends GetxController {
     );
   }
 
-  /// 保存草稿
-  Future<void> saveDraft(BuildContext context) async {
-    await submit(context, isDraft: true);
-  }
+
 
   /// 立即发布
   Future<void> publish(BuildContext context) async {
@@ -417,7 +420,7 @@ class PublishCouponController extends GetxController {
 
   /// 提交
   Future<void> submit(BuildContext context, {required bool isDraft}) async {
-    if (!_validate(isDraft: isDraft)) return;
+    if (!_validate(context,isDraft: isDraft)) return;
 
     if (isSubmitting.value) return;
 
@@ -436,7 +439,9 @@ class PublishCouponController extends GetxController {
 
       Get.back(result: true);
       ToastUtils.showToast(
-        message: isEditMode ? "优惠券修改成功。" : "优惠券发布成功。",
+        message: isEditMode
+            ? context.l10n.couponUpdateSuccess
+            : context.l10n.couponPublishSuccess,
         type: ToastType.success,
       );
     } finally {
@@ -445,25 +450,28 @@ class PublishCouponController extends GetxController {
   }
 
   /// 表单校验
-  bool _validate({required bool isDraft}) {
+  bool _validate(BuildContext context, {required bool isDraft}) {
     final name = nameController.text.trim();
     final desc = descriptionController.text.trim();
 
     if (name.isEmpty) {
-      errorMessage.value = '请输入优惠券名称';
+      errorMessage.value = context.l10n.pleaseInputCouponName;
       return false;
     }
 
     if (desc.isEmpty) {
-      errorMessage.value = '请输入优惠券描述';
+
+      errorMessage.value = context.l10n.pleaseInputCouponDescription;
+
       return false;
+
     }
 
     if (isFixedAmount) {
       final discountAmount = _doubleValue(fixedDiscountAmountController.text);
 
       if (discountAmount <= 0) {
-        errorMessage.value = '请输入减免金额';
+        errorMessage.value = context.l10n.pleaseInputDiscountAmount;
         return false;
       }
 
@@ -474,7 +482,7 @@ class PublishCouponController extends GetxController {
       final rate = _doubleValue(discountRateController.text);
 
       if (rate <= 0 || rate > 100) {
-        errorMessage.value = '请输入正确的折扣率';
+        errorMessage.value = context.l10n.pleaseInputCorrectDiscountRate;
         return false;
       }
     }
@@ -486,43 +494,43 @@ class PublishCouponController extends GetxController {
       );
 
       if (minAmount <= 0) {
-        errorMessage.value = '请输入满足门槛金额';
+        errorMessage.value = context.l10n.pleaseInputThresholdAmount;
         return false;
       }
 
       if (discountAmount <= 0) {
-        errorMessage.value = '请输入减免金额';
+        errorMessage.value = context.l10n.pleaseInputDiscountAmount;
         return false;
       }
 
       if (discountAmount > minAmount) {
-        errorMessage.value = '减免金额不能大于门槛金额';
+        errorMessage.value = context.l10n.discountAmountCannotExceedThreshold;
         return false;
       }
     }
 
     if (selectedShopIds.isEmpty) {
-      errorMessage.value = '请选择适用门店';
+      errorMessage.value = context.l10n.pleaseSelectApplicableStores;
       return false;
     }
 
     if (startDate.value == null) {
-      errorMessage.value = '请选择开始日期';
+      errorMessage.value = context.l10n.pleaseSelectStartDate;
       return false;
     }
 
     if (endDate.value == null) {
-      errorMessage.value = '请选择结束日期';
+      errorMessage.value = context.l10n.pleaseSelectEndDate;
       return false;
     }
 
     if (endDate.value!.isBefore(startDate.value!)) {
-      errorMessage.value = '结束时间不能早于开始时间';
+      errorMessage.value = context.l10n.endTimeCannotBeforeStartTime;
       return false;
     }
 
     if (isDisabled && disableReasonController.text.trim().isEmpty) {
-      errorMessage.value = '请输入禁用原因';
+      errorMessage.value = context.l10n.pleaseInputDisableReason;
       return false;
     }
 

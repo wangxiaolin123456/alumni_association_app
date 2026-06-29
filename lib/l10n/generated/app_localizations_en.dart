@@ -2316,4 +2316,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couponMemberExclusive => 'Members Only';
+
+  @override
+  String get hour => 'Hour';
+
+  @override
+  String get minute => 'Minute';
+
+  @override
+  String get second => 'Second';
+
+  @override
+  String get couponUpdateSuccess => 'Coupon updated successfully.';
+
+  @override
+  String get couponPublishSuccess => 'Coupon published successfully.';
+
+  @override
+  String get pleaseInputCouponName => 'Please enter the coupon name';
+
+  @override
+  String get pleaseInputCouponDescription =>
+      'Please enter the coupon description';
+
+  @override
+  String get pleaseInputDiscountAmount => 'Please enter the discount amount';
+
+  @override
+  String get pleaseInputCorrectDiscountRate =>
+      'Please enter a valid discount rate';
+
+  @override
+  String get pleaseInputThresholdAmount => 'Please enter the threshold amount';
+
+  @override
+  String get discountAmountCannotExceedThreshold =>
+      'The discount amount cannot exceed the threshold amount';
+
+  @override
+  String get pleaseSelectApplicableStores => 'Please select applicable stores';
+
+  @override
+  String get pleaseSelectStartDate => 'Please select the start date';
+
+  @override
+  String get pleaseSelectEndDate => 'Please select the end date';
+
+  @override
+  String get endTimeCannotBeforeStartTime =>
+      'The end time cannot be earlier than the start time';
+
+  @override
+  String get pleaseInputDisableReason => 'Please enter the disable reason';
 }

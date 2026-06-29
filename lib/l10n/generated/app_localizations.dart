@@ -4521,6 +4521,102 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'会员专享'**
   String get couponMemberExclusive;
+
+  /// No description provided for @hour.
+  ///
+  /// In zh, this message translates to:
+  /// **'时'**
+  String get hour;
+
+  /// No description provided for @minute.
+  ///
+  /// In zh, this message translates to:
+  /// **'分'**
+  String get minute;
+
+  /// No description provided for @second.
+  ///
+  /// In zh, this message translates to:
+  /// **'秒'**
+  String get second;
+
+  /// No description provided for @couponUpdateSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠券修改成功。'**
+  String get couponUpdateSuccess;
+
+  /// No description provided for @couponPublishSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠券发布成功。'**
+  String get couponPublishSuccess;
+
+  /// No description provided for @pleaseInputCouponName.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入优惠券名称'**
+  String get pleaseInputCouponName;
+
+  /// No description provided for @pleaseInputCouponDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入优惠券描述'**
+  String get pleaseInputCouponDescription;
+
+  /// No description provided for @pleaseInputDiscountAmount.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入减免金额'**
+  String get pleaseInputDiscountAmount;
+
+  /// No description provided for @pleaseInputCorrectDiscountRate.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入正确的折扣率'**
+  String get pleaseInputCorrectDiscountRate;
+
+  /// No description provided for @pleaseInputThresholdAmount.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入满足门槛金额'**
+  String get pleaseInputThresholdAmount;
+
+  /// No description provided for @discountAmountCannotExceedThreshold.
+  ///
+  /// In zh, this message translates to:
+  /// **'减免金额不能大于门槛金额'**
+  String get discountAmountCannotExceedThreshold;
+
+  /// No description provided for @pleaseSelectApplicableStores.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择适用门店'**
+  String get pleaseSelectApplicableStores;
+
+  /// No description provided for @pleaseSelectStartDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择开始日期'**
+  String get pleaseSelectStartDate;
+
+  /// No description provided for @pleaseSelectEndDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择结束日期'**
+  String get pleaseSelectEndDate;
+
+  /// No description provided for @endTimeCannotBeforeStartTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束时间不能早于开始时间'**
+  String get endTimeCannotBeforeStartTime;
+
+  /// No description provided for @pleaseInputDisableReason.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入禁用原因'**
+  String get pleaseInputDisableReason;
 }
 
 class _AppLocalizationsDelegate

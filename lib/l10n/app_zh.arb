@@ -778,5 +778,22 @@
     "couponMinusText": "减",
     "couponDirectMinusPrefix": "立减",
     "couponDiscountPrefix": "优惠",
-    "couponMemberExclusive": "会员专享"
+    "couponMemberExclusive": "会员专享",
+    "hour": "时",
+    "minute": "分",
+    "second": "秒",
+    "couponUpdateSuccess": "优惠券修改成功。",
+    "couponPublishSuccess": "优惠券发布成功。",
+    "pleaseInputCouponName": "请输入优惠券名称",
+    "pleaseInputCouponDescription": "请输入优惠券描述",
+    "pleaseInputDiscountAmount": "请输入减免金额",
+    "pleaseInputCorrectDiscountRate": "请输入正确的折扣率",
+    "pleaseInputThresholdAmount": "请输入满足门槛金额",
+    "discountAmountCannotExceedThreshold": "减免金额不能大于门槛金额",
+    "pleaseSelectApplicableStores": "请选择适用门店",
+    "pleaseSelectStartDate": "请选择开始日期",
+    "pleaseSelectEndDate": "请选择结束日期",
+    "endTimeCannotBeforeStartTime": "结束时间不能早于开始时间",
+    "pleaseInputDisableReason": "请输入禁用原因",
+    "selectedStoresCount": "已选择 {count} 家门店"
 }

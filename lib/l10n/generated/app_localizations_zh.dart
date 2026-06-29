@@ -2245,4 +2245,52 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get couponMemberExclusive => '会员专享';
+
+  @override
+  String get hour => '时';
+
+  @override
+  String get minute => '分';
+
+  @override
+  String get second => '秒';
+
+  @override
+  String get couponUpdateSuccess => '优惠券修改成功。';
+
+  @override
+  String get couponPublishSuccess => '优惠券发布成功。';
+
+  @override
+  String get pleaseInputCouponName => '请输入优惠券名称';
+
+  @override
+  String get pleaseInputCouponDescription => '请输入优惠券描述';
+
+  @override
+  String get pleaseInputDiscountAmount => '请输入减免金额';
+
+  @override
+  String get pleaseInputCorrectDiscountRate => '请输入正确的折扣率';
+
+  @override
+  String get pleaseInputThresholdAmount => '请输入满足门槛金额';
+
+  @override
+  String get discountAmountCannotExceedThreshold => '减免金额不能大于门槛金额';
+
+  @override
+  String get pleaseSelectApplicableStores => '请选择适用门店';
+
+  @override
+  String get pleaseSelectStartDate => '请选择开始日期';
+
+  @override
+  String get pleaseSelectEndDate => '请选择结束日期';
+
+  @override
+  String get endTimeCannotBeforeStartTime => '结束时间不能早于开始时间';
+
+  @override
+  String get pleaseInputDisableReason => '请输入禁用原因';
 }

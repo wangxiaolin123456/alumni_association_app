@@ -2080,7 +2080,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String selectedStoresCount(int count) {
-    return '$count店舗選択済み';
+    return '$count 店舗を選択済み';
   }
 
   @override
@@ -2248,4 +2248,52 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get couponMemberExclusive => '会員限定';
+
+  @override
+  String get hour => '時';
+
+  @override
+  String get minute => '分';
+
+  @override
+  String get second => '秒';
+
+  @override
+  String get couponUpdateSuccess => 'クーポンを更新しました。';
+
+  @override
+  String get couponPublishSuccess => 'クーポンを公開しました。';
+
+  @override
+  String get pleaseInputCouponName => 'クーポン名を入力してください';
+
+  @override
+  String get pleaseInputCouponDescription => 'クーポン説明を入力してください';
+
+  @override
+  String get pleaseInputDiscountAmount => '割引金額を入力してください';
+
+  @override
+  String get pleaseInputCorrectDiscountRate => '正しい割引率を入力してください';
+
+  @override
+  String get pleaseInputThresholdAmount => '利用条件金額を入力してください';
+
+  @override
+  String get discountAmountCannotExceedThreshold => '割引金額は利用条件金額を超えることはできません';
+
+  @override
+  String get pleaseSelectApplicableStores => '対象店舗を選択してください';
+
+  @override
+  String get pleaseSelectStartDate => '開始日を選択してください';
+
+  @override
+  String get pleaseSelectEndDate => '終了日を選択してください';
+
+  @override
+  String get endTimeCannotBeforeStartTime => '終了時間は開始時間より前にできません';
+
+  @override
+  String get pleaseInputDisableReason => '停止理由を入力してください';
 }
