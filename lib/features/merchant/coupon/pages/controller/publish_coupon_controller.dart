@@ -125,8 +125,8 @@ class PublishCouponController extends GetxController {
     } else if (coupon.type == 1) {
       discountRateController.text = _formatNumber(coupon.value);
     } else if (coupon.type == 2) {
-      conditionMinAmountController.text = _formatNumber(coupon.maxDiscountAmount);
-      conditionDiscountAmountController.text = _formatNumber(coupon.minOrderAmount);
+      conditionMinAmountController.text = _formatNumber(coupon.minOrderAmount);
+      conditionDiscountAmountController.text = _formatNumber(coupon.maxDiscountAmount);
     }
 
     startDate.value = _parseDate(coupon.startTime);
