@@ -771,5 +771,13 @@
   "allStores": "全店舗",
   "couponTypeFixedAmountShort": "割引券",
   "couponTypePercentageShort": "割引率",
-  "couponTypeConditionalShort": "割引券"
+  "couponTypeConditionalShort": "割引券",
+  "couponCurrencySymbol": "¥",
+  "couponDiscountUnit": "割",
+  "couponYuan": "円",
+  "couponFullText": "",
+  "couponMinusText": "以上で",
+  "couponDirectMinusPrefix": "",
+  "couponDiscountPrefix": "割引",
+  "couponMemberExclusive": "会員限定"
 }

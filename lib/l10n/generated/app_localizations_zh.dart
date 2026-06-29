@@ -2221,4 +2221,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get couponTypeConditionalShort => '满减券';
+
+  @override
+  String get couponCurrencySymbol => '¥';
+
+  @override
+  String get couponDiscountUnit => '折';
+
+  @override
+  String get couponYuan => '元';
+
+  @override
+  String get couponFullText => '满';
+
+  @override
+  String get couponMinusText => '减';
+
+  @override
+  String get couponDirectMinusPrefix => '立减';
+
+  @override
+  String get couponDiscountPrefix => '优惠';
+
+  @override
+  String get couponMemberExclusive => '会员专享';
 }

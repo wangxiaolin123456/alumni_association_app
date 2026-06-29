@@ -417,7 +417,9 @@ class MerchantOnboardingController extends GetxController {
         }
       }
       errorMessage.value = null;
-
+     if( shopId != null){
+       Get.back();
+     }
       Get.back();
       ToastUtils.showToast(
         message: isEditMode

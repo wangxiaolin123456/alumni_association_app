@@ -47,7 +47,6 @@ class MerchantOnboardingRequest {
 
   Map<String, dynamic> toJson() {
     final json = {
-      'id': 0,
       'userId': userId,
       'shopName': shopName,
       'typeId': typeId,

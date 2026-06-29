@@ -2224,4 +2224,28 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get couponTypeConditionalShort => '割引券';
+
+  @override
+  String get couponCurrencySymbol => '¥';
+
+  @override
+  String get couponDiscountUnit => '割';
+
+  @override
+  String get couponYuan => '円';
+
+  @override
+  String get couponFullText => '';
+
+  @override
+  String get couponMinusText => '以上で';
+
+  @override
+  String get couponDirectMinusPrefix => '';
+
+  @override
+  String get couponDiscountPrefix => '割引';
+
+  @override
+  String get couponMemberExclusive => '会員限定';
 }

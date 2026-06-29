@@ -4473,6 +4473,54 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'满减券'**
   String get couponTypeConditionalShort;
+
+  /// No description provided for @couponCurrencySymbol.
+  ///
+  /// In zh, this message translates to:
+  /// **'¥'**
+  String get couponCurrencySymbol;
+
+  /// No description provided for @couponDiscountUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'折'**
+  String get couponDiscountUnit;
+
+  /// No description provided for @couponYuan.
+  ///
+  /// In zh, this message translates to:
+  /// **'元'**
+  String get couponYuan;
+
+  /// No description provided for @couponFullText.
+  ///
+  /// In zh, this message translates to:
+  /// **'满'**
+  String get couponFullText;
+
+  /// No description provided for @couponMinusText.
+  ///
+  /// In zh, this message translates to:
+  /// **'减'**
+  String get couponMinusText;
+
+  /// No description provided for @couponDirectMinusPrefix.
+  ///
+  /// In zh, this message translates to:
+  /// **'立减'**
+  String get couponDirectMinusPrefix;
+
+  /// No description provided for @couponDiscountPrefix.
+  ///
+  /// In zh, this message translates to:
+  /// **'优惠'**
+  String get couponDiscountPrefix;
+
+  /// No description provided for @couponMemberExclusive.
+  ///
+  /// In zh, this message translates to:
+  /// **'会员专享'**
+  String get couponMemberExclusive;
 }
 
 class _AppLocalizationsDelegate

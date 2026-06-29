@@ -2292,4 +2292,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couponTypeConditionalShort => 'Amount Off';
+
+  @override
+  String get couponCurrencySymbol => '¥';
+
+  @override
+  String get couponDiscountUnit => '% Off';
+
+  @override
+  String get couponYuan => 'Yuan';
+
+  @override
+  String get couponFullText => 'Spend';
+
+  @override
+  String get couponMinusText => 'Save';
+
+  @override
+  String get couponDirectMinusPrefix => 'Save';
+
+  @override
+  String get couponDiscountPrefix => 'Discount';
+
+  @override
+  String get couponMemberExclusive => 'Members Only';
 }

@@ -770,5 +770,13 @@
     "allStores": "全部门店",
     "couponTypeFixedAmountShort": "满减券",
     "couponTypePercentageShort": "折扣券",
-    "couponTypeConditionalShort": "满减券"
+    "couponTypeConditionalShort": "满减券",
+    "couponCurrencySymbol": "¥",
+    "couponDiscountUnit": "折",
+    "couponYuan": "元",
+    "couponFullText": "满",
+    "couponMinusText": "减",
+    "couponDirectMinusPrefix": "立减",
+    "couponDiscountPrefix": "优惠",
+    "couponMemberExclusive": "会员专享"
 }

@@ -394,7 +394,7 @@ class _TicketFace extends StatelessWidget {
           ),
           SizedBox(height: 5.h),
           Text(
-            _ticketSubText(coupon),
+            _ticketSubText(context, coupon),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -581,17 +581,24 @@ String _ticketMainText(StoreCouponResponse coupon) {
   return '¥${_formatAmount(coupon.value)}';
 }
 
-String _ticketSubText(StoreCouponResponse coupon) {
-  if (coupon.type == 2 && coupon.maxDiscountAmount > 0 && coupon.minOrderAmount > 0) {
-    return '满${_formatAmount(coupon.maxDiscountAmount)}减${_formatAmount(coupon.minOrderAmount)}';
+String _ticketSubText(BuildContext context, StoreCouponResponse coupon) {
+  if (coupon.type == 2 &&
+      coupon.maxDiscountAmount > 0 &&
+      coupon.minOrderAmount > 0) {
+    return '${context.l10n.couponFullText}${_formatAmount(coupon.minOrderAmount)}'
+        '${context.l10n.couponMinusText}${_formatAmount(coupon.maxDiscountAmount)}';
   }
+
   if (coupon.type == 0) {
-    return '立减${_formatAmount(coupon.value)}元';
+    return '${context.l10n.couponDirectMinusPrefix}'
+        '${_formatAmount(coupon.value)}${context.l10n.couponYuan}';
   }
+
   if (coupon.type == 1) {
-    return '优惠${_formatAmount(coupon.value)}%';
+    return '${context.l10n.couponDiscountPrefix}${_formatAmount(coupon.value)}%';
   }
-  return '会员专享';
+
+  return context.l10n.couponMemberExclusive;
 }
 
 String _dateText(String value) {

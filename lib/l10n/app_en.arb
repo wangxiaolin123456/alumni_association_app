@@ -771,5 +771,13 @@
   "allStores": "All stores",
   "couponTypeFixedAmountShort": "Amount Off",
   "couponTypePercentageShort": "Discount",
-  "couponTypeConditionalShort": "Amount Off"
+  "couponTypeConditionalShort": "Amount Off",
+  "couponCurrencySymbol": "¥",
+  "couponDiscountUnit": "% Off",
+  "couponYuan": "Yuan",
+  "couponFullText": "Spend",
+  "couponMinusText": "Save",
+  "couponDirectMinusPrefix": "Save",
+  "couponDiscountPrefix": "Discount",
+  "couponMemberExclusive": "Members Only"
 }

@@ -42,7 +42,10 @@ class MyMerchantPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 16.w),
             child: InkWell(
-              onTap: () => Get.toNamed(Pages.merchantOnboardingPage),
+              onTap: () async {
+                await Get.toNamed(Pages.merchantOnboardingPage);
+                await controller.fetchMyMerchants();
+              },
               borderRadius: BorderRadius.circular(18.r),
               child: Container(
                 width: 36.w,
@@ -76,7 +79,8 @@ class MyMerchantPage extends StatelessWidget {
             itemCount: controller.merchants.length,
             separatorBuilder: (_, _) => SizedBox(height: 14.h),
             itemBuilder: (context, index) {
-              return _MerchantCard(store: controller.merchants[index]);
+              return _MerchantCard(store: controller.merchants[index],
+                onRefresh: controller.fetchMyMerchants,);
             },
           ),
         );
@@ -86,17 +90,21 @@ class MyMerchantPage extends StatelessWidget {
 }
 
 class _MerchantCard extends StatelessWidget {
-  const _MerchantCard({required this.store});
+  const _MerchantCard({required this.store,  required this.onRefresh,});
 
   final StoreResponse store;
-
+  final Future<void> Function() onRefresh;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(
-        Pages.merchantDashboard,
-        arguments: {'shopId': store.shopId},
-      ),
+      onTap: () async {
+        await Get.toNamed(
+          Pages.merchantDashboard,
+          arguments: {'shopId': store.shopId},
+        );
+        await onRefresh();
+
+      },
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
         padding: EdgeInsets.all(10.r),
