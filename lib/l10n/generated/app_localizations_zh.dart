@@ -788,7 +788,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get enterAmountHint => '请输入金额';
 
   @override
-  String get originalAmountHint => '请输入不享受优惠的原价金额';
+  String get originalAmountHint => '请输入享受优惠后的实际金额';
 
   @override
   String get selectedCoupon => '已选择优惠券';
@@ -2293,4 +2293,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pleaseInputDisableReason => '请输入禁用原因';
+
+  @override
+  String get actualConsumptionPrice => '消费实际价格';
 }

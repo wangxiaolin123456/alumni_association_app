@@ -800,7 +800,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterAmountHint => 'Enter amount';
 
   @override
-  String get originalAmountHint => 'Enter the original amount before discounts';
+  String get originalAmountHint =>
+      'Please enter the actual amount after enjoying the discount';
 
   @override
   String get selectedCoupon => 'Selected Coupon';
@@ -2368,4 +2369,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseInputDisableReason => 'Please enter the disable reason';
+
+  @override
+  String get actualConsumptionPrice => 'Actual consumption price';
 }

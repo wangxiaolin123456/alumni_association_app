@@ -8,6 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/config/app_config.dart';
+import '../../store/model/response/store_response.dart';
+
 /// 消费入单 第三步：填写消费金额
 class ConsumptionAmountPage extends StatelessWidget {
   const ConsumptionAmountPage({super.key});
@@ -17,6 +20,7 @@ class ConsumptionAmountPage extends StatelessWidget {
     final controller = Get.find<ConsumptionEntryController>();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
           context.l10n.consumptionEntry,
@@ -31,7 +35,7 @@ class ConsumptionAmountPage extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 105.h),
         children: [
-          SizedBox(height: 24.h),
+
 
           /// 已选商户
           Obx(() {
@@ -42,23 +46,14 @@ class ConsumptionAmountPage extends StatelessWidget {
             }
 
             return Container(
-              padding: EdgeInsets.all(14.r),
+              padding: EdgeInsets.all(10.r),
               decoration: consumptionCardDecoration,
               child: Row(
                 children: [
-                  Container(
-                    width: 44.r,
-                    height: 44.r,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEAF2FF),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.storefront_rounded,
-                      color: AppColors.primary,
-                      size: 25.sp,
-                    ),
+                  ///商户logo图
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: _storeImage(store),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
@@ -78,14 +73,24 @@ class ConsumptionAmountPage extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        Text(
-                          store.typeName.trim().isEmpty
-                              ? context.l10n.allCategories
-                              : store.typeName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: consumptionSecondaryText,
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF2E9),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            store.typeName.trim().isEmpty
+                                ? context.l10n.allCategories
+                                : store.typeName,
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: const Color(0xFFFF5B22),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
+
                       ],
                     ),
                   ),
@@ -95,37 +100,6 @@ class ConsumptionAmountPage extends StatelessWidget {
           }),
 
           SizedBox(height: 14.h),
-
-          /// 创建订单返回的信息
-          Obx(() {
-            final order = controller.currentOrder.value;
-            if (order == null || order.orderId <= 0) {
-              return const SizedBox.shrink();
-            }
-
-            return Container(
-              margin: EdgeInsets.only(bottom: 14.h),
-              padding: EdgeInsets.all(14.r),
-              decoration: consumptionCardDecoration,
-              child: Column(
-                children: [
-                  _AmountRow(
-                    label: context.l10n.orderNumber,
-                    value: order.orderNum.isEmpty
-                        ? order.orderId.toString()
-                        : order.orderNum,
-                    color: AppColors.textPrimary,
-                  ),
-                  SizedBox(height: 12.h),
-                  _AmountRow(
-                    label: context.l10n.orderCreateTime,
-                    value: order.createTime.isEmpty ? '--' : order.createTime,
-                    color: AppColors.textPrimary,
-                  ),
-                ],
-              ),
-            );
-          }),
 
           /// 金额填写
           Container(
@@ -142,7 +116,6 @@ class ConsumptionAmountPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 18.h),
-
                 TextField(
                   controller: controller.amountController,
                   onChanged: controller.updateAmount,
@@ -155,7 +128,7 @@ class ConsumptionAmountPage extends StatelessWidget {
                     ),
                   ],
                   decoration: InputDecoration(
-                    labelText: context.l10n.originalAmount,
+                    labelText: context.l10n.actualConsumptionPrice,
                     prefixText: '¥ ',
                     suffixText: context.l10n.currencyYuan,
                     hintText: context.l10n.enterAmountHint,
@@ -183,21 +156,21 @@ class ConsumptionAmountPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () => Get.back(),
-                      child: Text(context.l10n.changeCoupon),
-                    ),
+
                   ],
                 ),
 
-                Obx(
-                  () => ListTile(
+                Obx(() {
+                  final coupon = controller.selectedStoreCoupon.value;
+                  final type = coupon?.type ?? 0;
+
+                  return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: CircleAvatar(
-                      backgroundColor: const Color(0xFFFFF1E8),
+                      backgroundColor: _couponTypeBgColor(type),
                       child: Icon(
-                        Icons.percent_rounded,
-                        color: const Color(0xFFFF5B22),
+                        _couponTypeIcon(type),
+                        color: _couponTypeColor(type),
                         size: 22.sp,
                       ),
                     ),
@@ -216,8 +189,8 @@ class ConsumptionAmountPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: consumptionSecondaryText,
                     ),
-                  ),
-                ),
+                  );
+                }),
 
                 Divider(height: 28.h),
 
@@ -232,10 +205,11 @@ class ConsumptionAmountPage extends StatelessWidget {
                         color: const Color(0xFFFF5B22),
                       ),
                       SizedBox(height: 16.h),
+                      ///原价
                       _AmountRow(
-                        label: context.l10n.payableAmount,
+                        label: context.l10n.originalAmount,
                         value:
-                            '¥ ${controller.payableAmount.toStringAsFixed(2)}',
+                            '¥ ${controller.originalAmount.toStringAsFixed(2)}',
                         color: Colors.red,
                         emphasized: true,
                       ),
@@ -288,6 +262,92 @@ class ConsumptionAmountPage extends StatelessWidget {
       ),
     );
   }
+}
+IconData _couponTypeIcon(int type) {
+  switch (type) {
+    case 0:
+    // 固定金额
+      return Icons.confirmation_number_rounded;
+    case 1:
+    // 百分比
+      return Icons.percent_rounded;
+    case 2:
+    // 满减
+      return Icons.local_offer_rounded;
+    default:
+      return Icons.confirmation_number_rounded;
+  }
+}
+
+Color _couponTypeColor(int type) {
+  switch (type) {
+    case 0:
+      return const Color(0xFFFF5B22);
+    case 1:
+      return const Color(0xFF0B5CFF);
+    case 2:
+      return const Color(0xFF12B76A);
+    default:
+      return const Color(0xFFFF5B22);
+  }
+}
+
+Color _couponTypeBgColor(int type) {
+  switch (type) {
+    case 0:
+      return const Color(0xFFFFF1E8);
+    case 1:
+      return const Color(0xFFEAF2FF);
+    case 2:
+      return const Color(0xFFE8FAF1);
+    default:
+      return const Color(0xFFFFF1E8);
+  }
+}
+
+///商店logo图
+Widget _storeImage(StoreResponse store) {
+  final logo = store.shopLogo.trim();
+
+  if (logo.isEmpty) {
+    return Image.asset(
+      "assets/default_image.png",
+      width: 68.w,
+      height: 68.h,
+      fit: BoxFit.cover,
+    );
+  }
+
+  return Image.network(
+    AppConfig.apiBaseUrl + logo,
+    width: 68.w,
+    height: 68.h,
+    fit: BoxFit.cover,
+
+    // 加载失败显示默认图
+    errorBuilder: (context, error, stackTrace) {
+      return Image.asset(
+        "assets/default_image.png",
+        width: 68.w,
+        height: 68.h,
+        fit: BoxFit.cover,
+      );
+    },
+
+    // 加载中显示默认图或者 loading
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) {
+        return child;
+      }
+
+      return Image.asset(
+        "assets/default_image.png",
+        width: 68.w,
+        height: 68.h,
+        fit: BoxFit.cover,
+      );
+    },
+  );
 }
 
 class _AmountRow extends StatelessWidget {

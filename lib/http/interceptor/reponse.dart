@@ -7,6 +7,7 @@ import '../../storage/storage.dart';
 import 'package:get/get.dart' hide Response;
 
 import '../../util/loading_util.dart';
+import '../../util/pretty_print_json.dart';
 
 
 /// 响应拦截器
@@ -35,8 +36,8 @@ class MyResponseInterceptor extends Interceptor {
       return;
     }
 
-    // printJsonLine(response.data);
-    print('response.data=${response.data}');
+    printJsonLine(response.data);
+    // print('response.data=${response.data}');
     int? responseBodyCode = response.data['code'];
     print('response.statusCode=${response.statusCode}');
     if (responseBodyCode == 401) {

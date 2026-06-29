@@ -260,7 +260,7 @@
   "originalAmount": "Original Amount",
   "currencyYuan": "CNY",
   "enterAmountHint": "Enter amount",
-  "originalAmountHint": "Enter the original amount before discounts",
+  "originalAmountHint": "Please enter the actual amount after enjoying the discount",
   "selectedCoupon": "Selected Coupon",
   "changeCoupon": "Change Coupon",
   "discountAmount": "Discount",
@@ -796,5 +796,6 @@
   "pleaseSelectEndDate": "Please select the end date",
   "endTimeCannotBeforeStartTime": "The end time cannot be earlier than the start time",
   "pleaseInputDisableReason": "Please enter the disable reason",
-  "selectedStoresCount": "{count} stores selected"
+  "selectedStoresCount": "{count} stores selected",
+  "actualConsumptionPrice": "Actual consumption price"
 }

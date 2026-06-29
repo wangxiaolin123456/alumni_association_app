@@ -95,7 +95,7 @@ class ConsumptionSuccessPage extends StatelessWidget {
 
                   _ResultRow(
                     label: context.l10n.originalAmount,
-                    value: '¥ ${controller.amount.value.toStringAsFixed(2)}',
+                    value: '¥ ${controller.originalAmount.toStringAsFixed(2)}',
                   ),
                   _ResultRow(
                     label: context.l10n.usedCoupon,
@@ -110,7 +110,7 @@ class ConsumptionSuccessPage extends StatelessWidget {
 
                   _ResultRow(
                     label: context.l10n.payableAmount,
-                    value: '¥ ${controller.payableAmount.toStringAsFixed(2)}',
+                    value: '¥ ${controller.amount.value.toStringAsFixed(2)}',
                     emphasized: true,
                   ),
                 ],

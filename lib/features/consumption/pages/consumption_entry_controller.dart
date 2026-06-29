@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/api/api_request.dart';
+import '../../../util/pretty_print_json.dart';
 
 /// 消费入单
 class ConsumptionEntryController extends GetxController {
   /// 输入框
   final searchController = TextEditingController();
+  ///实际价格
   final amountController = TextEditingController();
   final noteController = TextEditingController();
 
@@ -135,60 +137,113 @@ class ConsumptionEntryController extends GetxController {
       currentOrder.value!.orderId > 0 &&
       !isSubmittingOrder.value;
 
+  /// 实际消费金额
+
+  double get actualConsumptionAmount => _roundMoney(amount.value);
+
   /// 优惠金额
   double get discountAmount {
+
     final coupon = selectedStoreCoupon.value;
-    final currentAmount = amount.value;
 
-    if (coupon == null || currentAmount <= 0) {
-      return 0;
-    }
+    final actualAmount = actualConsumptionAmount;
 
-    /// 没达到最低消费金额，不优惠
-    if (coupon.minOrderAmount > 0 && currentAmount < coupon.minOrderAmount) {
+    if (coupon == null || actualAmount <= 0) {
+
       return 0;
+
     }
 
     /// type:
-    /// 1 = 固定金额引 / 定额优惠
-    /// 2 = 百分比折扣
-    /// 3 = 条件付割引 / 满减
-    if (coupon.type == 1 || coupon.type == 3) {
-      return _roundMoney(coupon.value.clamp(0, currentAmount));
+
+    /// 0 = 固定金额
+
+    /// 1 = 百分比
+
+    /// 2 = 满减
+
+    if (coupon.type == 0) {
+
+      final discount = coupon.value;
+
+      return _roundMoney(discount.clamp(0, double.infinity));
+
+    }
+
+    if (coupon.type == 1) {
+
+      final rate = _discountPayRate(coupon.value);
+
+      if (rate <= 0 || rate >= 1) {
+
+        return 0;
+
+      }
+
+      final original = actualAmount / rate;
+
+      return _roundMoney((original - actualAmount).clamp(0, double.infinity));
+
     }
 
     if (coupon.type == 2) {
-      final rate = coupon.value;
-      double discount = 0;
+      ///消费满多少有优惠金额
+      final thresholdAmount = coupon.minOrderAmount;
+      ///折扣金额
+      final discountAmount = coupon.maxDiscountAmount;
 
-      /// 兼容后端可能传的几种折扣格式：
-      /// 0.9 = 9折
-      /// 9 = 9折
-      /// 90 = 90%
-      if (rate > 0 && rate <= 1) {
-        discount = currentAmount * (1 - rate);
-      } else if (rate > 1 && rate <= 10) {
-        discount = currentAmount * (1 - rate / 10);
-      } else if (rate > 10 && rate <= 100) {
-        discount = currentAmount * (1 - rate / 100);
+      if (discountAmount <= 0) return 0;
+
+      final possibleOriginal = actualAmount + discountAmount;
+
+      if (thresholdAmount > 0 && possibleOriginal < thresholdAmount) {
+
+        return 0;
+
       }
 
-      /// 最大优惠金额
-      if (coupon.maxDiscountAmount > 0) {
-        discount = discount.clamp(0, coupon.maxDiscountAmount);
-      }
+      return _roundMoney(discountAmount);
 
-      return _roundMoney(discount.clamp(0, currentAmount));
     }
 
     return 0;
+
   }
 
-  /// 应付金额
-  double get payableAmount {
+  /// 消费原价
+
+  double get originalAmount {
+
     return _roundMoney(
-      (amount.value - discountAmount).clamp(0, double.infinity),
+
+      (actualConsumptionAmount + discountAmount).clamp(0, double.infinity),
+
     );
+
+  }
+
+
+  /// 折扣后的支付比例
+  ///
+  /// 0.9 = 9折
+  /// 9 = 9折
+  /// 90 = 90%
+  double _discountPayRate(double value) {
+    if (value <= 0) return 1;
+
+    if (value > 0 && value <= 1) {
+      return value;
+    }
+
+    if (value > 1 && value <= 10) {
+      return value / 10;
+    }
+
+    if (value > 10 && value <= 100) {
+      return value / 100;
+    }
+
+    return 1;
   }
 
   @override
@@ -374,6 +429,8 @@ class ConsumptionEntryController extends GetxController {
     LoadingUtil.showSafe();
     try {
       final userId = SessionController.current.userInfo.value?.userId ?? 0;
+      printJsonLine(selectedCoupon);
+      print(' store.shopId= ${ store.shopId} userId= ${userId} couponId= ${selectedCoupon?.couponId ?? 0}');
       final order = await ApiRequest.addOrder(
         shopId: store.shopId,
         userId: userId,
@@ -470,7 +527,7 @@ class ConsumptionEntryController extends GetxController {
     try {
       final success = await ApiRequest.confirmOrder(
         orderId: order.orderId,
-        actualTotal: payableAmount,
+        actualTotal: double.tryParse(amountController.text.trim()) ?? 0,
         remark: noteController.text.trim(),
       );
       if (!success) return false;

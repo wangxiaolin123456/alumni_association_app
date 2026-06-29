@@ -557,8 +557,8 @@ class PublishCouponController extends GetxController {
       maxDiscountAmount = 0;
     } else if (type == 2) {
       /// 条件付割引
-      minOrderAmount = _doubleValue(conditionDiscountAmountController.text);
-      maxDiscountAmount = _doubleValue(conditionMinAmountController.text);
+      minOrderAmount = _doubleValue(conditionMinAmountController.text);
+      maxDiscountAmount = _doubleValue(conditionDiscountAmountController.text);
       value = 0;
     }
 

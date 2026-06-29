@@ -1627,7 +1627,7 @@ abstract class AppLocalizations {
   /// No description provided for @originalAmountHint.
   ///
   /// In zh, this message translates to:
-  /// **'请输入不享受优惠的原价金额'**
+  /// **'请输入享受优惠后的实际金额'**
   String get originalAmountHint;
 
   /// No description provided for @selectedCoupon.
@@ -4617,6 +4617,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'请输入禁用原因'**
   String get pleaseInputDisableReason;
+
+  /// No description provided for @actualConsumptionPrice.
+  ///
+  /// In zh, this message translates to:
+  /// **'消费实际价格'**
+  String get actualConsumptionPrice;
 }
 
 class _AppLocalizationsDelegate

@@ -787,7 +787,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get enterAmountHint => '金額を入力';
 
   @override
-  String get originalAmountHint => '割引前の元の金額を入力してください';
+  String get originalAmountHint => '割引を受けた実際の金額を入力してください';
 
   @override
   String get selectedCoupon => '選択したクーポン';
@@ -2296,4 +2296,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get pleaseInputDisableReason => '停止理由を入力してください';
+
+  @override
+  String get actualConsumptionPrice => '消費実績価格';
 }

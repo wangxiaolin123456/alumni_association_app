@@ -260,7 +260,7 @@
   "originalAmount": "元の金額",
   "currencyYuan": "元",
   "enterAmountHint": "金額を入力",
-  "originalAmountHint": "割引前の元の金額を入力してください",
+  "originalAmountHint": "割引を受けた実際の金額を入力してください",
   "selectedCoupon": "選択したクーポン",
   "changeCoupon": "クーポンを変更",
   "discountAmount": "割引金額",
@@ -796,5 +796,6 @@
   "pleaseSelectEndDate": "終了日を選択してください",
   "endTimeCannotBeforeStartTime": "終了時間は開始時間より前にできません",
   "pleaseInputDisableReason": "停止理由を入力してください",
-  "selectedStoresCount": "{count} 店舗を選択済み"
+  "selectedStoresCount": "{count} 店舗を選択済み",
+  "actualConsumptionPrice": "消費実績価格"
 }

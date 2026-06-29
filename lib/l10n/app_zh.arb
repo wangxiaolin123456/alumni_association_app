@@ -260,7 +260,7 @@
   "originalAmount": "消费原价",
   "currencyYuan": "元",
   "enterAmountHint": "请输入金额",
-  "originalAmountHint": "请输入不享受优惠的原价金额",
+  "originalAmountHint": "请输入享受优惠后的实际金额",
   "selectedCoupon": "已选择优惠券",
   "changeCoupon": "更换优惠券",
   "discountAmount": "优惠金额",
@@ -795,5 +795,6 @@
     "pleaseSelectEndDate": "请选择结束日期",
     "endTimeCannotBeforeStartTime": "结束时间不能早于开始时间",
     "pleaseInputDisableReason": "请输入禁用原因",
-    "selectedStoresCount": "已选择 {count} 家门店"
+    "selectedStoresCount": "已选择 {count} 家门店",
+    "actualConsumptionPrice": "消费实际价格"
 }
