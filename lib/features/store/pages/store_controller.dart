@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
+import 'package:alumni_association_app/util/loading_util.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../../app/api/api_request.dart';
-import '../model/response/store_offer_response.dart';
 
 /// 商家列表、商家详情、预约流程状态控制器
 class StoreController extends GetxController {
@@ -56,6 +58,15 @@ class StoreController extends GetxController {
   /// 是否收藏
   final isFavorite = false.obs;
 
+  /// 当前预约订单草稿。
+  ///
+  /// 从商户详情点击“立即预约”时先创建 orderType=1 的订单，
+  /// 后续预约页、确认页继续补充预约信息。
+  final currentReservationOrder = Rxn<OrderResponse>();
+
+  /// 是否正在提交预约订单
+  final isReservationSubmitting = false.obs;
+
   /// 二维码刷新计数
   final qrRefreshCount = 0.obs;
 
@@ -75,21 +86,38 @@ class StoreController extends GetxController {
   /// 搜索防抖
   Timer? _searchDebounce;
 
-  /// 预约日期
-  final reservationDates = const ['05-20', '05-21', '05-22', '05-23', '05-24'];
+  /// 预约日期：从当天开始连续 5 天，格式 MM-dd
+  List<String> get reservationDates {
+    final now = DateTime.now();
+
+    return List.generate(5, (index) {
+      final date = now.add(Duration(days: index));
+      final month = date.month.toString().padLeft(2, '0');
+      final day = date.day.toString().padLeft(2, '0');
+      return '$month-$day';
+    });
+  }
 
   /// 预约时间
-  final reservationTimes = const [
-    '10:00',
-    '11:00',
-    '12:00',
-    '13:00',
-    '14:00',
-    '17:00',
-    '18:00',
-    '19:00',
-    '20:00',
-  ];
+  /// 根据商户营业时间自动生成预约时间
+  List<String> get reservationTimes {
+    final startText = selectedStore.businessStartTime.trim();
+    final endText = selectedStore.businessEndTime.trim();
+
+    final start = _parseHourMinute(startText) ?? const _HourMinute(9, 0);
+    final end = _parseHourMinute(endText) ?? const _HourMinute(18, 0);
+
+    final result = <String>[];
+
+    var current = start;
+
+    while (current.compareTo(end) <= 0) {
+      result.add(current.format());
+      current = current.addHour();
+    }
+
+    return result.isEmpty ? const ['09:00'] : result;
+  }
 
   /// 当前选中的商户
   StoreResponse get selectedStore {
@@ -123,50 +151,24 @@ class StoreController extends GetxController {
     return merchantTypes[index].id;
   }
 
-  /// 当前接口暂未返回商户优惠数据，
-  /// 为了保证商家详情页、预约页逻辑不报错，先使用假数据。
-  final fakeOffers = const <StoreOfferResponse>[
-    StoreOfferResponse(
-      id: 'offer-001',
-      title: '会员专享优惠',
-      subtitle: '到店消费可享会员优惠价格',
-      price: 198,
-      originalPrice: 268,
-      discountLabel: '8.5折',
-    ),
-    StoreOfferResponse(
-      id: 'offer-002',
-      title: '全场通用优惠',
-      subtitle: '单笔消费满足条件可使用',
-      price: 300,
-      originalPrice: 350,
-      discountLabel: '满300减50',
-    ),
-  ];
 
-  /// 当前选中的优惠
+
+
+  /// 当前选中的后端优惠券。
   ///
-  /// 商户列表接口目前没有返回优惠数据，
-  /// 所以后续页面需要 offer 时，先从 fakeOffers 里取。
-  StoreOfferResponse get selectedOffer {
-    if (fakeOffers.isEmpty) {
-      return const StoreOfferResponse(
-        id: '',
-        title: '',
-        subtitle: '',
-        price: 0,
-        originalPrice: 0,
-        discountLabel: '',
-      );
-    }
+  /// 商户详情接口返回 coupons 时优先使用真实优惠券；没有时返回 null。
+  StoreCouponResponse? get selectedCoupon {
+    final coupons = selectedStore.coupons;
+    if (coupons.isEmpty) return null;
 
     final index = selectedOfferIndex.value;
-    if (index < 0 || index >= fakeOffers.length) {
-      return fakeOffers.first;
+    if (index < 0 || index >= coupons.length) {
+      return coupons.first;
     }
-
-    return fakeOffers[index];
+    return coupons[index];
   }
+
+
 
   @override
   void onInit() {
@@ -223,7 +225,7 @@ class StoreController extends GetxController {
 
     selectedStoreIndex.value = index < 0 ? 0 : index;
     selectedOfferIndex.value = 0;
-
+    selectedTimeIndex.value = 0;
     /// 列表接口返回的是摘要数据，进入详情后再按 shopId 拉完整详情。
     fetchStoreDetail(store.shopId);
   }
@@ -316,6 +318,102 @@ class StoreController extends GetxController {
   /// 选择优惠
   void selectOffer(int index) => selectedOfferIndex.value = index;
 
+  /// 从商户详情点击“立即预约”。
+  ///
+  /// 和“立即使用”一样先调用创建订单接口，只是这里 orderType=1，
+  /// 表示后续会进入预约信息填写流程。
+  Future<bool> prepareReservationOrder() async {
+    final store = selectedStore;
+    if (store.shopId <= 0) return false;
+
+    final coupon = selectedCoupon;
+    LoadingUtil.showSafe();
+    try {
+      final userId = SessionController.current.userInfo.value?.userId ?? 0;
+      final order = await ApiRequest.addOrder(
+        shopId: store.shopId,
+        userId: userId,
+        couponId: coupon?.couponId ?? 0,
+        coupon: coupon,
+        orderType: 1,
+      );
+
+      if (order == null || order.orderId <= 0) return false;
+
+      currentReservationOrder.value = order;
+      return true;
+    } finally {
+      LoadingUtil.dismissSafe();
+    }
+  }
+
+  /// 预约日期文本，格式：yyyy-MM-dd。
+  String get reservationDateParam {
+    final custom = selectedCustomDate.value;
+    if (custom != null) {
+      return _formatDate(custom);
+    }
+
+    final now = DateTime.now();
+    final index = selectedDateIndex.value;
+
+    final safeIndex = index >= 0 && index < reservationDates.length ? index : 0;
+    final date = now.add(Duration(days: safeIndex));
+
+    return _formatDate(date);
+  }
+
+  /// 预约时间文本，格式：yyyy-MM-dd HH:mm:ss。
+  String get reservationAppointmentTime {
+    final times = reservationTimes;
+    final index = selectedTimeIndex.value;
+
+    final time = index >= 0 && index < times.length
+        ? times[index]
+        : times.first;
+
+    return '$reservationDateParam $time:00';
+  }
+  /// 提交完整预约订单。
+  Future<bool> submitReservationOrder() async {
+    if (isReservationSubmitting.value) return false;
+
+    final store = selectedStore;
+    if (store.shopId <= 0) return false;
+
+    isReservationSubmitting.value = true;
+    LoadingUtil.showSafe();
+    try {
+      final draft = currentReservationOrder.value;
+      final userId = SessionController.current.userInfo.value?.userId ?? 0;
+      final coupon = selectedCoupon;
+
+      final result = await ApiRequest.addReservationOrder(
+        orderId: draft?.orderId ?? 0,
+        shopId: store.shopId,
+        userId: draft?.userId == 0 || draft?.userId == null
+            ? userId
+            : draft!.userId,
+        orderNum: draft?.orderNum ?? '',
+        peopleNum: guestCount.value,
+        orderStatus: draft?.orderStatus ?? 0,
+        couponId: coupon?.couponId ?? draft?.coupontId ?? 0,
+        appointmentTime: reservationAppointmentTime,
+        remark: noteController.text.trim(),
+        contactName: contactController.text.trim(),
+        contactPhone: phoneController.text.trim(),
+      );
+
+      if (result == null || result.orderId <= 0) return false;
+
+      currentReservationOrder.value = result;
+      return true;
+    } finally {
+      LoadingUtil.dismissSafe();
+      isReservationSubmitting.value = false;
+    }
+  }
+
   /// 选择预约日期
   void selectDate(int index) {
     selectedDateIndex.value = index;
@@ -370,5 +468,52 @@ class StoreController extends GetxController {
     noteController.dispose();
 
     super.onClose();
+  }
+}
+
+String _formatDate(DateTime date) {
+  final year = date.year.toString().padLeft(4, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+  return '$year-$month-$day';
+}
+_HourMinute? _parseHourMinute(String value) {
+  final text = value.trim();
+  if (text.isEmpty) return null;
+
+  final parts = text.split(':');
+  if (parts.length < 2) return null;
+
+  final hour = int.tryParse(parts[0]);
+  final minute = int.tryParse(parts[1]);
+
+  if (hour == null || minute == null) return null;
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+
+  return _HourMinute(hour, minute);
+}
+
+class _HourMinute {
+  const _HourMinute(this.hour, this.minute);
+
+  final int hour;
+  final int minute;
+
+  _HourMinute addHour() {
+    final nextHour = hour + 1;
+    if (nextHour > 23) return const _HourMinute(23, 59);
+    return _HourMinute(nextHour, minute);
+  }
+
+  int compareTo(_HourMinute other) {
+    final currentMinutes = hour * 60 + minute;
+    final otherMinutes = other.hour * 60 + other.minute;
+    return currentMinutes.compareTo(otherMinutes);
+  }
+
+  String format() {
+    final h = hour.toString().padLeft(2, '0');
+    final m = minute.toString().padLeft(2, '0');
+    return '$h:$m';
   }
 }

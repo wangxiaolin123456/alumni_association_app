@@ -2378,4 +2378,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get remark => 'Remark';
+
+  @override
+  String get businessHours => 'Business Hours';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get dayAfterTomorrow => 'After Tomorrow';
+
+  @override
+  String get monday => 'Mon';
+
+  @override
+  String get tuesday => 'Tue';
+
+  @override
+  String get wednesday => 'Wed';
+
+  @override
+  String get thursday => 'Thu';
+
+  @override
+  String get friday => 'Fri';
+
+  @override
+  String get saturday => 'Sat';
+
+  @override
+  String get sunday => 'Sun';
 }

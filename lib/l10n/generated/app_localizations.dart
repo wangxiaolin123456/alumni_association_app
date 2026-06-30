@@ -4635,6 +4635,66 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'备注'**
   String get remark;
+
+  /// No description provided for @businessHours.
+  ///
+  /// In zh, this message translates to:
+  /// **'营业时间'**
+  String get businessHours;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In zh, this message translates to:
+  /// **'明天'**
+  String get tomorrow;
+
+  /// No description provided for @dayAfterTomorrow.
+  ///
+  /// In zh, this message translates to:
+  /// **'后天'**
+  String get dayAfterTomorrow;
+
+  /// No description provided for @monday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周一'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周二'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周三'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周四'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周五'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周六'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In zh, this message translates to:
+  /// **'周日'**
+  String get sunday;
 }
 
 class _AppLocalizationsDelegate

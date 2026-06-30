@@ -799,5 +799,15 @@
   "selectedStoresCount": "{count} stores selected",
   "actualConsumptionPrice": "Actual consumption price",
   "reservationOrder": "Reservation",
-  "remark": "Remark"
+  "remark": "Remark",
+  "businessHours": "Business Hours",
+  "tomorrow": "Tomorrow",
+  "dayAfterTomorrow": "After Tomorrow",
+  "monday": "Mon",
+  "tuesday": "Tue",
+  "wednesday": "Wed",
+  "thursday": "Thu",
+  "friday": "Fri",
+  "saturday": "Sat",
+  "sunday": "Sun"
 }

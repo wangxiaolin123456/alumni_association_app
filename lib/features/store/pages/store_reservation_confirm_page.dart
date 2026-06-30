@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/config/app_config.dart';
+import '../model/response/store_response.dart';
+
 class StoreReservationConfirmPage extends StatelessWidget {
   const StoreReservationConfirmPage({super.key});
 
@@ -13,81 +16,42 @@ class StoreReservationConfirmPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<StoreController>();
     final store = controller.selectedStore;
-    final offer = controller.selectedOffer;
-    final amount = offer.price - 29;
+    final offer = controller.selectedCoupon;
+    // final amount = controller.reservationActualTotal;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.reservationConfirmation,
+        title: Text(
+          context.l10n.reservationConfirmation,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 18.sp,
-          ),),
+          ),
+        ),
         centerTitle: true,
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 120.h),
         children: [
-          StoreSectionCard(
-            child: Row(
-              children: [
-                Image.asset(
-                  "assets/default_image.png",
-                  width: 86.w,
-                  height: 72.h,
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        store.names,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        store.address,
-                        maxLines: 1,
-                        style: storeSecondaryText,
-                      ),
-                    ],
-                  ),
-                ),
-                Text(store.province),
-              ],
-            ),
-          ),
+          _ConfirmStoreCard(store: store),
           SizedBox(height: 12.h),
           _InfoCard(
             title: context.l10n.reservationPackage,
             children: [
               Text(
-                offer.title,
+                offer!.name,
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
-              Text(offer.subtitle, style: storeSecondaryText),
-              Text(
-                '¥${offer.price.toStringAsFixed(0)}',
-                style: TextStyle(
-                  color: const Color(0xFFFF5B22),
-                  fontSize: 18.sp,
-                ),
-              ),
+              Text(offer.description, style: storeSecondaryText),
+
             ],
           ),
           _InfoCard(
             title: context.l10n.reservationTime,
             children: [
-              Text(
-                '2026-${controller.reservationDates[controller.selectedDateIndex.value]}',
-              ),
-              Text(
-                controller.reservationTimes[controller.selectedTimeIndex.value],
-              ),
+              Text(controller.reservationDateParam),
+              Text(controller.reservationAppointmentTime.split(' ').last),
             ],
           ),
           _InfoCard(
@@ -117,18 +81,7 @@ class StoreReservationConfirmPage extends StatelessWidget {
               ),
             ],
           ),
-          _InfoCard(
-            title: context.l10n.benefitInfo,
-            children: [
-              _KeyValue(context.l10n.memberDiscount, '- ¥29'),
-              Divider(height: 24.h),
-              _KeyValue(
-                context.l10n.discountedAmount,
-                '¥${amount.toStringAsFixed(0)}',
-                valueColor: const Color(0xFFFF5B22),
-              ),
-            ],
-          ),
+
           Container(
             margin: EdgeInsets.only(top: 10.h),
             padding: EdgeInsets.all(14.r),
@@ -144,28 +97,194 @@ class StoreReservationConfirmPage extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 12.h),
           color: Colors.white,
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '${context.l10n.amountDue}\n¥${amount.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    color: const Color(0xFFFF5B22),
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
+          child: Obx(
+                () => SizedBox(
+              width: double.infinity,
+              height: 50.h,
+              child: FilledButton(
+                onPressed: controller.isReservationSubmitting.value
+                    ? null
+                    : () async {
+                  final success = await controller.submitReservationOrder();
+                  if (!context.mounted || !success) return;
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(context.l10n.reservationSubmitted),
+                    ),
+                  );
+                  Get.back();
+                },
+                child: controller.isReservationSubmitting.value
+                    ? SizedBox(
+                  width: 18.r,
+                  height: 18.r,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
                   ),
-                ),
+                )
+                    : Text(context.l10n.confirmReservation),
               ),
-              Expanded(
-                child: FilledButton(
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.l10n.reservationSubmitted)),
-                  ),
-                  child: Text(context.l10n.confirmReservation),
-                ),
-              ),
-            ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ConfirmStoreCard extends StatelessWidget {
+  const _ConfirmStoreCard({required this.store});
+
+  final StoreResponse store;
+
+  @override
+  Widget build(BuildContext context) {
+    final businessTime = _businessTimeText(context, store);
+    final address = '${store.province}${store.city}${store.area}${store.address}';
+
+    return StoreSectionCard(
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: _storeImage(store),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: SizedBox(
+              height: 96.h,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    store.names.trim().isEmpty
+                        ? context.l10n.unnamedStore
+                        : store.names,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: const Color(0xFF111827),
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16.r,
+                        color: const Color(0xFF8A93A3),
+                      ),
+                      SizedBox(width: 4.w),
+                      Expanded(
+                        child: Text(
+                          address,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: storeSecondaryText,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (businessTime.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      businessTime,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                  const Spacer(),
+                  _Tag(
+                    text: store.typeName.trim().isEmpty
+                        ? context.l10n.memberStore
+                        : store.typeName,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _businessTimeText(BuildContext context, StoreResponse store) {
+  final start = store.businessStartTime.trim();
+  final end = store.businessEndTime.trim();
+
+  if (start.isEmpty && end.isEmpty) return '';
+  if (start.isNotEmpty && end.isNotEmpty) {
+    return '${context.l10n.businessHours} $start-$end';
+  }
+  if (start.isNotEmpty) return '${context.l10n.businessStartTime} $start';
+  return '${context.l10n.businessEndTime} $end';
+}
+
+Widget _storeImage(StoreResponse store) {
+  final logo = store.shopLogo.trim();
+
+  if (logo.isEmpty) {
+    return Image.asset(
+      'assets/default_image.png',
+      width: 78.w,
+      height: 78.h,
+      fit: BoxFit.cover,
+    );
+  }
+
+  return Image.network(
+    AppConfig.apiBaseUrl + logo,
+    width: 78.w,
+    height: 78.h,
+    fit: BoxFit.cover,
+    errorBuilder: (_, _, _) => Image.asset(
+      'assets/default_image.png',
+      width: 78.w,
+      height: 78.h,
+      fit: BoxFit.cover,
+    ),
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) return child;
+      return Image.asset(
+        'assets/default_image.png',
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+  );
+}
+
+class _Tag extends StatelessWidget {
+  const _Tag({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    if (text.trim().isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF2E9),
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 8.sp,
+          color: const Color(0xFFFF5B22),
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

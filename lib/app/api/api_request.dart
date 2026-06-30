@@ -82,6 +82,9 @@ class URL {
   /// 提交/确认订单
   static const String confirmOrder = "/api/order/confirmOrder";
 
+  /// 创建/提交预约订单
+  static const String addReservationOrder = "/api/order/addReservationOrder";
+
   /// 用户订单列表
   static const String userOrder = "/api/order/userOrder";
 
@@ -710,6 +713,7 @@ class ApiRequest {
     required int userId,
     required int couponId,
     required StoreCouponResponse? coupon,
+    int orderType = 0,
   }) async {
     try {
       final response = await HttpManager.post<dynamic>(
@@ -723,7 +727,7 @@ class ApiRequest {
           "actualTotal": 0,
           "reduceAmount": 0,
           "peopleNum": 1,
-          "orderType": 0,
+          "orderType": orderType,
           "orderStatus": 0,
           "coupontId": couponId,
           "createTime": "",
@@ -748,6 +752,62 @@ class ApiRequest {
       return OrderResponse.fromJson(Map<String, dynamic>.from(rawData));
     } catch (e) {
       ToastUtils.showToast(message: "订单创建失败", type: ToastType.error);
+      return null;
+    }
+  }
+
+  /// 创建/提交预约订单。
+  ///
+  /// 预约确认页提交完整预约信息时调用，字段保持和后端入参一致。
+  static Future<OrderResponse?> addReservationOrder({
+    required int orderId,
+    required int shopId,
+    required int userId,
+    required String orderNum,
+    required int peopleNum,
+    required int orderStatus,
+    required int couponId,
+    required String appointmentTime,
+    required String remark,
+    required String contactName,
+    required String contactPhone,
+  }) async {
+    try {
+      final response = await HttpManager.post<dynamic>(
+        URL.addReservationOrder,
+        data: {
+          "orderId": orderId,
+          "shopId": shopId,
+          "userId": userId,
+          "orderNum": orderNum,
+          "total": 0,
+          "actualTotal": 0,
+          "reduceAmount": 0,
+          "peopleNum": peopleNum,
+          "orderType": 1,
+          "orderStatus": orderStatus,
+          "coupontId": couponId,
+          "createTime": "",
+          "appointmentTime": appointmentTime,
+          "finallyTime": "",
+          "cancelTime": "",
+          "remark": remark,
+          "contactName": contactName,
+          "contactPhone": contactPhone,
+        },
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! Map) return null;
+
+      return OrderResponse.fromJson(Map<String, dynamic>.from(rawData));
+    } catch (e) {
+      ToastUtils.showToast(message: "预约订单提交失败", type: ToastType.error);
       return null;
     }
   }

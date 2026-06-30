@@ -2305,4 +2305,34 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get remark => '備考';
+
+  @override
+  String get businessHours => '営業時間';
+
+  @override
+  String get tomorrow => '明日';
+
+  @override
+  String get dayAfterTomorrow => '明後日';
+
+  @override
+  String get monday => '月';
+
+  @override
+  String get tuesday => '火';
+
+  @override
+  String get wednesday => '水';
+
+  @override
+  String get thursday => '木';
+
+  @override
+  String get friday => '金';
+
+  @override
+  String get saturday => '土';
+
+  @override
+  String get sunday => '日';
 }

@@ -457,7 +457,7 @@ class StoreCouponResponse {
       return '${_formatAmount(value)}折';
     }
     if (type == 2 && minOrderAmount > 0 && maxDiscountAmount > 0) {
-      return '满${_formatAmount(maxDiscountAmount)}减${_formatAmount(minOrderAmount)}';
+      return '满${_formatAmount(minOrderAmount)}减${_formatAmount(maxDiscountAmount)}';
     }
     return '¥${_formatAmount(value)}';
   }

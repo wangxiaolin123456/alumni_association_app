@@ -31,7 +31,6 @@ import 'package:alumni_association_app/features/profile/orders/pages/my_orders_p
 import 'package:alumni_association_app/features/profile/orders/pages/order_detail_page.dart';
 import 'package:alumni_association_app/features/profile/services/pages/profile_service_pages.dart';
 import 'package:alumni_association_app/features/store/pages/store_detail_page.dart';
-import 'package:alumni_association_app/features/store/pages/store_offer_page.dart';
 import 'package:alumni_association_app/features/store/pages/store_reservation_confirm_page.dart';
 import 'package:alumni_association_app/features/store/pages/store_reservation_page.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +57,6 @@ class Pages {
 
   static const String memberSearch = '/member/search';
   static const String storeDetail = '/member/stores/detail';
-  static const String storeOffer = '/member/stores/offer';
   static const String storeReservation = '/member/stores/reservation';
   static const String storeReservationConfirm =
       '/member/stores/reservation/confirm';
@@ -152,7 +150,6 @@ class AppPages {
 
     GetPage(name: Pages.storeDetail, page: () => const StoreDetailPage()),
 
-    GetPage(name: Pages.storeOffer, page: () => const StoreOfferPage()),
 
     GetPage(
       name: Pages.storeReservation,

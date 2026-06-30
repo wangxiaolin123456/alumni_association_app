@@ -799,5 +799,15 @@
   "selectedStoresCount": "{count} 店舗を選択済み",
   "actualConsumptionPrice": "消費実績価格",
   "reservationOrder": "予約注文",
-  "remark": "備考"
+  "remark": "備考",
+  "businessHours": "営業時間",
+  "tomorrow": "明日",
+  "dayAfterTomorrow": "明後日",
+  "monday": "月",
+  "tuesday": "火",
+  "wednesday": "水",
+  "thursday": "木",
+  "friday": "金",
+  "saturday": "土",
+  "sunday": "日"
 }

@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../model/response/store_offer_response.dart';
+import '../../../core/config/app_config.dart';
 
-
+///预约信息
 class StoreReservationPage extends StatelessWidget {
   const StoreReservationPage({super.key});
 
@@ -17,17 +17,19 @@ class StoreReservationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<StoreController>();
     final store = controller.selectedStore;
-    final offer = controller.selectedOffer;
+    final offer = controller.selectedCoupon;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FC),
       appBar: AppBar(
-        title: Text(context.l10n.reservationInfo,
+        title: Text(
+          context.l10n.reservationInfo,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 18.sp,
-          ),),
+          ),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -39,7 +41,8 @@ class StoreReservationPage extends StatelessWidget {
                 children: [
                   _StoreInfoCard(store: store),
                   SizedBox(height: 12.h),
-                  _SelectedOfferCard(offer: offer),
+                  //优惠券
+                  _SelectedOfferCard(offer: offer!),
                   SizedBox(height: 12.h),
                   _DateCard(controller: controller),
                   SizedBox(height: 12.h),
@@ -61,42 +64,21 @@ class StoreReservationPage extends StatelessWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.title});
 
-  final String title;
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56.h,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            left: 6.w,
-            child: IconButton(
-              onPressed: () => Get.back(),
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 22.r,
-                color: const Color(0xFF111827),
-              ),
-            ),
-          ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18.sp,
-              color: const Color(0xFF111827),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
+String _businessTimeText(BuildContext context,StoreResponse store) {
+  final start = store.businessStartTime.trim();
+  final end = store.businessEndTime.trim();
+
+  if (start.isEmpty && end.isEmpty) return '';
+  if (start.isNotEmpty && end.isNotEmpty) {
+    return '${context.l10n.businessHours} $start-$end';
   }
+  if (start.isNotEmpty) return '${context.l10n.businessStartTime} $start';
+  return '${context.l10n.businessEndTime} $end';
 }
+
+
 
 class _StoreInfoCard extends StatelessWidget {
   const _StoreInfoCard({required this.store});
@@ -105,23 +87,19 @@ class _StoreInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final businessTime = _businessTimeText(context,store);
     return _WhiteCard(
       padding: EdgeInsets.all(12.r),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(10.r),
-
-            child:  Image.asset(
-              "assets/default_image.png",
-              width: 96.w,
-              height: 76.h,
-            ),
+            borderRadius: BorderRadius.circular(12.r),
+            child: _storeImage(store),
           ),
           SizedBox(width: 12.w),
           Expanded(
             child: SizedBox(
-              height: 76.h,
+              height: 96.h,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -139,8 +117,6 @@ class _StoreInfoCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(width: 6.w),
-                      const _MemberStoreBadge(),
                     ],
                   ),
                   const Spacer(),
@@ -154,7 +130,7 @@ class _StoreInfoCard extends StatelessWidget {
                       SizedBox(width: 4.w),
                       Expanded(
                         child: Text(
-                          store.address,
+                          '${store.province}${store.city}${store.area}${store.address}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -166,17 +142,26 @@ class _StoreInfoCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (businessTime.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      businessTime,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11.sp, color: AppColors.textSecondary),
+                    ),
+                  ],
+                  const Spacer(),
+                  Row(
+                    children: [
+                      _Tag(text: store.typeName.trim().isEmpty
+                          ? context.l10n.memberStore
+                          : store.typeName),
+
+                    ],
+                  ),
                 ],
               ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Text(
-            store.province,
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: const Color(0xFF4B5563),
-              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -184,11 +169,84 @@ class _StoreInfoCard extends StatelessWidget {
     );
   }
 }
+class _Tag extends StatelessWidget {
+  const _Tag({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    if (text.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF2E9),
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 8.sp,
+          color: const Color(0xFFFF5B22),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+///商店logo图
+Widget _storeImage(StoreResponse store) {
+  final logo = store.shopLogo.trim();
+
+  if (logo.isEmpty) {
+    return Image.asset(
+      "assets/default_image.png",
+      width: 78.w,
+      height: 78.h,
+      fit: BoxFit.cover,
+    );
+  }
+
+  return Image.network(
+    AppConfig.apiBaseUrl + logo,
+    width: 78.w,
+    height: 78.h,
+    fit: BoxFit.cover,
+
+    // 加载失败显示默认图
+    errorBuilder: (context, error, stackTrace) {
+      return Image.asset(
+        "assets/default_image.png",
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+
+    // 加载中显示默认图或者 loading
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) {
+        return child;
+      }
+
+      return Image.asset(
+        "assets/default_image.png",
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+  );
+}
 
 class _SelectedOfferCard extends StatelessWidget {
   const _SelectedOfferCard({required this.offer});
 
-  final StoreOfferResponse offer;
+  final StoreCouponResponse offer;
 
   @override
   Widget build(BuildContext context) {
@@ -197,10 +255,10 @@ class _SelectedOfferCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionTitle(text: context.l10n.selectReservationPackage),
+          _SectionTitle(text: context.l10n.selectedCoupon),
           SizedBox(height: 14.h),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
               color: const Color(0xFFFFF7F0),
               borderRadius: BorderRadius.circular(15.r),
@@ -222,13 +280,10 @@ class _SelectedOfferCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Text(
-                    '折',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 19.sp,
-                      fontWeight: FontWeight.w900,
-                    ),
+                  child: Icon(
+                    _couponTypeIcon(offer.type),
+                    color: Colors.white,
+                    size: 22.sp,
                   ),
                 ),
                 SizedBox(width: 14.w),
@@ -237,7 +292,7 @@ class _SelectedOfferCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        offer.title,
+                        offer.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -248,7 +303,7 @@ class _SelectedOfferCard extends StatelessWidget {
                       ),
                       SizedBox(height: 6.h),
                       Text(
-                        offer.subtitle,
+                        offer.description,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -257,33 +312,19 @@ class _SelectedOfferCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      SizedBox(height: 6.h),
+                      Text(
+                        '${offer.startTime} ~ ${offer.endTime}',
+                        style: TextStyle(
+                          color: const Color(0xFF6B7280),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(width: 8.w),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      offer.discountLabel,
-                      style: TextStyle(
-                        color: const Color(0xFFFF5B22),
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      '有效期至 2024.06.30',
-                      style: TextStyle(
-                        color: const Color(0xFF6B7280),
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+
               ],
             ),
           ),
@@ -292,6 +333,23 @@ class _SelectedOfferCard extends StatelessWidget {
     );
   }
 }
+
+IconData _couponTypeIcon(int type) {
+  switch (type) {
+    case 0:
+    // 固定金额
+      return Icons.confirmation_number_rounded;
+    case 1:
+    // 百分比
+      return Icons.percent_rounded;
+    case 2:
+    // 满减
+      return Icons.local_offer_rounded;
+    default:
+      return Icons.confirmation_number_rounded;
+  }
+}
+
 /// 选择日期
 class _DateCard extends StatelessWidget {
   const _DateCard({required this.controller});
@@ -300,7 +358,7 @@ class _DateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weekTexts = ['周一', '周二', '周三', '周四', '周五'];
+
 
     return _WhiteCard(
       padding: EdgeInsets.fromLTRB(14.w, 16.h, 14.w, 16.h),
@@ -362,19 +420,21 @@ class _DateCard extends StatelessWidget {
                   }
 
                   final selected = selectedDate == index;
+                  final date = DateTime.now().add(Duration(days: index));
+                  final weekText = _weekdayText(context, date);
                   final top = index == 0
                       ? context.l10n.today
                       : index == 1
-                      ? '明天'
+                      ? context.l10n.tomorrow
                       : index == 2
-                      ? '后天'
-                      : weekTexts[index];
+                      ? context.l10n.dayAfterTomorrow
+                      : weekText;
 
                   return _DateBox(
                     selected: selected,
                     top: top,
                     date: controller.reservationDates[index],
-                    week: weekTexts[index],
+                    week: weekText,
                     onTap: () => controller.selectDate(index),
                   );
                 },
@@ -407,7 +467,9 @@ class _TimeCard extends StatelessWidget {
             return Wrap(
               spacing: 10.w,
               runSpacing: 10.h,
-              children: controller.reservationTimes.asMap().entries.map((entry) {
+              children: controller.reservationTimes.asMap().entries.map((
+                entry,
+              ) {
                 return _TimeBox(
                   selected: selectedTime == entry.key,
                   time: entry.value,
@@ -473,7 +535,7 @@ class _ReservationFormCard extends StatelessWidget {
           ),
           SizedBox(height: 14.h),
           Obx(
-                () => _FormRow(
+            () => _FormRow(
               label: context.l10n.guestCount,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -521,8 +583,9 @@ class _AgreementRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => GestureDetector(
-        onTap: () => controller.toggleAgreement(!controller.agreementAccepted.value),
+      () => GestureDetector(
+        onTap: () =>
+            controller.toggleAgreement(!controller.agreementAccepted.value),
         child: Row(
           children: [
             Container(
@@ -541,11 +604,7 @@ class _AgreementRow extends StatelessWidget {
                 ),
               ),
               child: controller.agreementAccepted.value
-                  ? Icon(
-                Icons.check_rounded,
-                size: 14.r,
-                color: Colors.white,
-              )
+                  ? Icon(Icons.check_rounded, size: 14.r, color: Colors.white)
                   : null,
             ),
             SizedBox(width: 8.w),
@@ -613,10 +672,7 @@ class _ConfirmButton extends StatelessWidget {
 }
 
 class _WhiteCard extends StatelessWidget {
-  const _WhiteCard({
-    required this.child,
-    required this.padding,
-  });
+  const _WhiteCard({required this.child, required this.padding});
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -700,7 +756,9 @@ class _DateBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = selected ? Colors.white : const Color(0xFF111827);
-    final subColor = selected ? Colors.white.withOpacity(0.86) : const Color(0xFF6B7280);
+    final subColor = selected
+        ? Colors.white.withOpacity(0.86)
+        : const Color(0xFF6B7280);
 
     return GestureDetector(
       onTap: onTap,
@@ -716,12 +774,12 @@ class _DateBox extends StatelessWidget {
           ),
           boxShadow: selected
               ? [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.22),
-              blurRadius: 12.r,
-              offset: Offset(0, 5.h),
-            ),
-          ]
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.22),
+                    blurRadius: 12.r,
+                    offset: Offset(0, 5.h),
+                  ),
+                ]
               : [],
         ),
         child: Column(
@@ -744,15 +802,7 @@ class _DateBox extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 5.h),
-            Text(
-              week,
-              style: TextStyle(
-                color: subColor,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+
           ],
         ),
       ),
@@ -776,8 +826,9 @@ class _MoreDateBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = selected ? Colors.white : const Color(0xFF111827);
-    final subColor =
-    selected ? Colors.white.withOpacity(0.86) : const Color(0xFF6B7280);
+    final subColor = selected
+        ? Colors.white.withOpacity(0.86)
+        : const Color(0xFF6B7280);
 
     return GestureDetector(
       onTap: onTap,
@@ -793,65 +844,65 @@ class _MoreDateBox extends StatelessWidget {
           ),
           boxShadow: selected
               ? [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.22),
-              blurRadius: 12.r,
-              offset: Offset(0, 5.h),
-            ),
-          ]
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.22),
+                    blurRadius: 12.r,
+                    offset: Offset(0, 5.h),
+                  ),
+                ]
               : [],
         ),
         child: selected
             ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '已选',
-              style: TextStyle(
-                color: textColor,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              dateText ?? '',
-              style: TextStyle(
-                color: textColor,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 5.h),
-            Text(
-              weekText ?? '',
-              style: TextStyle(
-                color: subColor,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        )
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '已选',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    dateText ?? '',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  Text(
+                    weekText ?? '',
+                    style: TextStyle(
+                      color: subColor,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              )
             : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.calendar_month_outlined,
-              size: 25.r,
-              color: const Color(0xFF111827),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              '更多日期',
-              style: TextStyle(
-                color: const Color(0xFF4B5563),
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.calendar_month_outlined,
+                    size: 25.r,
+                    color: const Color(0xFF111827),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    '更多日期',
+                    style: TextStyle(
+                      color: const Color(0xFF4B5563),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -887,12 +938,12 @@ class _TimeBox extends StatelessWidget {
           ),
           boxShadow: selected
               ? [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.2),
-              blurRadius: 10.r,
-              offset: Offset(0, 4.h),
-            ),
-          ]
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.2),
+                    blurRadius: 10.r,
+                    offset: Offset(0, 4.h),
+                  ),
+                ]
               : [],
         ),
         child: Column(
@@ -910,7 +961,9 @@ class _TimeBox extends StatelessWidget {
             Text(
               '可预约',
               style: TextStyle(
-                color: selected ? Colors.white.withOpacity(0.85) : const Color(0xFF6B7280),
+                color: selected
+                    ? Colors.white.withOpacity(0.85)
+                    : const Color(0xFF6B7280),
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w500,
               ),
@@ -1114,14 +1167,10 @@ class _NoteInputBoxState extends State<_NoteInputBox> {
 }
 
 class _CountButton extends StatelessWidget {
-  const _CountButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _CountButton({required this.icon, required this.onTap});
 
   final IconData icon;
   final VoidCallback onTap;
-
 
   @override
   Widget build(BuildContext context) {
@@ -1135,12 +1184,30 @@ class _CountButton extends StatelessWidget {
           color: Color(0xFFF4F6FA),
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          size: 18.r,
-          color: const Color(0xFF111827),
-        ),
+        child: Icon(icon, size: 18.r, color: const Color(0xFF111827)),
       ),
     );
   }
+}
+
+
+String _weekdayText(BuildContext context, DateTime date) {
+  switch (date.weekday) {
+    case DateTime.monday:
+      return context.l10n.monday;
+    case DateTime.tuesday:
+      return context.l10n.tuesday;
+    case DateTime.wednesday:
+      return context.l10n.wednesday;
+    case DateTime.thursday:
+      return context.l10n.thursday;
+    case DateTime.friday:
+      return context.l10n.friday;
+    case DateTime.saturday:
+      return context.l10n.saturday;
+    case DateTime.sunday:
+      return context.l10n.sunday;
+  }
+
+  return '';
 }

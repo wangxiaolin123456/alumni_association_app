@@ -2302,4 +2302,34 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get remark => '备注';
+
+  @override
+  String get businessHours => '营业时间';
+
+  @override
+  String get tomorrow => '明天';
+
+  @override
+  String get dayAfterTomorrow => '后天';
+
+  @override
+  String get monday => '周一';
+
+  @override
+  String get tuesday => '周二';
+
+  @override
+  String get wednesday => '周三';
+
+  @override
+  String get thursday => '周四';
+
+  @override
+  String get friday => '周五';
+
+  @override
+  String get saturday => '周六';
+
+  @override
+  String get sunday => '周日';
 }

@@ -223,7 +223,7 @@ class _StoreListItem extends StatelessWidget {
         ? context.l10n.memberStore
         : store.typeName;
 
-    final businessTime = _businessTimeText(store);
+    final businessTime = _businessTimeText(context,store);
 
     return InkWell(
       onTap: onTap,
@@ -275,6 +275,7 @@ class _StoreListItem extends StatelessWidget {
                       children: [
                         _Tag(text: typeName),
                         SizedBox(width: 5.w),
+                        if(store.coupons!=null)
                         _Tag(text: context.l10n.memberDiscount),
                       ],
                     ),
@@ -289,16 +290,16 @@ class _StoreListItem extends StatelessWidget {
   }
 
 
-  String _businessTimeText(StoreResponse store) {
+  String _businessTimeText(BuildContext context,StoreResponse store) {
     final start = store.businessStartTime.trim();
     final end = store.businessEndTime.trim();
 
     if (start.isEmpty && end.isEmpty) return '';
     if (start.isNotEmpty && end.isNotEmpty) {
-      return '营业时间 $start-$end';
+      return '${context.l10n.businessHours} $start-$end';
     }
-    if (start.isNotEmpty) return '营业开始 $start';
-    return '营业结束 $end';
+    if (start.isNotEmpty) return '${context.l10n.businessStartTime} $start';
+    return '${context.l10n.businessEndTime} $end';
   }
 }
 

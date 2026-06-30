@@ -29,7 +29,7 @@ class StoreDetailPage extends StatelessWidget {
                 _HeroInfoCard(store: store),
                 SizedBox(height: 14.h),
 
-                ///会员优惠
+                ///优惠券
                 if (store.coupons.isNotEmpty) ...[
                   _BenefitCard(
                     store: store,
@@ -366,7 +366,7 @@ class _StoreTitleRow extends StatelessWidget {
   }
 }
 
-/// 会员优惠
+/// 优惠券
 class _BenefitCard extends StatelessWidget {
   const _BenefitCard({
     required this.store,
@@ -474,6 +474,7 @@ class _CouponItem extends StatelessWidget {
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.5,
               ),
+
             ),
           ],
         ),
@@ -541,7 +542,7 @@ class _BottomBar extends StatelessWidget {
               child: SizedBox(
                 height: 52.h,
                 child: OutlinedButton(
-                  onPressed: () => Get.toNamed(Pages.storeReservation),
+                  onPressed: () => _goToReservation(context),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: const Color(0xFFEAF2FF),
                     side: BorderSide.none,
@@ -606,6 +607,14 @@ class _BottomBar extends StatelessWidget {
 
     /// 跳转到消费入单金额页
     Get.toNamed(Pages.consumptionAmount);
+  }
+
+  Future<void> _goToReservation(BuildContext context) async {
+    final success = await controller.prepareReservationOrder();
+    if (!success) return;
+
+    /// 跳转到预约信息填写页
+    Get.toNamed(Pages.storeReservation);
   }
 }
 
