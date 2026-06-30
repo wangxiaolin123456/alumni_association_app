@@ -1,13 +1,14 @@
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
+
 /// 个人中心订单状态。
-///
-/// 后续接接口时可以把后端 status 字段统一转换成这里的枚举，页面只关心展示含义。
 enum ProfileOrderStatus { pending, used, cancelled }
 
-/// 我的订单列表和订单详情共用的展示模型。
-///
-/// 目前数据由 controller 模拟接口分页返回，字段命名尽量贴近接口响应，便于之后替换真实接口。
+/// 我的订单列表和订单详情共用展示模型。
 class ProfileOrderItem {
   const ProfileOrderItem({
+    required this.orderId,
+    required this.shopId,
+    required this.userId,
     required this.orderNo,
     required this.title,
     required this.merchantName,
@@ -19,35 +20,70 @@ class ProfileOrderItem {
     required this.originalPrice,
     required this.discount,
     required this.count,
+    required this.orderType,
     required this.status,
     required this.imageSeed,
     required this.paymentMethod,
     required this.userName,
     required this.userPhone,
     required this.merchantPhone,
+    required this.remark,
+    required this.couponId,
   });
 
+  final int orderId;
+  final int shopId;
+  final int userId;
   final String orderNo;
+
+  /// 优惠券名称 / 默认订单标题
   final String title;
+
+  /// 当前接口没有返回商户名称，先用 shopId 兜底
   final String merchantName;
+
+  /// 优惠券描述 / 备注
   final String packageContent;
+
+  /// 使用时间：已使用取 finallyTime，预约单取 appointmentTime，否则取 createTime
   final String useTime;
+
   final String createTime;
   final String address;
+
+  /// 实付金额 actualTotal
   final double price;
+
+  /// 原价 total
   final double originalPrice;
+
+  /// 优惠金额 reduceAmount
   final double discount;
+
+  /// 人数 peopleNum
   final int count;
+
+  /// 订单类型：0-直接支付 1-预约单
+  final int orderType;
+
   final ProfileOrderStatus status;
   final int imageSeed;
   final String paymentMethod;
   final String userName;
   final String userPhone;
   final String merchantPhone;
+  final String remark;
 
-  /// 用于取消预约后刷新列表状态。
-  ProfileOrderItem copyWith({ProfileOrderStatus? status}) {
+  /// 后端字段是 coupontId，先按接口拼写接
+  final int couponId;
+
+  ProfileOrderItem copyWith({
+    ProfileOrderStatus? status,
+  }) {
     return ProfileOrderItem(
+      orderId: orderId,
+      shopId: shopId,
+      userId: userId,
       orderNo: orderNo,
       title: title,
       merchantName: merchantName,
@@ -59,32 +95,66 @@ class ProfileOrderItem {
       originalPrice: originalPrice,
       discount: discount,
       count: count,
+      orderType: orderType,
       status: status ?? this.status,
       imageSeed: imageSeed,
       paymentMethod: paymentMethod,
       userName: userName,
       userPhone: userPhone,
       merchantPhone: merchantPhone,
+      remark: remark,
+      couponId: couponId,
     );
   }
 
-  static ProfileOrderItem fallback() => const ProfileOrderItem(
-    orderNo: '202406151856001234',
-    title: '双人套餐会员价',
-    merchantName: '创享餐饮商会',
-    packageContent: '招牌菜3选+饮品2杯',
-    useTime: '2024-06-20 18:30',
-    createTime: '2024-06-15 18:56:00',
-    address: '上海市 · 静安区南京西路123号',
-    price: 198,
-    originalPrice: 228,
-    discount: 30,
-    count: 1,
-    status: ProfileOrderStatus.pending,
-    imageSeed: 0,
-    paymentMethod: '微信支付',
-    userName: '张同学',
-    userPhone: '158****1234',
-    merchantPhone: '021-1234 5678',
-  );
+  factory ProfileOrderItem.fromOrderResponse(OrderResponse response) {
+    final orderNo = response.orderNum.trim().isNotEmpty
+        ? response.orderNum.trim()
+        : response.orderId.toString();
+
+    final couponName = response.coupons?.name.trim() ?? '';
+    final couponDesc = response.coupons?.description.trim() ?? '';
+
+    final title = couponName.isNotEmpty ? couponName : '会员优惠订单';
+
+    final useTime = response.finallyTime.trim().isNotEmpty
+        ? response.finallyTime
+        : response.appointmentTime.trim().isNotEmpty
+        ? response.appointmentTime
+        : response.createTime;
+
+    return ProfileOrderItem(
+      orderId: response.orderId,
+      shopId: response.shopId,
+      userId: response.userId,
+      orderNo: orderNo,
+      title: title,
+      merchantName: '商户 #${response.shopId}',
+      packageContent: couponDesc.isNotEmpty ? couponDesc : response.remark,
+      useTime: useTime,
+      createTime: response.createTime,
+      address: '',
+      price: response.actualTotal,
+      originalPrice: response.total,
+      discount: response.reduceAmount,
+      count: response.peopleNum <= 0 ? 1 : response.peopleNum,
+      orderType: response.orderType,
+      status: _statusFromApi(response.orderStatus),
+      imageSeed: response.orderId,
+      paymentMethod: '',
+      userName: response.contactName,
+      userPhone: response.contactPhone,
+      merchantPhone: '',
+      remark: response.remark,
+      couponId: response.coupontId,
+    );
+  }
+}
+
+ProfileOrderStatus _statusFromApi(int value) {
+  return switch (value) {
+    1 => ProfileOrderStatus.used,
+    2 => ProfileOrderStatus.cancelled,
+    _ => ProfileOrderStatus.pending,
+  };
 }

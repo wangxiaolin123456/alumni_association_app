@@ -399,7 +399,8 @@ class _OverviewCard extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 18.h),
       decoration: _cardDecoration,
       child: Obx(() {
-        final overview = controller.overview.value;
+        ///整体数据
+        final overview = controller.businessData.value;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +422,7 @@ class _OverviewCard extends StatelessWidget {
                     icon: Icons.assignment_rounded,
                     iconColor: AppColors.primary,
                     title: context.l10n.orderCount,
-                    value: '${overview.orderCount}',
+                    value: '${overview==null ?0:overview.monthOrderCount}',
                     backgroundColor: const Color(0xFFF6F8FF),
                   ),
                 ),
@@ -431,7 +432,7 @@ class _OverviewCard extends StatelessWidget {
                     icon: Icons.savings_rounded,
                     iconColor: const Color(0xFFFF4F2E),
                     title: context.l10n.receivedAmountYuan,
-                    value: _money(overview.receiveAmount),
+                    value: _money(overview==null ?0:overview.monthActualTotal),
                     backgroundColor: const Color(0xFFFFF8F3),
                   ),
                 ),
@@ -441,7 +442,7 @@ class _OverviewCard extends StatelessWidget {
                     icon: Icons.local_atm_rounded,
                     iconColor: const Color(0xFF8A4DFF),
                     title: context.l10n.discountAmountYuan,
-                    value: _money(overview.discountAmount),
+                    value: _money(overview==null ?0:overview.monthReduceAmount),
                     backgroundColor: const Color(0xFFF8F6FF),
                   ),
                 ),
@@ -693,17 +694,18 @@ class _BusinessDataCard extends StatelessWidget {
             SizedBox(height: 18.h),
             Row(
               children: [
+                ///今日入单次数
                 Expanded(
                   child: _DataTile(
                     title: context.l10n.todayEntryTimes,
-                    value: '${data.todayVerifyCount}',
+                    value: '${data==null ?0:data.todayOrderCount}',
                   ),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: _DataTile(
                     title: context.l10n.todayConsumeAmountYuan,
-                    value: _money(data.todayConsumeAmount),
+                    value: _money(data==null ?0:data.todayActualTotal),
                   ),
                 ),
               ],
@@ -713,15 +715,15 @@ class _BusinessDataCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _DataTile(
-                    title: context.l10n.todayGmvYuan,
-                    value: _money(data.monthGmv),
+                    title: context.l10n.todayGmv,
+                    value: _money(data==null ?0:data.todayTotal),
                   ),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: _DataTile(
                     title: context.l10n.todayDiscountAmountYuan,
-                    value: _money(data.monthDiscountAmount),
+                    value: _money(data==null ?0:data.todayReduceAmount),
                   ),
                 ),
               ],

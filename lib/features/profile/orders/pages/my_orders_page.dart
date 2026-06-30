@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-
 class MyOrdersPage extends StatelessWidget {
   const MyOrdersPage({super.key});
 
@@ -19,12 +18,6 @@ class MyOrdersPage extends StatelessWidget {
         leading: BackButton(onPressed: () => Get.back()),
         title: Text(context.l10n.myOrders, style: _titleStyle),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: controller.fetchInitial,
-            icon: Icon(Icons.search_rounded, size: 28.sp),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -41,25 +34,50 @@ class MyOrdersPage extends StatelessWidget {
                     }
                     return false;
                   },
-                  child: ListView.separated(
-                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
-                    itemCount:
-                        controller.orders.length +
-                        (controller.hasMore.value ? 1 : 0),
-                    separatorBuilder: (_, _) => SizedBox(height: 12.h),
-                    itemBuilder: (context, index) {
-                      if (index >= controller.orders.length) {
-                        return const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        );
-                      }
-                      return _OrderCard(
-                        order: controller.orders[index],
-                        onCancel: () =>
-                            controller.cancelOrder(controller.orders[index]),
-                      );
-                    },
-                  ),
+                  child:
+                      controller.orders.isEmpty && !controller.isLoading.value
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(height: 180.h),
+                            Icon(
+                              Icons.receipt_long_outlined,
+                              size: 58.sp,
+                              color: AppColors.textSecondary,
+                            ),
+                            SizedBox(height: 12.h),
+                            Center(
+                              child: Text(
+                                context.l10n.noRecords,
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView.separated(
+                          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+                          itemCount:
+                              controller.orders.length +
+                              (controller.hasMore.value ? 1 : 0),
+                          separatorBuilder: (_, _) => SizedBox(height: 12.h),
+                          itemBuilder: (context, index) {
+                            if (index >= controller.orders.length) {
+                              return const Center(
+                                child: CircularProgressIndicator.adaptive(),
+                              );
+                            }
+                            return _OrderCard(
+                              order: controller.orders[index],
+                              onCancel: () => controller.cancelOrder(
+                                controller.orders[index],
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ),
             ),
@@ -134,7 +152,7 @@ class _OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(Pages.orderDetail),
+      onTap: () => Get.toNamed(Pages.orderDetail, arguments: order),
       borderRadius: BorderRadius.circular(18.r),
       child: Container(
         padding: EdgeInsets.all(14.r),
@@ -178,7 +196,7 @@ class _OrderCard extends StatelessWidget {
                               style: _itemTitleStyle,
                             ),
                           ),
-                          _CouponTag(),
+                          _OrderTypeTag(orderType: order.orderType),
                         ],
                       ),
                       SizedBox(height: 7.h),
@@ -233,7 +251,7 @@ class _OrderCard extends StatelessWidget {
                 else
                   OutlinedButton(
                     onPressed: () =>
-                        Get.toNamed(Pages.orderDetail),
+                        Get.toNamed(Pages.orderDetail, arguments: order),
                     child: Text(context.l10n.viewDetail),
                   ),
               ],
@@ -272,18 +290,31 @@ class _FoodImage extends StatelessWidget {
   }
 }
 
-class _CouponTag extends StatelessWidget {
+class _OrderTypeTag extends StatelessWidget {
+  const _OrderTypeTag({required this.orderType});
+
+  final int orderType;
+
   @override
   Widget build(BuildContext context) {
+    if (orderType != 1) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFFF5A1F)),
+        color: const Color(0xFFEAF2FF),
+        border: Border.all(color: AppColors.primary),
         borderRadius: BorderRadius.circular(4.r),
       ),
       child: Text(
-        context.l10n.memberOffer,
-        style: TextStyle(color: const Color(0xFFFF5A1F), fontSize: 10.sp),
+        context.l10n.reservationOrder,
+        style: TextStyle(
+          color: AppColors.primary,
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

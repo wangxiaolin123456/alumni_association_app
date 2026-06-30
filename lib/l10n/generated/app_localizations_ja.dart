@@ -778,10 +778,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get fillConsumptionAmount => '利用金額を入力';
 
   @override
-  String get originalAmount => '元の金額';
+  String get originalAmount => '円の金額';
 
   @override
-  String get currencyYuan => '元';
+  String get currencyYuan => '円';
 
   @override
   String get enterAmountHint => '金額を入力';
@@ -1264,10 +1264,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get todayConsumptionAmount => '本日の売上';
 
   @override
-  String get monthlyGmv => '月間GMV';
+  String get todayGmv => '本日のGMV（円）';
 
   @override
-  String get monthlyDiscountAmount => '月間割引額';
+  String get todayDiscountAmount => '本日の割引金額（円）';
 
   @override
   String get pendingItems => '対応待ち';
@@ -1495,10 +1495,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get orderCount => '注文数';
 
   @override
-  String get receivedAmountYuan => '実収金額(元)';
+  String get receivedAmountYuan => '実収金額(円)';
 
   @override
-  String get discountAmountYuan => '割引金額(元)';
+  String get discountAmountYuan => '割引金額(円)';
 
   @override
   String get selectMonth => '月を選択';
@@ -1531,7 +1531,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get monthOrderCount => '今月の注文数';
 
   @override
-  String get monthReceivedAmount => '今月の実収金額(元)';
+  String get monthReceivedAmount => '今月の実収金額(円)';
 
   @override
   String get increaseComparedLastMonth => '前月より増加';
@@ -1564,13 +1564,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get todayEntryTimes => '本日の入金回数';
 
   @override
-  String get todayConsumeAmountYuan => '本日の消費金額(元)';
+  String get todayConsumeAmountYuan => '本日の消費金額(円)';
 
   @override
-  String get todayGmvYuan => '本日のGMV(元)';
+  String get todayGmvYuan => '本日のGMV(円)';
 
   @override
-  String get todayDiscountAmountYuan => '本日の割引金額(元)';
+  String get todayDiscountAmountYuan => '本日の割引金額(円)';
 
   @override
   String get merchantInfoUpdated => '店舗情報を更新しました';
@@ -2010,7 +2010,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get couponDescriptionRequired => 'クーポン説明 *';
 
   @override
-  String get couponDescriptionHint => '例：299元以上で30元割引。対象外商品がある場合があります。';
+  String get couponDescriptionHint => '例：299円以上で30円割引。対象外商品がある場合があります。';
 
   @override
   String get couponTypeRequired => 'クーポン種類 *';
@@ -2022,7 +2022,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get couponTypeFixedAmountSubtitle => '固定金額を割引';
 
   @override
-  String get couponTypeFixedAmountExample => '例：199元以上で20元割引';
+  String get couponTypeFixedAmountExample => '例：199円以上で20円割引';
 
   @override
   String get couponTypePercentage => '割合割引';
@@ -2040,7 +2040,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get couponTypeConditionalSubtitle => '条件達成で割引';
 
   @override
-  String get couponTypeConditionalExample => '例：299元以上で30元割引';
+  String get couponTypeConditionalExample => '例：299円以上で30円割引';
 
   @override
   String get couponThresholdAmountRequired => '利用条件金額 *';
@@ -2064,7 +2064,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get couponRateHint => '割引率を入力してください';
 
   @override
-  String get yuan => '元';
+  String get yuan => '円';
 
   @override
   String get applicableStoresRequired => '対象店舗 *';
@@ -2299,4 +2299,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get actualConsumptionPrice => '消費実績価格';
+
+  @override
+  String get reservationOrder => '予約注文';
+
+  @override
+  String get remark => '備考';
 }

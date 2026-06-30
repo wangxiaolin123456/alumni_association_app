@@ -12,7 +12,18 @@ class OrderDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final item = order ?? ProfileOrderItem.fallback();
+    final controller = Get.isRegistered<MyOrdersController>()
+        ? Get.find<MyOrdersController>()
+        : Get.put(MyOrdersController());
+    final initialOrder = order ?? _parseOrderArgument(Get.arguments);
+    final orderId = initialOrder?.orderId ?? _parseOrderId(Get.arguments);
+
+    if (orderId > 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.fetchOrderDetail(orderId: orderId, fallback: initialOrder);
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () => Get.back()),
@@ -25,59 +36,67 @@ class OrderDetailPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 28.h),
-        children: [
-          _StatusHero(order: item),
-          SizedBox(height: 12.h),
-          _PackageCard(order: item),
-          SizedBox(height: 12.h),
-          _InfoCard(
-            title: context.l10n.orderInfo,
-            rows: [
-              _InfoRow(
-                context.l10n.orderNo,
-                item.orderNo,
-                action: context.l10n.copy,
-              ),
-              _InfoRow(context.l10n.orderCreateTime, item.createTime),
-              _InfoRow(
-                context.l10n.orderStatus,
-                _statusText(context, item.status),
-              ),
-              _InfoRow(context.l10n.packageName, item.title),
-              _InfoRow(context.l10n.packageContent, item.packageContent),
-              _InfoRow(
-                context.l10n.quantity,
-                '${item.count}${context.l10n.portion}',
-              ),
-              _InfoRow(
-                context.l10n.paidAmount,
-                '¥${item.price.toStringAsFixed(2)}',
-                highlight: true,
-              ),
-              _InfoRow(context.l10n.paymentMethod, item.paymentMethod),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          _InfoCard(
-            title: context.l10n.useInfo,
-            rows: [
-              _InfoRow(context.l10n.useTime, item.useTime),
-              _InfoRow(context.l10n.useStore, '${item.merchantName}（静安店）'),
-              _InfoRow(context.l10n.useAddress, item.address),
-              _InfoRow(
-                context.l10n.user,
-                '${item.userName}（${item.userPhone}）',
-                link: true,
-              ),
-              _InfoRow(context.l10n.contactPhone, item.merchantPhone),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          _AmountCard(order: item),
-        ],
-      ),
+      body: Obx(() {
+        final item =
+            controller.detailOrder.value ??
+            initialOrder;
+
+        if (controller.isDetailLoading.value && initialOrder == null) {
+          return const Center(child: CircularProgressIndicator.adaptive());
+        }
+
+        return ListView(
+          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 28.h),
+          children: [
+            _StatusHero(order: item!),
+            SizedBox(height: 12.h),
+            _PackageCard(order: item),
+            SizedBox(height: 12.h),
+            _InfoCard(
+              title: context.l10n.orderInfo,
+              rows: [
+                _InfoRow(
+                  context.l10n.orderNo,
+                  item.orderNo,
+                  action: context.l10n.copy,
+                ),
+                _InfoRow(context.l10n.orderCreateTime, item.createTime),
+                _InfoRow(
+                  context.l10n.orderStatus,
+                  _statusText(context, item.status),
+                ),
+                _InfoRow(
+                  context.l10n.quantity,
+                  '${item.count}${context.l10n.portion}',
+                ),
+                _InfoRow(
+                  context.l10n.paidAmount,
+                  '¥${item.price.toStringAsFixed(2)}',
+                  highlight: true,
+                ),
+
+                _InfoRow(
+                  context.l10n.remark,
+                  item.remark.trim().isEmpty ? '-' : item.remark,
+                ),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            _InfoCard(
+              title: context.l10n.useInfo,
+              rows: [
+                _InfoRow(context.l10n.useTime, item.useTime),
+                _InfoRow(context.l10n.useStore, item.merchantName),
+                _InfoRow(context.l10n.useAddress, item.address),
+                _InfoRow(context.l10n.user, _userText(item), link: true),
+                _InfoRow(context.l10n.contactPhone, item.merchantPhone),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            _AmountCard(order: item),
+          ],
+        );
+      }),
     );
   }
 }
@@ -157,23 +176,7 @@ class _PackageCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(child: Text(order.title, style: _itemTitleStyle)),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 6.w,
-                        vertical: 2.h,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFFFF5A1F)),
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      child: Text(
-                        context.l10n.memberOffer,
-                        style: TextStyle(
-                          color: const Color(0xFFFF5A1F),
-                          fontSize: 10.sp,
-                        ),
-                      ),
-                    ),
+                    _OrderTypeTag(orderType: order.orderType),
                   ],
                 ),
                 SizedBox(height: 7.h),
@@ -213,6 +216,36 @@ class _PackageCard extends StatelessWidget {
   }
 }
 
+
+class _OrderTypeTag extends StatelessWidget {
+  const _OrderTypeTag({required this.orderType});
+
+  final int orderType;
+
+  @override
+  Widget build(BuildContext context) {
+    if (orderType != 1) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF2FF),
+        border: Border.all(color: AppColors.primary),
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      child: Text(
+        context.l10n.reservationOrder,
+        style: TextStyle(
+          color: AppColors.primary,
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
 class _InfoCard extends StatelessWidget {
   const _InfoCard({required this.title, required this.rows});
   final String title;
@@ -328,32 +361,7 @@ class _AmountCard extends StatelessWidget {
             danger: true,
             bold: true,
           ),
-          SizedBox(height: 18.h),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () =>
-                      _toast(context, context.l10n.contactMerchant),
-                  icon: const Icon(Icons.phone_outlined),
-                  label: Text(context.l10n.contactMerchant),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: FilledButton(
-                  onPressed: () {
-                    Get.find<MyOrdersController>().cancelOrder(order);
-                    _toast(context, context.l10n.orderCancelSuccess);
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF4B16),
-                  ),
-                  child: Text(context.l10n.cancelReservation),
-                ),
-              ),
-            ],
-          ),
+
         ],
       ),
     );
@@ -443,6 +451,35 @@ String _statusText(BuildContext context, ProfileOrderStatus status) {
     ProfileOrderStatus.used => context.l10n.used,
     ProfileOrderStatus.cancelled => context.l10n.cancelled,
   };
+}
+
+ProfileOrderItem? _parseOrderArgument(dynamic arguments) {
+  if (arguments is ProfileOrderItem) return arguments;
+  if (arguments is Map && arguments['order'] is ProfileOrderItem) {
+    return arguments['order'] as ProfileOrderItem;
+  }
+  return null;
+}
+
+int _parseOrderId(dynamic arguments) {
+  if (arguments is int) return arguments;
+  if (arguments is String) return int.tryParse(arguments) ?? 0;
+  if (arguments is Map) {
+    final raw = arguments['orderId'];
+    if (raw is int) return raw;
+    return int.tryParse(raw?.toString() ?? '') ?? 0;
+  }
+  return 0;
+}
+
+String _userText(ProfileOrderItem item) {
+  final name = item.userName.trim();
+  final phone = item.userPhone.trim();
+
+  if (name.isEmpty && phone.isEmpty) return '';
+  if (name.isEmpty) return phone;
+  if (phone.isEmpty) return name;
+  return '$name（$phone）';
 }
 
 void _toast(BuildContext context, String message) {

@@ -1264,10 +1264,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get todayConsumptionAmount => '今日消费金额(元)';
 
   @override
-  String get monthlyGmv => '本月GMV(元)';
+  String get todayGmv => '今日GMV(元)';
 
   @override
-  String get monthlyDiscountAmount => '本月优惠金额(元)';
+  String get todayDiscountAmount => '今日优惠金额(元)';
 
   @override
   String get pendingItems => '待处理事项';
@@ -2296,4 +2296,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get actualConsumptionPrice => '消费实际价格';
+
+  @override
+  String get reservationOrder => '预约订单';
+
+  @override
+  String get remark => '备注';
 }

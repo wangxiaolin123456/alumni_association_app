@@ -419,8 +419,8 @@
   "businessOverview": "Business Overview",
   "todayVerificationCount": "Today's Redemptions",
   "todayConsumptionAmount": "Today's Sales",
-  "monthlyGmv": "Monthly GMV",
-  "monthlyDiscountAmount": "Monthly Discounts",
+  "todayGmv": "Today's GMV ",
+  "todayDiscountAmount": "Today's discount amount",
   "pendingItems": "Pending Items",
   "pendingVerificationConfirm": "Pending Redemption",
   "abnormalVerification": "Abnormal Redemption",
@@ -797,5 +797,7 @@
   "endTimeCannotBeforeStartTime": "The end time cannot be earlier than the start time",
   "pleaseInputDisableReason": "Please enter the disable reason",
   "selectedStoresCount": "{count} stores selected",
-  "actualConsumptionPrice": "Actual consumption price"
+  "actualConsumptionPrice": "Actual consumption price",
+  "reservationOrder": "Reservation",
+  "remark": "Remark"
 }

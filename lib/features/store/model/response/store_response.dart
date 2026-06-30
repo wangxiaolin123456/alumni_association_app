@@ -23,6 +23,7 @@ class StoreResponse {
     required this.updateTime,
     required this.isDeleted,
     this.coupons = const [],
+    this.orderStatistics = const StoreOrderStatisticsResponse(),
   });
 
   /// 商户ID
@@ -100,6 +101,12 @@ class StoreResponse {
   /// 详情接口没有优惠券时会返回空数组，页面需要据此隐藏优惠区块。
   final List<StoreCouponResponse> coupons;
 
+  /// 商户工作台订单统计。
+  ///
+  /// `/api/merchant/myMerchantInfo` 会随商户信息返回统计数据，
+  /// 页面通过它展示今日数据和按月经营概览。
+  final StoreOrderStatisticsResponse orderStatistics;
+
   factory StoreResponse.fromJson(Map<String, dynamic> json) {
     return StoreResponse(
       shopId: _intValue(json['shopId']),
@@ -124,6 +131,9 @@ class StoreResponse {
       updateTime: _stringValue(json['updateTime']),
       isDeleted: _intValue(json['isDeleted']),
       coupons: _couponList(json['coupons']),
+      orderStatistics: StoreOrderStatisticsResponse.fromJson(
+        _mapValue(json['orderStatisticsVO']),
+      ),
     );
   }
 
@@ -151,6 +161,7 @@ class StoreResponse {
       'updateTime': updateTime,
       'isDeleted': isDeleted,
       'coupons': coupons.map((item) => item.toJson()).toList(),
+      'orderStatisticsVO': orderStatistics.toJson(),
     };
   }
 
@@ -225,6 +236,13 @@ class StoreResponse {
     return 0;
   }
 
+  static double _doubleValue(Object? value) {
+    if (value is double) return value;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
+  }
+
   static List<StoreCouponResponse> _couponList(Object? value) {
     if (value is! List) return const [];
 
@@ -236,6 +254,76 @@ class StoreResponse {
         )
         .where((item) => item.isDeleted == 0)
         .toList();
+  }
+
+  static Map<String, dynamic> _mapValue(Object? value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return const {};
+  }
+}
+
+/// 商户工作台订单统计数据。
+class StoreOrderStatisticsResponse {
+  const StoreOrderStatisticsResponse({
+    this.todayTotal = 0,
+    this.todayActualTotal = 0,
+    this.todayReduceAmount = 0,
+    this.todayOrderCount = 0,
+    this.monthTotal = 0,
+    this.monthActualTotal = 0,
+    this.monthReduceAmount = 0,
+    this.monthOrderCount = 0,
+  });
+
+  /// 今日订单总额
+  final double todayTotal;
+
+  /// 今日实收金额
+  final double todayActualTotal;
+
+  /// 今日优惠金额
+  final double todayReduceAmount;
+
+  /// 今日订单数量
+  final int todayOrderCount;
+
+  /// 当前选择月份订单总额
+  final double monthTotal;
+
+  /// 当前选择月份实收金额
+  final double monthActualTotal;
+
+  /// 当前选择月份优惠金额
+  final double monthReduceAmount;
+
+  /// 当前选择月份订单数量
+  final int monthOrderCount;
+
+  factory StoreOrderStatisticsResponse.fromJson(Map<String, dynamic> json) {
+    return StoreOrderStatisticsResponse(
+      todayTotal: StoreResponse._doubleValue(json['todayTotal']),
+      todayActualTotal: StoreResponse._doubleValue(json['todayActualTotal']),
+      todayReduceAmount: StoreResponse._doubleValue(json['todayReduceAmount']),
+      todayOrderCount: StoreResponse._intValue(json['todayOrderCount']),
+      monthTotal: StoreResponse._doubleValue(json['monthTotal']),
+      monthActualTotal: StoreResponse._doubleValue(json['monthActualTotal']),
+      monthReduceAmount: StoreResponse._doubleValue(json['monthReduceAmount']),
+      monthOrderCount: StoreResponse._intValue(json['monthOrderCount']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'todayTotal': todayTotal,
+      'todayActualTotal': todayActualTotal,
+      'todayReduceAmount': todayReduceAmount,
+      'todayOrderCount': todayOrderCount,
+      'monthTotal': monthTotal,
+      'monthActualTotal': monthActualTotal,
+      'monthReduceAmount': monthReduceAmount,
+      'monthOrderCount': monthOrderCount,
+    };
   }
 }
 
@@ -363,13 +451,12 @@ class StoreCouponResponse {
   /// 页面展示用主文案
   String get displayTitle => name.trim().isEmpty ? '会员优惠' : name;
 
-
   /// 页面展示用优惠值
   String get displayValue {
     if (type == 1) {
       return '${_formatAmount(value)}折';
     }
-    if (type == 2 && minOrderAmount > 0&& maxDiscountAmount > 0) {
+    if (type == 2 && minOrderAmount > 0 && maxDiscountAmount > 0) {
       return '满${_formatAmount(maxDiscountAmount)}减${_formatAmount(minOrderAmount)}';
     }
     return '¥${_formatAmount(value)}';

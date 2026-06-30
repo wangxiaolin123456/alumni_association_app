@@ -1,11 +1,12 @@
+import 'package:alumni_association_app/app/api/api_request.dart';
 import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// 我的订单列表控制器。
 ///
-/// 这里模拟真实接口分页：刷新时重置页码，加载更多时追加下一页。
-/// 后续接入接口时，只需要把 [_requestOrderPage] 替换成 ApiRequest 调用即可。
+/// 列表分页、Tab 状态筛选和详情请求都集中放在 Controller，
+/// 页面只负责展示和触发交互。
 class MyOrdersController extends GetxController {
   /// 当前选中的订单状态 Tab。
   final selectedTab = 0.obs;
@@ -13,8 +14,14 @@ class MyOrdersController extends GetxController {
   /// 订单列表数据。
   final orders = <ProfileOrderItem>[].obs;
 
-  /// 是否正在加载。
+  /// 当前详情页订单。
+  final detailOrder = Rxn<ProfileOrderItem>();
+
+  /// 是否正在加载列表。
   final isLoading = false.obs;
+
+  /// 是否正在加载详情。
+  final isDetailLoading = false.obs;
 
   /// 是否还有更多数据。
   final hasMore = true.obs;
@@ -26,7 +33,7 @@ class MyOrdersController extends GetxController {
   int pageNum = 1;
 
   /// 每页条数。
-  final int pageSize = 4;
+  final int pageSize = 10;
 
   @override
   void onInit() {
@@ -34,8 +41,21 @@ class MyOrdersController extends GetxController {
     fetchInitial();
   }
 
-  /// 切换 Tab 后重新模拟请求第一页数据。
+  /// 当前 Tab 对应后端订单状态。
+  ///
+  /// null 表示全部订单。
+  int? get currentOrderStatus {
+    return switch (selectedTab.value) {
+      1 => 0,
+      2 => 1,
+      3 => 2,
+      _ => null,
+    };
+  }
+
+  /// 切换 Tab 后重新请求第一页数据。
   Future<void> switchTab(int index) async {
+    if (selectedTab.value == index) return;
     selectedTab.value = index;
     await fetchInitial();
   }
@@ -56,155 +76,76 @@ class MyOrdersController extends GetxController {
   /// 获取订单列表数据。
   Future<void> fetchOrders({bool isRefresh = false}) async {
     if (isLoading.value) return;
+
     isLoading.value = true;
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 250));
-      final rows = _requestOrderPage(pageNum: pageNum, pageSize: pageSize);
+      final result = await ApiRequest.userOrders(
+        orderStatus: currentOrderStatus,
+        pageNum: pageNum,
+        pageSize: pageSize,
+      );
+
+      if (result == null) {
+        if (isRefresh) orders.clear();
+        hasMore.value = false;
+        return;
+      }
+
+      final rows = result.rows.map(ProfileOrderItem.fromOrderResponse).toList();
       if (isRefresh) {
         orders.assignAll(rows);
       } else {
         orders.addAll(rows);
       }
-      hasMore.value = rows.length >= pageSize;
+
+      hasMore.value = orders.length < result.total;
       if (hasMore.value) pageNum++;
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// 取消预约时只更新当前列表的本地状态，模拟接口提交成功后的返回。
+  /// 获取订单详情。
+  ///
+  /// 详情页进入时通过 orderId 请求完整详情；如果接口失败，
+  /// 会保留列表传入的订单做兜底展示。
+  Future<void> fetchOrderDetail({
+    required int orderId,
+    ProfileOrderItem? fallback,
+  }) async {
+    if (orderId <= 0) {
+      detailOrder.value = fallback;
+      return;
+    }
+    if (isDetailLoading.value) return;
+    if (detailOrder.value?.orderId == orderId) return;
+
+    detailOrder.value = fallback;
+    isDetailLoading.value = true;
+    try {
+      final result = await ApiRequest.orderInfo(orderId: orderId);
+      if (result == null) return;
+
+      detailOrder.value = ProfileOrderItem.fromOrderResponse(result);
+    } finally {
+      isDetailLoading.value = false;
+    }
+  }
+
+  /// 取消预约时只更新当前列表的本地状态，后续可替换为取消订单接口。
   void cancelOrder(ProfileOrderItem item) {
-    final index = orders.indexWhere((order) => order.orderNo == item.orderNo);
+    final index = orders.indexWhere((order) => order.orderId == item.orderId);
     if (index == -1) return;
     orders[index] = orders[index].copyWith(
       status: ProfileOrderStatus.cancelled,
     );
-  }
 
-  /// 根据 Tab 和搜索关键字模拟后端筛选。
-  List<ProfileOrderItem> _requestOrderPage({
-    required int pageNum,
-    required int pageSize,
-  }) {
-    final keyword = searchController.text.trim();
-    final status = switch (selectedTab.value) {
-      1 => ProfileOrderStatus.pending,
-      2 => ProfileOrderStatus.used,
-      3 => ProfileOrderStatus.cancelled,
-      _ => null,
-    };
-    final filtered = _mockOrders.where((order) {
-      final matchStatus = status == null || order.status == status;
-      final matchKeyword =
-          keyword.isEmpty ||
-          order.orderNo.contains(keyword) ||
-          order.title.contains(keyword) ||
-          order.merchantName.contains(keyword);
-      return matchStatus && matchKeyword;
-    }).toList();
-    final start = (pageNum - 1) * pageSize;
-    if (start >= filtered.length) return const [];
-    final end = (start + pageSize).clamp(0, filtered.length);
-    return filtered.sublist(start, end);
+    if (detailOrder.value?.orderId == item.orderId) {
+      detailOrder.value = detailOrder.value?.copyWith(
+        status: ProfileOrderStatus.cancelled,
+      );
+    }
   }
-
-  List<ProfileOrderItem> get _mockOrders => const [
-    ProfileOrderItem(
-      orderNo: '202406151856001234',
-      title: '双人套餐会员价',
-      merchantName: '创享餐饮商会',
-      packageContent: '招牌菜3选+饮品2杯',
-      useTime: '2024-06-20 18:30',
-      createTime: '2024-06-15 18:56:00',
-      address: '上海市 · 静安区南京西路123号',
-      price: 198,
-      originalPrice: 228,
-      discount: 30,
-      count: 1,
-      status: ProfileOrderStatus.pending,
-      imageSeed: 0,
-      paymentMethod: '微信支付',
-      userName: '张同学',
-      userPhone: '158****1234',
-      merchantPhone: '021-1234 5678',
-    ),
-    ProfileOrderItem(
-      orderNo: '202406141230000567',
-      title: '双人套餐会员价',
-      merchantName: '创享餐饮商会',
-      packageContent: '招牌菜3选+饮品2杯',
-      useTime: '2024-06-14 19:00',
-      createTime: '2024-06-14 12:30:00',
-      address: '上海市 · 静安区南京西路123号',
-      price: 198,
-      originalPrice: 228,
-      discount: 30,
-      count: 1,
-      status: ProfileOrderStatus.used,
-      imageSeed: 1,
-      paymentMethod: '微信支付',
-      userName: '张同学',
-      userPhone: '158****1234',
-      merchantPhone: '021-1234 5678',
-    ),
-    ProfileOrderItem(
-      orderNo: '202406121045003333',
-      title: '单人套餐',
-      merchantName: '创享餐饮商会',
-      packageContent: '主厨精选单人餐',
-      useTime: '2024-06-12 10:45',
-      createTime: '2024-06-12 10:45:00',
-      address: '上海市 · 静安区南京西路123号',
-      price: 128,
-      originalPrice: 158,
-      discount: 30,
-      count: 1,
-      status: ProfileOrderStatus.pending,
-      imageSeed: 2,
-      paymentMethod: '微信支付',
-      userName: '张同学',
-      userPhone: '158****1234',
-      merchantPhone: '021-1234 5678',
-    ),
-    ProfileOrderItem(
-      orderNo: '202406081530009876',
-      title: '双人套餐',
-      merchantName: '创享餐饮商会',
-      packageContent: '双人招牌套餐',
-      useTime: '2024-06-08 15:30',
-      createTime: '2024-06-08 15:30:00',
-      address: '上海市 · 静安区南京西路123号',
-      price: 198,
-      originalPrice: 228,
-      discount: 30,
-      count: 1,
-      status: ProfileOrderStatus.cancelled,
-      imageSeed: 3,
-      paymentMethod: '微信支付',
-      userName: '张同学',
-      userPhone: '158****1234',
-      merchantPhone: '021-1234 5678',
-    ),
-    ProfileOrderItem(
-      orderNo: '202406041900002468',
-      title: '下午茶双人券',
-      merchantName: '星巴克校友店',
-      packageContent: '咖啡2杯+甜品2份',
-      useTime: '2024-06-24 15:00',
-      createTime: '2024-06-04 19:00:00',
-      address: '上海市 · 浦东新区世纪大道8号',
-      price: 88,
-      originalPrice: 108,
-      discount: 20,
-      count: 1,
-      status: ProfileOrderStatus.pending,
-      imageSeed: 4,
-      paymentMethod: '支付宝',
-      userName: '张同学',
-      userPhone: '158****1234',
-      merchantPhone: '021-8888 1234',
-    ),
-  ];
 
   @override
   void onClose() {

@@ -2572,17 +2572,17 @@ abstract class AppLocalizations {
   /// **'今日消费金额(元)'**
   String get todayConsumptionAmount;
 
-  /// No description provided for @monthlyGmv.
+  /// No description provided for @todayGmv.
   ///
   /// In zh, this message translates to:
-  /// **'本月GMV(元)'**
-  String get monthlyGmv;
+  /// **'今日GMV(元)'**
+  String get todayGmv;
 
-  /// No description provided for @monthlyDiscountAmount.
+  /// No description provided for @todayDiscountAmount.
   ///
   /// In zh, this message translates to:
-  /// **'本月优惠金额(元)'**
-  String get monthlyDiscountAmount;
+  /// **'今日优惠金额(元)'**
+  String get todayDiscountAmount;
 
   /// No description provided for @pendingItems.
   ///
@@ -4623,6 +4623,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'消费实际价格'**
   String get actualConsumptionPrice;
+
+  /// No description provided for @reservationOrder.
+  ///
+  /// In zh, this message translates to:
+  /// **'预约订单'**
+  String get reservationOrder;
+
+  /// No description provided for @remark.
+  ///
+  /// In zh, this message translates to:
+  /// **'备注'**
+  String get remark;
 }
 
 class _AppLocalizationsDelegate

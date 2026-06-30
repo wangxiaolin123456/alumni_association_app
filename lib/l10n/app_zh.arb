@@ -419,8 +419,8 @@
   "businessOverview": "经营概览",
   "todayVerificationCount": "今日核销次数",
   "todayConsumptionAmount": "今日消费金额(元)",
-  "monthlyGmv": "本月GMV(元)",
-  "monthlyDiscountAmount": "本月优惠金额(元)",
+  "todayGmv": "今日GMV(元)",
+  "todayDiscountAmount": "今日优惠金额(元)",
   "pendingItems": "待处理事项",
   "pendingVerificationConfirm": "待确认核销",
   "abnormalVerification": "异常核销",
@@ -796,5 +796,7 @@
     "endTimeCannotBeforeStartTime": "结束时间不能早于开始时间",
     "pleaseInputDisableReason": "请输入禁用原因",
     "selectedStoresCount": "已选择 {count} 家门店",
-    "actualConsumptionPrice": "消费实际价格"
+    "actualConsumptionPrice": "消费实际价格",
+    "reservationOrder": "预约订单",
+    "remark": "备注"
 }

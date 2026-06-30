@@ -1299,10 +1299,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todayConsumptionAmount => 'Today\'s Sales';
 
   @override
-  String get monthlyGmv => 'Monthly GMV';
+  String get todayGmv => 'Today\'s GMV ';
 
   @override
-  String get monthlyDiscountAmount => 'Monthly Discounts';
+  String get todayDiscountAmount => 'Today\'s discount amount';
 
   @override
   String get pendingItems => 'Pending Items';
@@ -2372,4 +2372,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actualConsumptionPrice => 'Actual consumption price';
+
+  @override
+  String get reservationOrder => 'Reservation';
+
+  @override
+  String get remark => 'Remark';
 }

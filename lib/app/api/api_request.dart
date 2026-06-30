@@ -64,6 +64,9 @@ class URL {
   /// 我的商户列表
   static const String myMerchantList = "/api/merchant/myMerchantList";
 
+  /// 我的商户工作台信息
+  static const String myMerchantInfo = "/api/merchant/myMerchantInfo";
+
   /// 新增优惠券
   static const String addCoupons = "/api/coupons/addCoupons";
 
@@ -78,6 +81,12 @@ class URL {
 
   /// 提交/确认订单
   static const String confirmOrder = "/api/order/confirmOrder";
+
+  /// 用户订单列表
+  static const String userOrder = "/api/order/userOrder";
+
+  /// 订单详情
+  static const String orderInfo = "/api/order/orderInfo";
 }
 
 class ApiRequest {
@@ -585,6 +594,35 @@ class ApiRequest {
     }
   }
 
+  /// 我的商户工作台信息。
+  ///
+  /// [dateParam] 按月份查询经营概览，格式使用 `yyyy-MM`。
+  static Future<StoreResponse?> myMerchantInfo({
+    required int shopId,
+    required String dateParam,
+  }) async {
+    try {
+      final response = await HttpManager.get<dynamic>(
+        URL.myMerchantInfo,
+        params: {"shopId": shopId, "dateParam": dateParam},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! Map) return null;
+
+      return StoreResponse.fromJson(Map<String, dynamic>.from(rawData));
+    } catch (e) {
+      ToastUtils.showToast(message: "商户工作台信息获取失败", type: ToastType.error);
+      return null;
+    }
+  }
+
   /// 新增优惠券
   static Future<bool> addCoupons({required CouponRequest request}) async {
     try {
@@ -666,6 +704,7 @@ class ApiRequest {
   ///
   /// 商户详情点击“立即使用”时先创建订单，后端返回订单对象，
   /// 随后带着订单数据进入消费金额填写页。
+  /// 订单类型 0-直接支付 1-预约单
   static Future<OrderResponse?> addOrder({
     required int shopId,
     required int userId,
@@ -763,6 +802,71 @@ class ApiRequest {
     } catch (e) {
       ToastUtils.showToast(message: "优惠券修改失败", type: ToastType.error);
       return false;
+    }
+  }
+
+  /// 我的订单列表。
+  /// orderType 订单类型 0-直接支付 1-预约单
+  /// [orderStatus] 为空表示全部；订单状态 0-待使用 1-已使用 2-已取消
+  static Future<PageResponse<OrderResponse>?> userOrders({
+    int? orderStatus,
+    required int pageNum,
+    required int pageSize,
+  }) async {
+    try {
+      final params = <String, dynamic>{
+        "pageNum": pageNum,
+        "pageSize": pageSize,
+      };
+      if (orderStatus != null) {
+        params["orderStatus"] = orderStatus;
+      }
+
+      final response = await HttpManager.get<dynamic>(
+        URL.userOrder,
+        params: params,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! Map) return null;
+
+      return PageResponse<OrderResponse>.fromJson(
+        Map<String, dynamic>.from(rawData),
+        OrderResponse.fromJson,
+      );
+    } catch (e) {
+      ToastUtils.showToast(message: "订单列表获取失败", type: ToastType.error);
+      return null;
+    }
+  }
+
+  /// 订单详情。
+  static Future<OrderResponse?> orderInfo({required int orderId}) async {
+    try {
+      final response = await HttpManager.get<dynamic>(
+        URL.orderInfo,
+        params: {"orderId": orderId},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! Map) return null;
+
+      return OrderResponse.fromJson(Map<String, dynamic>.from(rawData));
+    } catch (e) {
+      ToastUtils.showToast(message: "订单详情获取失败", type: ToastType.error);
+      return null;
     }
   }
 }
