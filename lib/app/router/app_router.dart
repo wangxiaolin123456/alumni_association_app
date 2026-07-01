@@ -39,6 +39,7 @@ import 'package:get/get.dart';
 import '../../features/merchant/coupon/pages/view/publish_coupon_page.dart';
 import '../../features/merchant/coupon/pages/view/coupon_management_page.dart';
 import '../../features/merchant/center/pages/view/merchant_dashboard_page.dart';
+import '../../features/merchant/records/pages/entry_record_detail_page.dart';
 import '../../features/merchant/records/pages/entry_records_page.dart';
 
 class Pages {
@@ -102,6 +103,7 @@ class Pages {
   static const String helpCenter = '/member/profile/help-center';
   static const String feedback = '/member/profile/feedback';
   static const String entryRecordsPage = '/merchant/records';
+  static const String entryRecordDetail = '/merchant/records/detail';
   static const String merchantStatistics = '/merchant/statistics';
   static const couponManagement = '/merchant/coupons';
   static const publishCoupon = '/merchant/coupons/publish';
@@ -149,7 +151,6 @@ class AppPages {
     GetPage(name: Pages.memberSearch, page: () => const MemberSearchPage()),
 
     GetPage(name: Pages.storeDetail, page: () => const StoreDetailPage()),
-
 
     GetPage(
       name: Pages.storeReservation,
@@ -271,6 +272,11 @@ class AppPages {
     ),
 
     GetPage(name: Pages.entryRecordsPage, page: () => const EntryRecordsPage()),
+
+    GetPage(
+      name: Pages.entryRecordDetail,
+      page: () => const EntryRecordDetailPage(),
+    ),
 
     GetPage(
       name: Pages.merchantStatistics,

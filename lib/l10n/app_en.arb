@@ -813,5 +813,6 @@
   "goUse": "Use Now",
   "contactNotProvided": "Contact information is not available",
   "copySuccess": "Copied successfully",
-  "noCopyContent": "No content to copy"
+  "noCopyContent": "No content to copy",
+  "finallyTime": "Completion Time"
 }

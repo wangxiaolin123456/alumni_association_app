@@ -4719,6 +4719,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'暂无可复制内容'**
   String get noCopyContent;
+
+  /// No description provided for @finallyTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成时间'**
+  String get finallyTime;
 }
 
 class _AppLocalizationsDelegate

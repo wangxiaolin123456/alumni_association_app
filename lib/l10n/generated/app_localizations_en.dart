@@ -2420,4 +2420,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noCopyContent => 'No content to copy';
+
+  @override
+  String get finallyTime => 'Completion Time';
 }

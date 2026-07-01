@@ -89,6 +89,9 @@ class URL {
   /// 用户订单列表
   static const String userOrder = "/api/order/userOrder";
 
+  /// 商家订单列表
+  static const String shopOrder = "/api/order/shopOrder";
+
   /// 订单详情
   static const String orderInfo = "/api/order/orderInfo";
 }
@@ -872,6 +875,42 @@ class ApiRequest {
       return response.data;
     } catch (e) {
       ToastUtils.showToast(message: "订单列表获取失败", type: ToastType.error);
+      return null;
+    }
+  }
+
+  /// 商家入单记录列表。
+  ///
+  /// [orderStatus] 为空表示全部；订单状态 0-待使用 1-已使用 2-已取消。
+  static Future<PageResponse<OrderResponse>?> shopOrders({
+    required int shopId,
+    int? orderStatus,
+    required int pageNum,
+    required int pageSize,
+  }) async {
+    try {
+      final params = <String, dynamic>{
+        "shopId": shopId,
+        "pageNum": pageNum,
+        "pageSize": pageSize,
+      };
+      if (orderStatus != null) {
+        params["orderStatus"] = orderStatus;
+      }
+
+      final response = await HttpManager.get<PageResponse<OrderResponse>>(
+        URL.shopOrder,
+        params: params,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return null;
+      }
+      return response.data;
+    } catch (e) {
+      ToastUtils.showToast(message: "入单记录获取失败", type: ToastType.error);
       return null;
     }
   }

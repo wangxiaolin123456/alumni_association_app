@@ -20,9 +20,7 @@ class MerchantDashboardController extends GetxController {
   final currentTabIndex = 0.obs;
 
   /// 当前选择的统计月份
-  final selectedMonth = DateTime
-      .now()
-      .obs;
+  final selectedMonth = DateTime.now().obs;
 
   /// 是否选择过月份
   final hasSelectedMonth = false.obs;
@@ -71,7 +69,6 @@ class MerchantDashboardController extends GetxController {
 
   ///数据部分
   final businessData = Rxn<StoreOrderStatisticsResponse>();
-
 
   @override
   void onInit() {
@@ -141,7 +138,11 @@ class MerchantDashboardController extends GetxController {
 
   /// 入单记录
   void openEntryRecords() {
-    Get.toNamed(Pages.entryRecordsPage);
+    final store = currentStore.value;
+    Get.toNamed(
+      Pages.entryRecordsPage,
+      arguments: {'shopId': store?.shopId ?? shopId ?? 0},
+    );
   }
 
   /// 数据统计
@@ -154,13 +155,10 @@ class MerchantDashboardController extends GetxController {
     Get.toNamed(Pages.couponManagement);
   }
 
-
   /// 接口月份参数，格式：yyyy-MM。
   String _dateParam(DateTime date) {
     final year = date.year.toString().padLeft(4, '0');
     final month = date.month.toString().padLeft(2, '0');
     return '$year-$month';
   }
-
-
 }

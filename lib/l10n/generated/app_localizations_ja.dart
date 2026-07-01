@@ -2347,4 +2347,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get noCopyContent => 'コピーできる内容がありません';
+
+  @override
+  String get finallyTime => '完了時間';
 }

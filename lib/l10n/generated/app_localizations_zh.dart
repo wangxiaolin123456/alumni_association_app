@@ -2344,4 +2344,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noCopyContent => '暂无可复制内容';
+
+  @override
+  String get finallyTime => '完成时间';
 }

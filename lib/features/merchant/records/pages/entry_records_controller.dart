@@ -1,31 +1,57 @@
-import 'package:flutter/material.dart';
+import 'package:alumni_association_app/app/api/api_request.dart';
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
+import 'package:alumni_association_app/features/merchant/center/pages/controller/merchant_dashboard_controller.dart';
+import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 import 'package:get/get.dart';
-
-import '../model/entry_record_item.dart';
 
 /// 入单记录控制器。
 ///
-/// 按照项目里列表页的写法，刷新、加载更多、假数据分页都集中在 controller 中。
+/// 商家端入单记录直接走 `/api/order/shopOrder`，分页、顶部 Tab 筛选、
+/// 详情请求都集中在 controller，页面只负责展示。
 class EntryRecordsController extends GetxController {
-  /// 入单记录列表。
-  final records = <EntryRecordItem>[].obs;
+  /// 顶部 Tab：0 全部，1 待使用，2 已使用，3 已取消。
+  final selectedTab = 0.obs;
 
-  /// 是否正在加载。
+  /// 入单记录列表。
+  final records = <OrderResponse>[].obs;
+
+  /// 当前详情页订单。
+  final detailOrder = Rxn<OrderResponse>();
+
+  /// 是否正在加载列表。
   final isLoading = false.obs;
+
+  /// 是否正在加载详情。
+  final isDetailLoading = false.obs;
 
   /// 是否还有更多。
   final hasMore = true.obs;
 
-  /// 搜索框控制器。
-  final searchController = TextEditingController();
+  /// 当前商户 id。
+  late final int shopId = _resolveShopId();
 
   int pageNum = 1;
-  final int pageSize = 6;
+  final int pageSize = 10;
 
+  /// 应收合计，仅统计当前已加载列表。
   double get receivableTotal =>
-      records.fold(0, (sum, item) => sum + item.receivableAmount);
+      records.fold(0, (sum, item) => sum + item.total);
 
-  double get paidTotal => records.fold(0, (sum, item) => sum + item.paidAmount);
+  /// 实付合计，仅统计当前已加载列表。
+  double get paidTotal =>
+      records.fold(0, (sum, item) => sum + item.actualTotal);
+
+  /// 当前接口筛选状态。
+  ///
+  /// null = 全部；0 = 待使用；1 = 已使用；2 = 已取消。
+  int? get currentOrderStatus {
+    return switch (selectedTab.value) {
+      1 => 0,
+      2 => 1,
+      3 => 2,
+      _ => null,
+    };
+  }
 
   @override
   void onInit() {
@@ -33,126 +59,111 @@ class EntryRecordsController extends GetxController {
     fetchInitial();
   }
 
+  /// 切换顶部 Tab，并重新拉取第一页。
+  Future<void> switchTab(int index) async {
+    if (selectedTab.value == index) return;
+    selectedTab.value = index;
+    await fetchInitial();
+  }
+
+  /// 下拉刷新。
   Future<void> fetchInitial() async {
     pageNum = 1;
     hasMore.value = true;
     await fetchRecords(isRefresh: true);
   }
 
+  /// 上拉加载更多。
   Future<void> loadMore() async {
     if (!hasMore.value || isLoading.value) return;
     await fetchRecords();
   }
 
+  /// 获取商家入单记录列表。
   Future<void> fetchRecords({bool isRefresh = false}) async {
     if (isLoading.value) return;
+
+    if (shopId <= 0) {
+      records.clear();
+      hasMore.value = false;
+      return;
+    }
+
     isLoading.value = true;
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 220));
-      final rows = _requestRecordPage(pageNum: pageNum, pageSize: pageSize);
-      if (isRefresh) {
-        records.assignAll(rows);
-      } else {
-        records.addAll(rows);
+      final result = await ApiRequest.shopOrders(
+        shopId: shopId,
+        orderStatus: currentOrderStatus,
+        pageNum: pageNum,
+        pageSize: pageSize,
+      );
+
+      if (result == null) {
+        if (isRefresh) records.clear();
+        hasMore.value = false;
+        return;
       }
-      hasMore.value = rows.length >= pageSize;
+
+      if (isRefresh) {
+        records.assignAll(result.rows);
+      } else {
+        records.addAll(result.rows);
+      }
+
+      hasMore.value = records.length < result.total;
       if (hasMore.value) pageNum++;
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// 模拟搜索接口筛选。
-  List<EntryRecordItem> _requestRecordPage({
-    required int pageNum,
-    required int pageSize,
-  }) {
-    final keyword = searchController.text.trim();
-    final filtered = _mockRecords.where((item) {
-      return keyword.isEmpty ||
-          item.name.contains(keyword) ||
-          item.phone.contains(keyword) ||
-          item.orderNo.contains(keyword);
-    }).toList();
-    final start = (pageNum - 1) * pageSize;
-    if (start >= filtered.length) return const [];
-    final end = (start + pageSize).clamp(0, filtered.length);
-    return filtered.sublist(start, end);
+  /// 获取入单记录详情。
+  ///
+  /// 列表返回的数据可能不是完整详情，点击卡片后再通过订单详情接口刷新一次。
+  Future<void> fetchOrderDetail({
+    required int orderId,
+    OrderResponse? fallback,
+  }) async {
+    if (orderId <= 0) {
+      detailOrder.value = fallback;
+      return;
+    }
+
+    if (isDetailLoading.value) return;
+    if (detailOrder.value?.orderId == orderId) return;
+
+    detailOrder.value = fallback;
+    isDetailLoading.value = true;
+    try {
+      final result = await ApiRequest.orderInfo(orderId: orderId);
+      if (result != null) {
+        detailOrder.value = result;
+      }
+    } finally {
+      isDetailLoading.value = false;
+    }
   }
 
-  List<EntryRecordItem> get _mockRecords => const [
-    EntryRecordItem(
-      name: '张三',
-      packageName: '校友双人套餐',
-      orderNo: '202406151856001234',
-      phone: '138****1234',
-      time: '2024-06-15 18:20',
-      receivableAmount: 268,
-      paidAmount: 198,
-      avatarText: '张',
-      avatarColor: 0xFF1A73E8,
-    ),
-    EntryRecordItem(
-      name: '李四',
-      packageName: '会员菜品8.5折',
-      orderNo: '202406151705002345',
-      phone: '139****5678',
-      time: '2024-06-15 17:05',
-      receivableAmount: 520,
-      paidAmount: 442,
-      avatarText: '李',
-      avatarColor: 0xFF22A447,
-    ),
-    EntryRecordItem(
-      name: '王五',
-      packageName: '满300减50',
-      orderNo: '202406151230003456',
-      phone: '137****9012',
-      time: '2024-06-15 12:30',
-      receivableAmount: 360,
-      paidAmount: 310,
-      avatarText: '王',
-      avatarColor: 0xFF7650DC,
-    ),
-    EntryRecordItem(
-      name: '赵六',
-      packageName: '商务套餐A',
-      orderNo: '202406151015004567',
-      phone: '136****3456',
-      time: '2024-06-15 10:15',
-      receivableAmount: 888,
-      paidAmount: 780,
-      avatarText: '赵',
-      avatarColor: 0xFFFF7A00,
-      isVip: false,
-    ),
-    EntryRecordItem(
-      name: '刘七',
-      packageName: '精致下午茶套餐',
-      orderNo: '202406150945005678',
-      phone: '135****7890',
-      time: '2024-06-15 09:45',
-      receivableAmount: 128,
-      paidAmount: 118,
-      avatarText: '刘',
-      avatarColor: 0xFF1A73E8,
-    ),
-    EntryRecordItem(
-      name: '陈八',
-      packageName: '会员特价菜品',
-      orderNo: '202406150830006789',
-      phone: '132****2468',
-      time: '2024-06-15 08:30',
-      receivableAmount: 268,
-      paidAmount: 228,
-      avatarText: '陈',
-      avatarColor: 0xFF21A33A,
-    ),
-  ];
+  /// 解析商户 id。
+  ///
+  /// 支持从路由参数传 int/String/StoreResponse，也支持从商家首页 controller 兜底读取。
+  int _resolveShopId() {
+    final args = Get.arguments;
+    if (args is StoreResponse) return args.shopId;
+    if (args is int) return args;
+    if (args is String) return int.tryParse(args) ?? 0;
+    if (args is Map) {
+      final raw = args['shopId'];
+      if (raw is int) return raw;
+      final parsed = int.tryParse(raw?.toString() ?? '');
+      if (parsed != null) return parsed;
+    }
 
-  @override
-  void onClose() {
-    searchController.dispose();
-    super.onClose();
+    if (Get.isRegistered<MerchantDashboardController>()) {
+      final dashboard = Get.find<MerchantDashboardController>();
+      return dashboard.currentStore.value?.shopId ?? dashboard.shopId ?? 0;
+    }
+
+    return 0;
   }
 }

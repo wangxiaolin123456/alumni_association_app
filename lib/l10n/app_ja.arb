@@ -813,5 +813,6 @@
   "goUse": "利用する",
   "contactNotProvided": "連絡先はまだ提供されていません",
   "copySuccess": "コピーしました",
-  "noCopyContent": "コピーできる内容がありません"
+  "noCopyContent": "コピーできる内容がありません",
+  "finallyTime": "完了時間"
 }

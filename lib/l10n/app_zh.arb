@@ -812,5 +812,6 @@
     "goUse": "去使用",
     "contactNotProvided": "暂未提供联系方式",
     "copySuccess": "复制成功",
-    "noCopyContent": "暂无可复制内容"
+    "noCopyContent": "暂无可复制内容",
+    "finallyTime": "完成时间"
 }
