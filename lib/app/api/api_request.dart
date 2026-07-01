@@ -3,6 +3,7 @@ import 'package:alumni_association_app/features/profile/pages/merchant_onboardin
 import 'package:alumni_association_app/features/profile/pages/merchant_region_item.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:dio/dio.dart';
+import '../../features/consumption/model/request/order_request.dart';
 import '../../features/consumption/model/response/order_response.dart';
 import '../../features/auth/model/response/user_info_response.dart';
 import '../../features/merchant/coupon/model/request/coupon_request.dart';
@@ -709,36 +710,12 @@ class ApiRequest {
   /// 随后带着订单数据进入消费金额填写页。
   /// 订单类型 0-直接支付 1-预约单
   static Future<OrderResponse?> addOrder({
-    required int shopId,
-    required int userId,
-    required int couponId,
-    required StoreCouponResponse? coupon,
-    int orderType = 0,
+    required OrderRequest request,
   }) async {
     try {
-      final response = await HttpManager.post<dynamic>(
+      final response = await HttpManager.post<OrderResponse>(
         URL.addOrder,
-        data: {
-          "orderId": 0,
-          "shopId": shopId,
-          "userId": userId,
-          "orderNum": "",
-          "total": 0,
-          "actualTotal": 0,
-          "reduceAmount": 0,
-          "peopleNum": 1,
-          "orderType": orderType,
-          "orderStatus": 0,
-          "coupontId": couponId,
-          "createTime": "",
-          "appointmentTime": "",
-          "finallyTime": "",
-          "cancelTime": "",
-          "remark": "",
-          "contactName": "",
-          "contactPhone": "",
-          "coupons": coupon?.toJson(),
-        },
+        data: request.toJson(),
       );
 
       if (response.code != 200) {

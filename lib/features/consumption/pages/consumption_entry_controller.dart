@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
+import 'package:alumni_association_app/features/consumption/model/request/order_request.dart';
 import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
@@ -10,12 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/api/api_request.dart';
-import '../../../util/pretty_print_json.dart';
 
 /// 消费入单
 class ConsumptionEntryController extends GetxController {
   /// 输入框
   final searchController = TextEditingController();
+
   ///实际价格
   final amountController = TextEditingController();
   final noteController = TextEditingController();
@@ -143,15 +144,12 @@ class ConsumptionEntryController extends GetxController {
 
   /// 优惠金额
   double get discountAmount {
-
     final coupon = selectedStoreCoupon.value;
 
     final actualAmount = actualConsumptionAmount;
 
     if (coupon == null || actualAmount <= 0) {
-
       return 0;
-
     }
 
     /// type:
@@ -163,32 +161,27 @@ class ConsumptionEntryController extends GetxController {
     /// 2 = 满减
 
     if (coupon.type == 0) {
-
       final discount = coupon.value;
 
       return _roundMoney(discount.clamp(0, double.infinity));
-
     }
 
     if (coupon.type == 1) {
-
       final rate = _discountPayRate(coupon.value);
 
       if (rate <= 0 || rate >= 1) {
-
         return 0;
-
       }
 
       final original = actualAmount / rate;
 
       return _roundMoney((original - actualAmount).clamp(0, double.infinity));
-
     }
 
     if (coupon.type == 2) {
       ///消费满多少有优惠金额
       final thresholdAmount = coupon.minOrderAmount;
+
       ///折扣金额
       final discountAmount = coupon.maxDiscountAmount;
 
@@ -197,31 +190,22 @@ class ConsumptionEntryController extends GetxController {
       final possibleOriginal = actualAmount + discountAmount;
 
       if (thresholdAmount > 0 && possibleOriginal < thresholdAmount) {
-
         return 0;
-
       }
 
       return _roundMoney(discountAmount);
-
     }
 
     return 0;
-
   }
 
   /// 消费原价
 
   double get originalAmount {
-
     return _roundMoney(
-
       (actualConsumptionAmount + discountAmount).clamp(0, double.infinity),
-
     );
-
   }
-
 
   /// 折扣后的支付比例
   ///
@@ -428,14 +412,15 @@ class ConsumptionEntryController extends GetxController {
 
     LoadingUtil.showSafe();
     try {
-      final userId = SessionController.current.userInfo.value?.userId ?? 0;
-      printJsonLine(selectedCoupon);
-      print(' store.shopId= ${ store.shopId} userId= ${userId} couponId= ${selectedCoupon?.couponId ?? 0}');
+      final userInfo = SessionController.current.userInfo.value;
       final order = await ApiRequest.addOrder(
-        shopId: store.shopId,
-        userId: userId,
-        couponId: selectedCoupon?.couponId ?? 0,
-        coupon: selectedCoupon,
+        request: OrderRequest(
+          shopId: store.shopId,
+          userId: userInfo?.userId ?? 0,
+          coupontId: selectedCoupon?.couponId ?? 0,
+          contactName: store.names.isEmpty?userInfo?.displayName ?? '':store.names,
+          contactPhone: store.phone.isEmpty?userInfo?.phone ?? '':store.phone,
+        ),
       );
       if (order == null || order.orderId <= 0) return false;
 

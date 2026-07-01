@@ -141,7 +141,7 @@ class MyOrdersController extends GetxController {
       if (store == null || store.shopId <= 0) return false;
 
       final consumptionController =
-      Get.isRegistered<ConsumptionEntryController>()
+          Get.isRegistered<ConsumptionEntryController>()
           ? Get.find<ConsumptionEntryController>()
           : Get.put(ConsumptionEntryController());
 
@@ -167,14 +167,11 @@ class MyOrdersController extends GetxController {
     consumptionController.setCreatedOrder(order);
 
     final couponIndex = store.coupons.indexWhere(
-          (coupon) => coupon.couponId == order.coupontId,
+      (coupon) => coupon.couponId == order.coupontId,
     );
 
     if (couponIndex >= 0) {
-      consumptionController.selectStoreCoupon(
-        store: store,
-        index: couponIndex,
-      );
+      consumptionController.selectStoreCoupon(store: store, index: couponIndex);
     } else if (order.coupons == null) {
       consumptionController.clearStoreCoupon();
     }

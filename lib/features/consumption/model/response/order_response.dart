@@ -69,6 +69,17 @@ class OrderResponse {
   final StoreCouponResponse? coupons;
 
   factory OrderResponse.fromJson(Map<String, dynamic> json) {
+    final contactName = _firstNotEmpty([
+      json['contactName'],
+      json['nickName'],
+      json['names'],
+    ]);
+    final contactPhone = _firstNotEmpty([
+      json['contactPhone'],
+      json['userPhone'],
+      json['phone'],
+    ]);
+
     return OrderResponse(
       orderId: _intValue(json['orderId']),
       shopId: _intValue(json['shopId']),
@@ -95,8 +106,8 @@ class OrderResponse {
       finallyTime: _stringValue(json['finallyTime']),
       cancelTime: _stringValue(json['cancelTime']),
       remark: _stringValue(json['remark']),
-      contactName: _stringValue(json['contactName']),
-      contactPhone: _stringValue(json['contactPhone']),
+      contactName: contactName,
+      contactPhone: contactPhone,
       coupons: _couponValue(json['coupons']),
     );
   }
@@ -174,6 +185,14 @@ class OrderResponse {
   static String _stringValue(Object? value) {
     if (value == null) return '';
     return value.toString();
+  }
+
+  static String _firstNotEmpty(List<Object?> values) {
+    for (final value in values) {
+      final text = _stringValue(value).trim();
+      if (text.isNotEmpty) return text;
+    }
+    return '';
   }
 
   static int _intValue(Object? value) {

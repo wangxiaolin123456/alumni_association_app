@@ -13,6 +13,7 @@ import '../../../consumption/model/response/order_response.dart';
 
 class OrderDetailPage extends StatelessWidget {
   const OrderDetailPage({this.order, super.key});
+
   final OrderResponse? order;
 
   @override
@@ -38,16 +39,14 @@ class OrderDetailPage extends StatelessWidget {
           IconButton(
             onPressed: () {
               final phone = initialOrder?.contactPhone ?? '';
-              _callPhone(context,phone);
+              _callPhone(context, phone);
             },
             icon: Icon(Icons.support_agent_rounded, size: 25.sp),
           ),
         ],
       ),
       body: Obx(() {
-        final item =
-            controller.detailOrder.value ??
-            initialOrder;
+        final item = controller.detailOrder.value ?? initialOrder;
 
         if (controller.isDetailLoading.value && initialOrder == null) {
           return const Center(child: CircularProgressIndicator.adaptive());
@@ -74,10 +73,11 @@ class OrderDetailPage extends StatelessWidget {
                   context.l10n.orderStatus,
                   _statusText(context, item.orderStatus),
                 ),
-                _InfoRow(
-                  context.l10n.quantity,
-                  '${item.peopleNum <= 0 ? 1 : item.peopleNum}${context.l10n.portion}',
-                ),
+                if (item.peopleNum > 0)
+                  _InfoRow(
+                    context.l10n.quantity,
+                    '${item.peopleNum <= 0 ? 1 : item.peopleNum}${context.l10n.portion}',
+                  ),
                 _InfoRow(
                   context.l10n.paidAmount,
                   '¥${item.actualTotal.toStringAsFixed(2)}',
@@ -112,6 +112,7 @@ class OrderDetailPage extends StatelessWidget {
 
 class _StatusHero extends StatelessWidget {
   const _StatusHero({required this.order});
+
   final OrderResponse order;
 
   @override
@@ -167,6 +168,7 @@ class _StatusHero extends StatelessWidget {
 
 class _PackageCard extends StatelessWidget {
   const _PackageCard({required this.order});
+
   final OrderResponse order;
 
   @override
@@ -187,7 +189,12 @@ class _PackageCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(child: Text(_shopName(context, order), style: _itemTitleStyle)),
+                    Expanded(
+                      child: Text(
+                        _shopName(context, order),
+                        style: _itemTitleStyle,
+                      ),
+                    ),
                     _OrderTypeTag(orderType: order.orderType),
                   ],
                 ),
@@ -211,10 +218,11 @@ class _PackageCard extends StatelessWidget {
                       style: _originPriceStyle,
                     ),
                     const Spacer(),
-                    Text(
-                      '${context.l10n.totalCountPrefix}${order.peopleNum}${context.l10n.portion}',
-                      style: _metaStyle,
-                    ),
+                    if (order.peopleNum > 0)
+                      Text(
+                        '${context.l10n.totalCountPrefix}${order.peopleNum}${context.l10n.portion}',
+                        style: _metaStyle,
+                      ),
                   ],
                 ),
               ],
@@ -225,7 +233,6 @@ class _PackageCard extends StatelessWidget {
     );
   }
 }
-
 
 class _OrderTypeTag extends StatelessWidget {
   const _OrderTypeTag({required this.orderType});
@@ -256,8 +263,10 @@ class _OrderTypeTag extends StatelessWidget {
     );
   }
 }
+
 class _InfoCard extends StatelessWidget {
   const _InfoCard({required this.title, required this.rows});
+
   final String title;
   final List<_InfoRow> rows;
 
@@ -390,8 +399,10 @@ class _Tag extends StatelessWidget {
     );
   }
 }
+
 class _AmountCard extends StatelessWidget {
   const _AmountCard({required this.order});
+
   final OrderResponse order;
 
   @override
@@ -420,7 +431,6 @@ class _AmountCard extends StatelessWidget {
             danger: true,
             bold: true,
           ),
-
         ],
       ),
     );
@@ -429,13 +439,13 @@ class _AmountCard extends StatelessWidget {
 
 class _InfoRow {
   const _InfoRow(
-      this.label,
-      this.value, {
-        this.action,
-        this.onActionTap,
-        this.highlight = false,
-        this.link = false,
-      });
+    this.label,
+    this.value, {
+    this.action,
+    this.onActionTap,
+    this.highlight = false,
+    this.link = false,
+  });
 
   final String label;
   final String value;
@@ -452,6 +462,7 @@ class _AmountRow extends StatelessWidget {
     this.danger = false,
     this.bold = false,
   });
+
   final String label;
   final String value;
   final bool danger;
@@ -519,7 +530,6 @@ String _shopName(BuildContext context, OrderResponse order) {
       : '${context.l10n.merchant} #${order.shopId}';
 }
 
-
 String _orderUseTime(OrderResponse order) {
   if (order.finallyTime.trim().isNotEmpty) return order.finallyTime;
   if (order.appointmentTime.trim().isNotEmpty) return order.appointmentTime;
@@ -537,12 +547,12 @@ String _fullAddress(OrderResponse order) {
 
 String _userText(OrderResponse item) {
   final name = item.nickName.trim();
-  final phone = item.userPhone.trim();
+  final name1 = item.contactName.trim();
 
-  if (name.isEmpty && phone.isEmpty) return '';
-  if (name.isEmpty) return phone;
-  if (phone.isEmpty) return name;
-  return '$name（$phone）';
+  if (name.isEmpty && name1.isEmpty) return '';
+  if (name.isEmpty) return name1;
+  if (name1.isEmpty) return name;
+  return '$name（$name1）';
 }
 
 String _statusText(BuildContext context, int status) {
@@ -560,6 +570,7 @@ OrderResponse? _parseOrderArgument(dynamic arguments) {
   }
   return null;
 }
+
 Future<void> _callPhone(BuildContext context, String phone) async {
   final value = phone
       .trim()
@@ -577,10 +588,7 @@ Future<void> _callPhone(BuildContext context, String phone) async {
 
   final uri = Uri(scheme: 'tel', path: value);
 
-  final success = await launchUrl(
-    uri,
-    mode: LaunchMode.externalApplication,
-  );
+  final success = await launchUrl(uri, mode: LaunchMode.externalApplication);
 
   if (!success) {
     ToastUtils.showToast(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alumni_association_app/features/auth/domain/session_controller.dart';
+import 'package:alumni_association_app/features/consumption/model/request/order_request.dart';
 import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
 import 'package:alumni_association_app/features/profile/pages/merchant_type_item.dart';
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
@@ -151,9 +152,6 @@ class StoreController extends GetxController {
     return merchantTypes[index].id;
   }
 
-
-
-
   /// 当前选中的后端优惠券。
   ///
   /// 商户详情接口返回 coupons 时优先使用真实优惠券；没有时返回 null。
@@ -167,8 +165,6 @@ class StoreController extends GetxController {
     }
     return coupons[index];
   }
-
-
 
   @override
   void onInit() {
@@ -226,6 +222,7 @@ class StoreController extends GetxController {
     selectedStoreIndex.value = index < 0 ? 0 : index;
     selectedOfferIndex.value = 0;
     selectedTimeIndex.value = 0;
+
     /// 列表接口返回的是摘要数据，进入详情后再按 shopId 拉完整详情。
     fetchStoreDetail(store.shopId);
   }
@@ -329,13 +326,16 @@ class StoreController extends GetxController {
     final coupon = selectedCoupon;
     LoadingUtil.showSafe();
     try {
-      final userId = SessionController.current.userInfo.value?.userId ?? 0;
+      final userInfo = SessionController.current.userInfo.value;
       final order = await ApiRequest.addOrder(
-        shopId: store.shopId,
-        userId: userId,
-        couponId: coupon?.couponId ?? 0,
-        coupon: coupon,
-        orderType: 1,
+        request: OrderRequest(
+          shopId: store.shopId,
+          userId: userInfo?.userId ?? 0,
+          coupontId: coupon?.couponId ?? 0,
+          orderType: 1,
+          contactName: store.names.isEmpty?userInfo?.displayName ?? '':store.names,
+          contactPhone: store.phone.isEmpty?userInfo?.phone ?? '':store.phone,
+        ),
       );
 
       if (order == null || order.orderId <= 0) return false;
@@ -374,6 +374,7 @@ class StoreController extends GetxController {
 
     return '$reservationDateParam $time:00';
   }
+
   /// 提交完整预约订单。
   Future<bool> submitReservationOrder() async {
     if (isReservationSubmitting.value) return false;
@@ -477,6 +478,7 @@ String _formatDate(DateTime date) {
   final day = date.day.toString().padLeft(2, '0');
   return '$year-$month-$day';
 }
+
 _HourMinute? _parseHourMinute(String value) {
   final text = value.trim();
   if (text.isEmpty) return null;
