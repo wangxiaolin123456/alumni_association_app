@@ -2335,4 +2335,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get sunday => '日';
+
+  @override
+  String get goUse => '利用する';
+
+  @override
+  String get contactNotProvided => '連絡先はまだ提供されていません';
+
+  @override
+  String get copySuccess => 'コピーしました';
+
+  @override
+  String get noCopyContent => 'コピーできる内容がありません';
 }

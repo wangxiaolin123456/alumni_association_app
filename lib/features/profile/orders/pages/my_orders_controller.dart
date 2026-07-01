@@ -1,5 +1,8 @@
 import 'package:alumni_association_app/app/api/api_request.dart';
-import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
+import 'package:alumni_association_app/features/consumption/pages/consumption_entry_controller.dart';
+import 'package:alumni_association_app/features/store/model/response/store_response.dart';
+import 'package:alumni_association_app/util/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,31 +11,22 @@ import 'package:get/get.dart';
 /// 列表分页、Tab 状态筛选和详情请求都集中放在 Controller，
 /// 页面只负责展示和触发交互。
 class MyOrdersController extends GetxController {
-  /// 当前选中的订单状态 Tab。
   final selectedTab = 0.obs;
 
-  /// 订单列表数据。
-  final orders = <ProfileOrderItem>[].obs;
+  /// 直接使用接口订单模型
+  final orders = <OrderResponse>[].obs;
 
-  /// 当前详情页订单。
-  final detailOrder = Rxn<ProfileOrderItem>();
+  /// 当前详情页订单
+  final detailOrder = Rxn<OrderResponse>();
 
-  /// 是否正在加载列表。
   final isLoading = false.obs;
-
-  /// 是否正在加载详情。
   final isDetailLoading = false.obs;
-
-  /// 是否还有更多数据。
+  final isPreparingUse = false.obs;
   final hasMore = true.obs;
 
-  /// 搜索框控制器。
   final searchController = TextEditingController();
 
-  /// 当前页码。
   int pageNum = 1;
-
-  /// 每页条数。
   final int pageSize = 10;
 
   @override
@@ -41,9 +35,6 @@ class MyOrdersController extends GetxController {
     fetchInitial();
   }
 
-  /// 当前 Tab 对应后端订单状态。
-  ///
-  /// null 表示全部订单。
   int? get currentOrderStatus {
     return switch (selectedTab.value) {
       1 => 0,
@@ -53,27 +44,23 @@ class MyOrdersController extends GetxController {
     };
   }
 
-  /// 切换 Tab 后重新请求第一页数据。
   Future<void> switchTab(int index) async {
     if (selectedTab.value == index) return;
     selectedTab.value = index;
     await fetchInitial();
   }
 
-  /// 下拉刷新入口。
   Future<void> fetchInitial() async {
     pageNum = 1;
     hasMore.value = true;
     await fetchOrders(isRefresh: true);
   }
 
-  /// 上拉加载更多入口。
   Future<void> loadMore() async {
     if (!hasMore.value || isLoading.value) return;
     await fetchOrders();
   }
 
-  /// 获取订单列表数据。
   Future<void> fetchOrders({bool isRefresh = false}) async {
     if (isLoading.value) return;
 
@@ -91,11 +78,10 @@ class MyOrdersController extends GetxController {
         return;
       }
 
-      final rows = result.rows.map(ProfileOrderItem.fromOrderResponse).toList();
       if (isRefresh) {
-        orders.assignAll(rows);
+        orders.assignAll(result.rows);
       } else {
-        orders.addAll(rows);
+        orders.addAll(result.rows);
       }
 
       hasMore.value = orders.length < result.total;
@@ -105,46 +91,97 @@ class MyOrdersController extends GetxController {
     }
   }
 
-  /// 获取订单详情。
-  ///
-  /// 详情页进入时通过 orderId 请求完整详情；如果接口失败，
-  /// 会保留列表传入的订单做兜底展示。
   Future<void> fetchOrderDetail({
     required int orderId,
-    ProfileOrderItem? fallback,
+    OrderResponse? fallback,
   }) async {
     if (orderId <= 0) {
       detailOrder.value = fallback;
       return;
     }
+
     if (isDetailLoading.value) return;
     if (detailOrder.value?.orderId == orderId) return;
 
     detailOrder.value = fallback;
     isDetailLoading.value = true;
+
     try {
       final result = await ApiRequest.orderInfo(orderId: orderId);
       if (result == null) return;
 
-      detailOrder.value = ProfileOrderItem.fromOrderResponse(result);
+      detailOrder.value = result;
     } finally {
       isDetailLoading.value = false;
     }
   }
 
-  /// 取消预约时只更新当前列表的本地状态，后续可替换为取消订单接口。
-  void cancelOrder(ProfileOrderItem item) {
-    final index = orders.indexWhere((order) => order.orderId == item.orderId);
-    if (index == -1) return;
-    orders[index] = orders[index].copyWith(
-      status: ProfileOrderStatus.cancelled,
+  void cancelOrder(OrderResponse item) {
+    // final index = orders.indexWhere((order) => order.orderId == item.orderId);
+    // if (index == -1) return;
+    //
+    // orders[index] = orders[index].copyWith(orderStatus: 2);
+    //
+    // if (detailOrder.value?.orderId == item.orderId) {
+    //   detailOrder.value = detailOrder.value?.copyWith(orderStatus: 2);
+    // }
+  }
+
+  Future<bool> prepareUseOrder(OrderResponse item) async {
+    if (item.orderId <= 0 || isPreparingUse.value) return false;
+
+    isPreparingUse.value = true;
+    LoadingUtil.showSafe();
+
+    try {
+      final order = await ApiRequest.orderInfo(orderId: item.orderId);
+      if (order == null || order.orderId <= 0) return false;
+
+      final store = await ApiRequest.merchantInfo(shopId: order.shopId);
+      if (store == null || store.shopId <= 0) return false;
+
+      final consumptionController =
+      Get.isRegistered<ConsumptionEntryController>()
+          ? Get.find<ConsumptionEntryController>()
+          : Get.put(ConsumptionEntryController());
+
+      _fillConsumptionController(
+        consumptionController: consumptionController,
+        order: order,
+        store: store,
+      );
+
+      return true;
+    } finally {
+      LoadingUtil.dismissSafe();
+      isPreparingUse.value = false;
+    }
+  }
+
+  void _fillConsumptionController({
+    required ConsumptionEntryController consumptionController,
+    required OrderResponse order,
+    required StoreResponse store,
+  }) {
+    consumptionController.selectStoreMerchant(store);
+    consumptionController.setCreatedOrder(order);
+
+    final couponIndex = store.coupons.indexWhere(
+          (coupon) => coupon.couponId == order.coupontId,
     );
 
-    if (detailOrder.value?.orderId == item.orderId) {
-      detailOrder.value = detailOrder.value?.copyWith(
-        status: ProfileOrderStatus.cancelled,
+    if (couponIndex >= 0) {
+      consumptionController.selectStoreCoupon(
+        store: store,
+        index: couponIndex,
       );
+    } else if (order.coupons == null) {
+      consumptionController.clearStoreCoupon();
     }
+
+    consumptionController.amount.value = 0;
+    consumptionController.amountController.clear();
+    consumptionController.noteController.text = order.remark;
   }
 
   @override

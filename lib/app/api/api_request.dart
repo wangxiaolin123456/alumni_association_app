@@ -882,7 +882,7 @@ class ApiRequest {
         params["orderStatus"] = orderStatus;
       }
 
-      final response = await HttpManager.get<dynamic>(
+      final response = await HttpManager.get<PageResponse<OrderResponse>>(
         URL.userOrder,
         params: params,
         options: Options(contentType: Headers.formUrlEncodedContentType),
@@ -892,14 +892,7 @@ class ApiRequest {
         ToastUtils.showToast(message: response.msg, type: ToastType.error);
         return null;
       }
-
-      final rawData = response.raw['data'] ?? response.data;
-      if (rawData is! Map) return null;
-
-      return PageResponse<OrderResponse>.fromJson(
-        Map<String, dynamic>.from(rawData),
-        OrderResponse.fromJson,
-      );
+      return response.data;
     } catch (e) {
       ToastUtils.showToast(message: "订单列表获取失败", type: ToastType.error);
       return null;

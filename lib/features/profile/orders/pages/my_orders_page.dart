@@ -1,14 +1,17 @@
 import 'package:alumni_association_app/app/router/app_router.dart';
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
 import 'package:alumni_association_app/features/profile/orders/pages/my_orders_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/config/app_config.dart';
+import '../../../consumption/model/response/order_response.dart';
+
 class MyOrdersPage extends StatelessWidget {
   const MyOrdersPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +78,13 @@ class MyOrdersPage extends StatelessWidget {
                               onCancel: () => controller.cancelOrder(
                                 controller.orders[index],
                               ),
+                              onUse: () async {
+                                final success = await controller
+                                    .prepareUseOrder(controller.orders[index]);
+                                if (!success) return;
+
+                                Get.toNamed(Pages.consumptionAmount);
+                              },
                             );
                           },
                         ),
@@ -145,12 +155,28 @@ class _OrderTabs extends StatelessWidget {
 }
 
 class _OrderCard extends StatelessWidget {
-  const _OrderCard({required this.order, required this.onCancel});
-  final ProfileOrderItem order;
+  const _OrderCard({
+    required this.order,
+    required this.onCancel,
+    required this.onUse,
+  });
+
+  final OrderResponse order;
   final VoidCallback onCancel;
+  final Future<void> Function() onUse;
 
   @override
   Widget build(BuildContext context) {
+    final orderNo = order.orderNum.trim().isNotEmpty
+        ? order.orderNum
+        : order.orderId.toString();
+
+    final title = order.coupons?.name.trim().isNotEmpty == true
+        ? order.coupons!.name
+        : order.typeName.trim().isNotEmpty
+        ? order.typeName
+        : context.l10n.memberOffer;
+
     return InkWell(
       onTap: () => Get.toNamed(Pages.orderDetail, arguments: order),
       borderRadius: BorderRadius.circular(18.r),
@@ -163,14 +189,14 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '${context.l10n.orderNo}:  ${order.orderNo}',
+                    '${context.l10n.orderNo}:  $orderNo',
                     style: _metaStyle,
                   ),
                 ),
                 Text(
-                  _statusText(context, order.status),
+                  _statusText(context, order.orderStatus),
                   style: TextStyle(
-                    color: _statusColor(order.status),
+                    color: _statusColor(order.orderStatus),
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -180,7 +206,10 @@ class _OrderCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _FoodImage(seed: order.imageSeed, size: 104.w),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: _storeImage(order),
+                ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
@@ -190,7 +219,9 @@ class _OrderCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              order.title,
+                              order.shopName.trim().isEmpty
+                                  ? '${context.l10n.merchant} #${order.shopId}'
+                                  : order.shopName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: _itemTitleStyle,
@@ -200,27 +231,27 @@ class _OrderCard extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 7.h),
-                      Text(order.merchantName, style: _metaStyle),
+                      _Tag(text: title),
                       SizedBox(height: 5.h),
                       Text(
-                        '${context.l10n.useDate}:  ${order.useTime}',
+                        '${context.l10n.useDate}:  ${_orderUseTime(order)}',
                         style: _metaStyle,
                       ),
                       SizedBox(height: 10.h),
                       Row(
                         children: [
                           Text(
-                            '¥${order.price.toStringAsFixed(2)}',
+                            '¥${order.actualTotal.toStringAsFixed(2)}',
                             style: _priceStyle,
                           ),
                           SizedBox(width: 18.w),
                           Text(
-                            '¥${order.originalPrice.toStringAsFixed(2)}',
+                            '¥${order.total.toStringAsFixed(2)}',
                             style: _originPriceStyle,
                           ),
                           const Spacer(),
                           Text(
-                            '${context.l10n.totalCountPrefix}${order.count}${context.l10n.portion}',
+                            '${context.l10n.totalCountPrefix}${order.peopleNum <= 0 ? 1 : order.peopleNum}${context.l10n.portion}',
                             style: _metaStyle,
                           ),
                         ],
@@ -232,28 +263,33 @@ class _OrderCard extends StatelessWidget {
             ),
             SizedBox(height: 14.h),
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                OutlinedButton.icon(
-                  onPressed: () =>
-                      _toast(context, context.l10n.contactMerchant),
-                  icon: Icon(Icons.phone_outlined, size: 16.sp),
-                  label: Text(context.l10n.contactMerchant),
-                ),
-                const Spacer(),
-                if (order.status == ProfileOrderStatus.pending)
-                  FilledButton(
-                    onPressed: onCancel,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF4B16),
+                if (order.orderStatus == 0) ...[
+                  if (order.orderType == 1) ...[
+                    OutlinedButton(
+                      onPressed: onCancel,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFFFF4B16),
+                        side: const BorderSide(color: Color(0xFFFF4B16)),
+                      ),
+                      child: Text(context.l10n.cancelReservation),
                     ),
-                    child: Text(context.l10n.cancelReservation),
-                  )
-                else
-                  OutlinedButton(
-                    onPressed: () =>
-                        Get.toNamed(Pages.orderDetail, arguments: order),
-                    child: Text(context.l10n.viewDetail),
+                    SizedBox(width: 8.w),
+                  ],
+                  FilledButton(
+                    onPressed: onUse,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                    ),
+                    child: Text(context.l10n.goUse),
                   ),
+                  SizedBox(width: 8.w),
+                ],
+                OutlinedButton(
+                  onPressed: () => Get.toNamed(Pages.orderDetail, arguments: order),
+                  child: Text(context.l10n.viewDetail),
+                ),
               ],
             ),
           ],
@@ -263,33 +299,80 @@ class _OrderCard extends StatelessWidget {
   }
 }
 
-class _FoodImage extends StatelessWidget {
-  const _FoodImage({required this.seed, required this.size});
-  final int seed;
-  final double size;
+
+///商店logo图
+Widget _storeImage(OrderResponse store) {
+  final logo = store.shopLogo.trim();
+
+  if (logo.isEmpty) {
+    return Image.asset(
+      "assets/default_image.png",
+      width: 78.w,
+      height: 78.h,
+      fit: BoxFit.cover,
+    );
+  }
+
+  return Image.network(
+    AppConfig.apiBaseUrl + logo,
+    width: 78.w,
+    height: 78.h,
+    fit: BoxFit.cover,
+
+    // 加载失败显示默认图
+    errorBuilder: (context, error, stackTrace) {
+      return Image.asset(
+        "assets/default_image.png",
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+
+    // 加载中显示默认图或者 loading
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) {
+        return child;
+      }
+
+      return Image.asset(
+        "assets/default_image.png",
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+  );
+}
+
+class _Tag extends StatelessWidget {
+  const _Tag({required this.text});
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    final gradients = [
-      const [Color(0xFF402312), Color(0xFFC57A2E)],
-      const [Color(0xFF263B59), Color(0xFFE1A15B)],
-      const [Color(0xFF5A2418), Color(0xFFE57E33)],
-      const [Color(0xFF20140E), Color(0xFFA96836)],
-      const [Color(0xFF14446F), Color(0xFFB88E58)],
-    ];
-    final colors = gradients[seed % gradients.length];
+    if (text.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      width: size,
-      height: size * 0.72,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        gradient: LinearGradient(colors: colors),
+        color: const Color(0xFFFFF2E9),
+        borderRadius: BorderRadius.circular(4.r),
       ),
-      child: Icon(Icons.restaurant_rounded, color: Colors.white, size: 34.sp),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10.sp,
+          color: const Color(0xFFFF5B22),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
-
 class _OrderTypeTag extends StatelessWidget {
   const _OrderTypeTag({required this.orderType});
 
@@ -320,24 +403,27 @@ class _OrderTypeTag extends StatelessWidget {
   }
 }
 
-String _statusText(BuildContext context, ProfileOrderStatus status) {
+String _statusText(BuildContext context, int status) {
   return switch (status) {
-    ProfileOrderStatus.pending => context.l10n.pendingUse,
-    ProfileOrderStatus.used => context.l10n.used,
-    ProfileOrderStatus.cancelled => context.l10n.cancelled,
+    1 => context.l10n.used,
+    2 => context.l10n.cancelled,
+    _ => context.l10n.pendingUse,
   };
 }
 
-Color _statusColor(ProfileOrderStatus status) {
+Color _statusColor(int status) {
   return switch (status) {
-    ProfileOrderStatus.pending => const Color(0xFFFF4B16),
-    ProfileOrderStatus.used => AppColors.success,
-    ProfileOrderStatus.cancelled => AppColors.textSecondary,
+    1 => AppColors.success,
+    2 => AppColors.textSecondary,
+    _ => const Color(0xFFFF4B16),
   };
 }
 
-void _toast(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+
+String _orderUseTime(OrderResponse order) {
+  if (order.finallyTime.trim().isNotEmpty) return order.finallyTime;
+  if (order.appointmentTime.trim().isNotEmpty) return order.appointmentTime;
+  return order.createTime;
 }
 
 final _titleStyle = TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w900);

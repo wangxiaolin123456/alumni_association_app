@@ -2408,4 +2408,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sunday => 'Sun';
+
+  @override
+  String get goUse => 'Use Now';
+
+  @override
+  String get contactNotProvided => 'Contact information is not available';
+
+  @override
+  String get copySuccess => 'Copied successfully';
+
+  @override
+  String get noCopyContent => 'No content to copy';
 }

@@ -1,13 +1,20 @@
 import 'package:alumni_association_app/features/store/model/response/store_response.dart';
 
 /// 订单接口返回模型。
-///
-/// 对应 `/api/order/addOrder` 返回的订单信息，同时也作为确认订单后页面展示的数据。
 class OrderResponse {
   const OrderResponse({
     required this.orderId,
     required this.shopId,
+    required this.shopName,
+    required this.shopLogo,
+    required this.province,
+    required this.city,
+    required this.area,
+    required this.address,
+    required this.typeName,
     required this.userId,
+    required this.nickName,
+    required this.userPhone,
     required this.orderNum,
     required this.total,
     required this.actualTotal,
@@ -28,7 +35,22 @@ class OrderResponse {
 
   final int orderId;
   final int shopId;
+
+  /// 商户信息
+  final String shopName;
+  final String shopLogo;
+  final String province;
+  final String city;
+  final String area;
+  final String address;
+  final String typeName;
+
   final int userId;
+
+  /// 用户信息
+  final String nickName;
+  final String userPhone;
+
   final String orderNum;
   final double total;
   final double actualTotal;
@@ -50,7 +72,16 @@ class OrderResponse {
     return OrderResponse(
       orderId: _intValue(json['orderId']),
       shopId: _intValue(json['shopId']),
+      shopName: _stringValue(json['shopName']),
+      shopLogo: _stringValue(json['shopLogo']),
+      province: _stringValue(json['province']),
+      city: _stringValue(json['city']),
+      area: _stringValue(json['area']),
+      address: _stringValue(json['address']),
+      typeName: _stringValue(json['typeName']),
       userId: _intValue(json['userId']),
+      nickName: _stringValue(json['nickName']),
+      userPhone: _stringValue(json['userPhone']),
       orderNum: _stringValue(json['orderNum']),
       total: _doubleValue(json['total']),
       actualTotal: _doubleValue(json['actualTotal']),
@@ -74,7 +105,16 @@ class OrderResponse {
     return {
       'orderId': orderId,
       'shopId': shopId,
+      'shopName': shopName,
+      'shopLogo': shopLogo,
+      'province': province,
+      'city': city,
+      'area': area,
+      'address': address,
+      'typeName': typeName,
       'userId': userId,
+      'nickName': nickName,
+      'userPhone': userPhone,
       'orderNum': orderNum,
       'total': total,
       'actualTotal': actualTotal,
@@ -98,7 +138,16 @@ class OrderResponse {
     return const OrderResponse(
       orderId: 0,
       shopId: 0,
+      shopName: '',
+      shopLogo: '',
+      province: '',
+      city: '',
+      area: '',
+      address: '',
+      typeName: '',
       userId: 0,
+      nickName: '',
+      userPhone: '',
       orderNum: '',
       total: 0,
       actualTotal: 0,

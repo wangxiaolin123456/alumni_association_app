@@ -2332,4 +2332,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sunday => '周日';
+
+  @override
+  String get goUse => '去使用';
+
+  @override
+  String get contactNotProvided => '暂未提供联系方式';
+
+  @override
+  String get copySuccess => '复制成功';
+
+  @override
+  String get noCopyContent => '暂无可复制内容';
 }

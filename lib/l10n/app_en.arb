@@ -809,5 +809,9 @@
   "thursday": "Thu",
   "friday": "Fri",
   "saturday": "Sat",
-  "sunday": "Sun"
+  "sunday": "Sun",
+  "goUse": "Use Now",
+  "contactNotProvided": "Contact information is not available",
+  "copySuccess": "Copied successfully",
+  "noCopyContent": "No content to copy"
 }

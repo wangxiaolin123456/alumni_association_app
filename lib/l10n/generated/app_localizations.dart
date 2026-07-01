@@ -4695,6 +4695,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'周日'**
   String get sunday;
+
+  /// No description provided for @goUse.
+  ///
+  /// In zh, this message translates to:
+  /// **'去使用'**
+  String get goUse;
+
+  /// No description provided for @contactNotProvided.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂未提供联系方式'**
+  String get contactNotProvided;
+
+  /// No description provided for @copySuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制成功'**
+  String get copySuccess;
+
+  /// No description provided for @noCopyContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无可复制内容'**
+  String get noCopyContent;
 }
 
 class _AppLocalizationsDelegate

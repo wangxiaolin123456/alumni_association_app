@@ -1,14 +1,19 @@
 import 'package:alumni_association_app/app/theme/app_theme.dart';
 import 'package:alumni_association_app/core/localization/localization_extensions.dart';
-import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
 import 'package:alumni_association_app/features/profile/orders/pages/my_orders_controller.dart';
+import 'package:alumni_association_app/util/toast_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../core/config/app_config.dart';
+import '../../../consumption/model/response/order_response.dart';
 
 class OrderDetailPage extends StatelessWidget {
   const OrderDetailPage({this.order, super.key});
-  final ProfileOrderItem? order;
+  final OrderResponse? order;
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +21,9 @@ class OrderDetailPage extends StatelessWidget {
         ? Get.find<MyOrdersController>()
         : Get.put(MyOrdersController());
     final initialOrder = order ?? _parseOrderArgument(Get.arguments);
-    final orderId = initialOrder?.orderId ?? _parseOrderId(Get.arguments);
+    final orderId = initialOrder?.orderId;
 
-    if (orderId > 0) {
+    if (orderId! > 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.fetchOrderDetail(orderId: orderId, fallback: initialOrder);
       });
@@ -31,7 +36,10 @@ class OrderDetailPage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => _toast(context, context.l10n.contactService),
+            onPressed: () {
+              final phone = initialOrder?.contactPhone ?? '';
+              _callPhone(context,phone);
+            },
             icon: Icon(Icons.support_agent_rounded, size: 25.sp),
           ),
         ],
@@ -57,21 +65,22 @@ class OrderDetailPage extends StatelessWidget {
               rows: [
                 _InfoRow(
                   context.l10n.orderNo,
-                  item.orderNo,
+                  _orderNo(item),
                   action: context.l10n.copy,
+                  onActionTap: () => _copyText(context, _orderNo(item)),
                 ),
                 _InfoRow(context.l10n.orderCreateTime, item.createTime),
                 _InfoRow(
                   context.l10n.orderStatus,
-                  _statusText(context, item.status),
+                  _statusText(context, item.orderStatus),
                 ),
                 _InfoRow(
                   context.l10n.quantity,
-                  '${item.count}${context.l10n.portion}',
+                  '${item.peopleNum <= 0 ? 1 : item.peopleNum}${context.l10n.portion}',
                 ),
                 _InfoRow(
                   context.l10n.paidAmount,
-                  '¥${item.price.toStringAsFixed(2)}',
+                  '¥${item.actualTotal.toStringAsFixed(2)}',
                   highlight: true,
                 ),
 
@@ -85,11 +94,11 @@ class OrderDetailPage extends StatelessWidget {
             _InfoCard(
               title: context.l10n.useInfo,
               rows: [
-                _InfoRow(context.l10n.useTime, item.useTime),
-                _InfoRow(context.l10n.useStore, item.merchantName),
-                _InfoRow(context.l10n.useAddress, item.address),
+                _InfoRow(context.l10n.useTime, _orderUseTime(item)),
+                _InfoRow(context.l10n.useStore, _shopName(context, item)),
+                _InfoRow(context.l10n.useAddress, _fullAddress(item)),
                 _InfoRow(context.l10n.user, _userText(item), link: true),
-                _InfoRow(context.l10n.contactPhone, item.merchantPhone),
+                _InfoRow(context.l10n.contactPhone, item.contactPhone),
               ],
             ),
             SizedBox(height: 12.h),
@@ -103,7 +112,7 @@ class OrderDetailPage extends StatelessWidget {
 
 class _StatusHero extends StatelessWidget {
   const _StatusHero({required this.order});
-  final ProfileOrderItem order;
+  final OrderResponse order;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +139,7 @@ class _StatusHero extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _statusText(context, order.status),
+                  _statusText(context, order.orderStatus),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 25.sp,
@@ -158,7 +167,7 @@ class _StatusHero extends StatelessWidget {
 
 class _PackageCard extends StatelessWidget {
   const _PackageCard({required this.order});
-  final ProfileOrderItem order;
+  final OrderResponse order;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +176,10 @@ class _PackageCard extends StatelessWidget {
       decoration: _cardDecoration,
       child: Row(
         children: [
-          _DetailFoodImage(seed: order.imageSeed, size: 110.w),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: _storeImage(order),
+          ),
           SizedBox(width: 14.w),
           Expanded(
             child: Column(
@@ -175,34 +187,32 @@ class _PackageCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(child: Text(order.title, style: _itemTitleStyle)),
+                    Expanded(child: Text(_shopName(context, order), style: _itemTitleStyle)),
                     _OrderTypeTag(orderType: order.orderType),
                   ],
                 ),
                 SizedBox(height: 7.h),
-                Text(order.merchantName, style: _metaStyle),
+                _Tag(text: order.typeName),
                 SizedBox(height: 5.h),
                 Text(
-                  '${context.l10n.useDate}:  ${order.useTime}',
+                  '${context.l10n.useDate}:  ${_orderUseTime(order)}',
                   style: _metaStyle,
                 ),
                 SizedBox(height: 5.h),
-                Text(order.address, style: _metaStyle),
-                SizedBox(height: 10.h),
                 Row(
                   children: [
                     Text(
-                      '¥${order.price.toStringAsFixed(2)}',
+                      '¥${order.actualTotal.toStringAsFixed(2)}',
                       style: _priceStyle,
                     ),
                     SizedBox(width: 16.w),
                     Text(
-                      '¥${order.originalPrice.toStringAsFixed(2)}',
+                      '¥${order.total.toStringAsFixed(2)}',
                       style: _originPriceStyle,
                     ),
                     const Spacer(),
                     Text(
-                      '${context.l10n.totalCountPrefix}${order.count}${context.l10n.portion}',
+                      '${context.l10n.totalCountPrefix}${order.peopleNum}${context.l10n.portion}',
                       style: _metaStyle,
                     ),
                   ],
@@ -289,9 +299,12 @@ class _InfoCard extends StatelessWidget {
                   ),
                   if (row.action != null) ...[
                     SizedBox(width: 8.w),
-                    Text(
-                      row.action!,
-                      style: const TextStyle(color: AppColors.primary),
+                    InkWell(
+                      onTap: row.onActionTap,
+                      child: Text(
+                        row.action!,
+                        style: const TextStyle(color: AppColors.primary),
+                      ),
                     ),
                   ],
                 ],
@@ -304,36 +317,82 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-class _DetailFoodImage extends StatelessWidget {
-  const _DetailFoodImage({required this.seed, required this.size});
-  final int seed;
-  final double size;
+///商店logo图
+Widget _storeImage(OrderResponse store) {
+  final logo = store.shopLogo.trim();
+
+  if (logo.isEmpty) {
+    return Image.asset(
+      "assets/default_image.png",
+      width: 78.w,
+      height: 78.h,
+      fit: BoxFit.cover,
+    );
+  }
+
+  return Image.network(
+    AppConfig.apiBaseUrl + logo,
+    width: 78.w,
+    height: 78.h,
+    fit: BoxFit.cover,
+
+    // 加载失败显示默认图
+    errorBuilder: (context, error, stackTrace) {
+      return Image.asset(
+        "assets/default_image.png",
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+
+    // 加载中显示默认图或者 loading
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) {
+        return child;
+      }
+
+      return Image.asset(
+        "assets/default_image.png",
+        width: 78.w,
+        height: 78.h,
+        fit: BoxFit.cover,
+      );
+    },
+  );
+}
+
+class _Tag extends StatelessWidget {
+  const _Tag({required this.text});
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    final gradients = [
-      const [Color(0xFF402312), Color(0xFFC57A2E)],
-      const [Color(0xFF263B59), Color(0xFFE1A15B)],
-      const [Color(0xFF5A2418), Color(0xFFE57E33)],
-      const [Color(0xFF20140E), Color(0xFFA96836)],
-      const [Color(0xFF14446F), Color(0xFFB88E58)],
-    ];
-    final colors = gradients[seed % gradients.length];
+    if (text.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      width: size,
-      height: size * 0.72,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        gradient: LinearGradient(colors: colors),
+        color: const Color(0xFFFFF2E9),
+        borderRadius: BorderRadius.circular(4.r),
       ),
-      child: Icon(Icons.restaurant_rounded, color: Colors.white, size: 34.sp),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10.sp,
+          color: const Color(0xFFFF5B22),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
-
 class _AmountCard extends StatelessWidget {
   const _AmountCard({required this.order});
-  final ProfileOrderItem order;
+  final OrderResponse order;
 
   @override
   Widget build(BuildContext context) {
@@ -347,17 +406,17 @@ class _AmountCard extends StatelessWidget {
           SizedBox(height: 12.h),
           _AmountRow(
             context.l10n.productAmount,
-            '¥${order.originalPrice.toStringAsFixed(2)}',
+            '¥${order.total.toStringAsFixed(2)}',
           ),
           _AmountRow(
             context.l10n.memberDiscountAmount,
-            '-¥${order.discount.toStringAsFixed(2)}',
+            '-¥${order.reduceAmount.toStringAsFixed(2)}',
             danger: true,
           ),
           const Divider(height: 24),
           _AmountRow(
             context.l10n.paidAmount,
-            '¥${order.price.toStringAsFixed(2)}',
+            '¥${order.actualTotal.toStringAsFixed(2)}',
             danger: true,
             bold: true,
           ),
@@ -370,15 +429,18 @@ class _AmountCard extends StatelessWidget {
 
 class _InfoRow {
   const _InfoRow(
-    this.label,
-    this.value, {
-    this.action,
-    this.highlight = false,
-    this.link = false,
-  });
+      this.label,
+      this.value, {
+        this.action,
+        this.onActionTap,
+        this.highlight = false,
+        this.link = false,
+      });
+
   final String label;
   final String value;
   final String? action;
+  final VoidCallback? onActionTap;
   final bool highlight;
   final bool link;
 }
@@ -445,35 +507,36 @@ final _cardDecoration = BoxDecoration(
   ],
 );
 
-String _statusText(BuildContext context, ProfileOrderStatus status) {
-  return switch (status) {
-    ProfileOrderStatus.pending => context.l10n.pendingUse,
-    ProfileOrderStatus.used => context.l10n.used,
-    ProfileOrderStatus.cancelled => context.l10n.cancelled,
-  };
+String _orderNo(OrderResponse order) {
+  return order.orderNum.trim().isNotEmpty
+      ? order.orderNum
+      : order.orderId.toString();
 }
 
-ProfileOrderItem? _parseOrderArgument(dynamic arguments) {
-  if (arguments is ProfileOrderItem) return arguments;
-  if (arguments is Map && arguments['order'] is ProfileOrderItem) {
-    return arguments['order'] as ProfileOrderItem;
-  }
-  return null;
+String _shopName(BuildContext context, OrderResponse order) {
+  return order.shopName.trim().isNotEmpty
+      ? order.shopName
+      : '${context.l10n.merchant} #${order.shopId}';
 }
 
-int _parseOrderId(dynamic arguments) {
-  if (arguments is int) return arguments;
-  if (arguments is String) return int.tryParse(arguments) ?? 0;
-  if (arguments is Map) {
-    final raw = arguments['orderId'];
-    if (raw is int) return raw;
-    return int.tryParse(raw?.toString() ?? '') ?? 0;
-  }
-  return 0;
+
+String _orderUseTime(OrderResponse order) {
+  if (order.finallyTime.trim().isNotEmpty) return order.finallyTime;
+  if (order.appointmentTime.trim().isNotEmpty) return order.appointmentTime;
+  return order.createTime;
 }
 
-String _userText(ProfileOrderItem item) {
-  final name = item.userName.trim();
+String _fullAddress(OrderResponse order) {
+  return [
+    order.province,
+    order.city,
+    order.area,
+    order.address,
+  ].where((item) => item.trim().isNotEmpty).join('');
+}
+
+String _userText(OrderResponse item) {
+  final name = item.nickName.trim();
   final phone = item.userPhone.trim();
 
   if (name.isEmpty && phone.isEmpty) return '';
@@ -482,6 +545,66 @@ String _userText(ProfileOrderItem item) {
   return '$name（$phone）';
 }
 
-void _toast(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+String _statusText(BuildContext context, int status) {
+  return switch (status) {
+    1 => context.l10n.used,
+    2 => context.l10n.cancelled,
+    _ => context.l10n.pendingUse,
+  };
+}
+
+OrderResponse? _parseOrderArgument(dynamic arguments) {
+  if (arguments is OrderResponse) return arguments;
+  if (arguments is Map && arguments['order'] is OrderResponse) {
+    return arguments['order'] as OrderResponse;
+  }
+  return null;
+}
+Future<void> _callPhone(BuildContext context, String phone) async {
+  final value = phone
+      .trim()
+      .replaceAll(' ', '')
+      .replaceAll('-', '')
+      .replaceAll('－', '');
+
+  if (value.isEmpty) {
+    ToastUtils.showToast(
+      message: context.l10n.contactNotProvided,
+      type: ToastType.error,
+    );
+    return;
+  }
+
+  final uri = Uri(scheme: 'tel', path: value);
+
+  final success = await launchUrl(
+    uri,
+    mode: LaunchMode.externalApplication,
+  );
+
+  if (!success) {
+    ToastUtils.showToast(
+      message: context.l10n.contactNotProvided,
+      type: ToastType.error,
+    );
+  }
+}
+
+Future<void> _copyText(BuildContext context, String text) async {
+  final value = text.trim();
+
+  if (value.isEmpty) {
+    ToastUtils.showToast(
+      message: context.l10n.noCopyContent,
+      type: ToastType.error,
+    );
+    return;
+  }
+
+  await Clipboard.setData(ClipboardData(text: value));
+
+  ToastUtils.showToast(
+    message: context.l10n.copySuccess,
+    type: ToastType.success,
+  );
 }

@@ -2,6 +2,7 @@ import 'package:alumni_association_app/features/auth/pages/login_page.dart';
 import 'package:alumni_association_app/features/auth/pages/forgot_password_page.dart';
 import 'package:alumni_association_app/features/auth/pages/account_bind_page.dart';
 import 'package:alumni_association_app/features/activity/pages/activity_detail_page.dart';
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
 import 'package:alumni_association_app/features/consumption/pages/consumption_amount_page.dart';
 import 'package:alumni_association_app/features/consumption/pages/consumption_merchant_page.dart';
 import 'package:alumni_association_app/features/consumption/pages/consumption_success_page.dart';
@@ -26,7 +27,6 @@ import 'package:alumni_association_app/features/profile/pages/personal_info_page
 import 'package:alumni_association_app/features/profile/pages/settings_page.dart';
 import 'package:alumni_association_app/features/profile/management/pages/activity_management_page.dart';
 import 'package:alumni_association_app/features/profile/management/pages/opportunity_management_page.dart';
-import 'package:alumni_association_app/features/profile/orders/model/profile_order_item.dart';
 import 'package:alumni_association_app/features/profile/orders/pages/my_orders_page.dart';
 import 'package:alumni_association_app/features/profile/orders/pages/order_detail_page.dart';
 import 'package:alumni_association_app/features/profile/services/pages/profile_service_pages.dart';
@@ -266,7 +266,7 @@ class AppPages {
       name: Pages.orderDetail,
       page: () {
         final args = Get.arguments;
-        return OrderDetailPage(order: args is ProfileOrderItem ? args : null);
+        return OrderDetailPage(order: args is OrderResponse ? args : null);
       },
     ),
 

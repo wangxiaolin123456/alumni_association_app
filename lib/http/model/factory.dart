@@ -1,3 +1,4 @@
+import 'package:alumni_association_app/features/consumption/model/response/order_response.dart';
 import 'package:alumni_association_app/http/model/page_response.dart';
 
 import '../../features/auth/model/response/login_response.dart';
@@ -24,6 +25,15 @@ class FactoryModel {
       return PageResponse<StoreResponse>.fromJson(
         Map<String, dynamic>.from(json as Map),
         StoreResponse.fromJson,
+      ) as T;
+    }
+    if (T.toString() == (OrderResponse).toString()) {
+      return OrderResponse.fromJson(json) as T;
+    }
+    if (T == PageResponse<OrderResponse>) {
+      return PageResponse<OrderResponse>.fromJson(
+        Map<String, dynamic>.from(json as Map),
+        OrderResponse.fromJson,
       ) as T;
     }
     return json;
