@@ -147,7 +147,11 @@ class MerchantDashboardController extends GetxController {
 
   /// 数据统计
   void openStatistics() {
-    Get.toNamed(Pages.merchantStatistics);
+    final store = currentStore.value;
+    Get.toNamed(
+      Pages.merchantStatistics,
+      arguments: {'shopId': store?.shopId ?? shopId ?? 0},
+    );
   }
 
   /// 优惠券管理

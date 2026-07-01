@@ -7,6 +7,7 @@ import '../../features/consumption/model/request/order_request.dart';
 import '../../features/consumption/model/response/order_response.dart';
 import '../../features/auth/model/response/user_info_response.dart';
 import '../../features/merchant/coupon/model/request/coupon_request.dart';
+import '../../features/merchant/statistics/model/order_summary_response.dart';
 import '../../features/store/model/response/store_response.dart';
 import '../../http/core/http_manager.dart';
 import '../../http/model/page_response.dart';
@@ -91,6 +92,9 @@ class URL {
 
   /// 商家订单列表
   static const String shopOrder = "/api/order/shopOrder";
+
+  /// 商户订单统计
+  static const String orderSum = "/api/order/orderSum";
 
   /// 订单详情
   static const String orderInfo = "/api/order/orderInfo";
@@ -912,6 +916,41 @@ class ApiRequest {
     } catch (e) {
       ToastUtils.showToast(message: "入单记录获取失败", type: ToastType.error);
       return null;
+    }
+  }
+
+  /// 商户订单统计。
+  ///
+  /// [dateParam] 传当前查询月份，格式：yyyy-MM。后端返回从年初到当前月份的统计数组。
+  static Future<List<OrderSummaryResponse>> orderSum({
+    required int shopId,
+    required String dateParam,
+  }) async {
+    try {
+      final response = await HttpManager.get<dynamic>(
+        URL.orderSum,
+        params: {"shopId": shopId, "dateParam": dateParam},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (response.code != 200) {
+        ToastUtils.showToast(message: response.msg, type: ToastType.error);
+        return [];
+      }
+
+      final rawData = response.raw['data'] ?? response.data;
+      if (rawData is! List) return [];
+
+      return rawData
+          .whereType<Map>()
+          .map(
+            (item) =>
+                OrderSummaryResponse.fromJson(Map<String, dynamic>.from(item)),
+          )
+          .toList();
+    } catch (e) {
+      ToastUtils.showToast(message: "统计数据获取失败", type: ToastType.error);
+      return [];
     }
   }
 

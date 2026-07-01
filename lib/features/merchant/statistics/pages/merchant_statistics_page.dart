@@ -10,6 +10,9 @@ import 'package:get/get.dart';
 import 'merchant_statistics_controller.dart';
 
 /// 商户数据统计页面。
+///
+/// 页面数据来自 `/api/order/orderSum`，后端返回月度数组：
+/// 订单数、实收金额、优惠金额及对应环比。
 class MerchantStatisticsPage extends StatelessWidget {
   const MerchantStatisticsPage({super.key});
 
@@ -28,109 +31,39 @@ class MerchantStatisticsPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20.sp),
         ),
         centerTitle: true,
-        title: Text(
-          context.l10n.dataStatistics,
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
+        title: Text(context.l10n.dataStatistics, style: _titleStyle),
+      ),
+      body: Obx(
+        () => RefreshIndicator(
+          onRefresh: controller.loadStatistics,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 110.h),
+            children: [
+              _MonthSwitcher(controller: controller),
+              SizedBox(height: 16.h),
+              if (controller.isLoading.value && controller.summaries.isEmpty)
+                Padding(
+                  padding: EdgeInsets.only(top: 160.h),
+                  child: const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                )
+              else ...[
+                _CoreOverviewCard(controller: controller),
+                SizedBox(height: 14.h),
+                _TrendCard(controller: controller),
+                SizedBox(height: 14.h),
+                _DetailCard(controller: controller),
+              ],
+            ],
           ),
         ),
-        actions: [
-          TextButton.icon(
-            onPressed: () => _showMonthPicker(context, controller),
-            icon: Icon(
-              Icons.calendar_month_outlined,
-              size: 18.sp,
-              color: const Color(0xFF526079),
-            ),
-            label: Text(
-              context.l10n.selectDate,
-              style: TextStyle(
-                color: const Color(0xFF526079),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 110.h),
-        children: [
-          _MonthSwitcher(controller: controller),
-          SizedBox(height: 16.h),
-          _CoreOverviewCard(controller: controller),
-          SizedBox(height: 14.h),
-          _TrendCard(controller: controller),
-          SizedBox(height: 14.h),
-          _DetailCard(controller: controller),
-          SizedBox(height: 14.h),
-          _ChannelCard(controller: controller),
-        ],
-      ),
-      bottomNavigationBar: const _MerchantBottomNav(),
     );
   }
 
-  /// 底部月份选择器，先做本地月份切换，后续可在确认时请求接口。
-  void _showMonthPicker(
-    BuildContext context,
-    MerchantStatisticsController controller,
-  ) {
-    Get.bottomSheet<void>(
-      Container(
-        padding: EdgeInsets.fromLTRB(18.w, 12.h, 18.w, 20.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 42.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: const Color(0xFFD7DEEA),
-                borderRadius: BorderRadius.circular(99.r),
-              ),
-            ),
-            SizedBox(height: 18.h),
-            Text(
-              context.l10n.selectMonth,
-              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w900),
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      controller.previousMonth();
-                      Get.back();
-                    },
-                    child: Text(context.l10n.previousMonth),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      controller.nextMonth();
-                      Get.back();
-                    },
-                    child: Text(context.l10n.nextMonth),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: Colors.transparent,
-    );
-  }
+
 }
 
 class _MonthSwitcher extends StatelessWidget {
@@ -222,11 +155,6 @@ class _CoreOverviewCard extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: Colors.white,
-                size: 18.sp,
-              ),
             ],
           ),
           SizedBox(height: 24.h),
@@ -251,13 +179,13 @@ class _CoreMetricItem extends StatelessWidget {
     return Column(
       children: [
         Icon(
-          IconData(metric.iconCodePoint, fontFamily: 'MaterialIcons'),
+          IconData(metric.icon, fontFamily: 'MaterialIcons'),
           color: Colors.white,
           size: 24.sp,
         ),
         SizedBox(height: 12.h),
         Text(
-          _metricTitle(context, metric.titleKey),
+          _metricTitle(context, metric.key),
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -265,7 +193,7 @@ class _CoreMetricItem extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
         Text(
-          metric.value,
+          metric.displayValue,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
@@ -276,7 +204,7 @@ class _CoreMetricItem extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          '${metric.changeText} ${metric.increased ? '↗' : '↘'}',
+          _growthText(metric),
           style: TextStyle(
             color: metric.increased
                 ? const Color(0xFFFFA1A1)
@@ -312,7 +240,7 @@ class _TrendCard extends StatelessWidget {
                 labels: [
                   context.l10n.orderCount,
                   context.l10n.receivedAmountYuan,
-                  context.l10n.memberCount,
+                  context.l10n.discountAmountYuan,
                 ],
               ),
             ],
@@ -320,13 +248,13 @@ class _TrendCard extends StatelessWidget {
           SizedBox(height: 24.h),
           SizedBox(
             height: 220.h,
-            child: CustomPaint(
+            child:Obx(() =>  CustomPaint(
               painter: _TrendChartPainter(
                 points: controller.trendPoints,
                 color: AppColors.primary,
               ),
               child: const SizedBox.expand(),
-            ),
+            )),
           ),
           SizedBox(height: 8.h),
           Text(
@@ -347,7 +275,7 @@ class _SegmentTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Obx(() => Container(
       padding: EdgeInsets.all(3.r),
       decoration: BoxDecoration(
         color: const Color(0xFFF1F4FA),
@@ -360,25 +288,25 @@ class _SegmentTabs extends StatelessWidget {
           return GestureDetector(
             onTap: () => controller.selectTrendTab(index),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
               decoration: BoxDecoration(
                 color: selected ? Colors.white : Colors.transparent,
                 borderRadius: BorderRadius.circular(99.r),
                 boxShadow: selected
                     ? [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 10,
-                          offset: Offset(0, 3.h),
-                        ),
-                      ]
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: Offset(0, 3.h),
+                  ),
+                ]
                     : null,
               ),
               child: Text(
                 labels[index],
                 style: TextStyle(
                   color: selected ? AppColors.primary : AppColors.textSecondary,
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -386,7 +314,7 @@ class _SegmentTabs extends StatelessWidget {
           );
         }),
       ),
-    );
+    ));
   }
 }
 
@@ -419,17 +347,15 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColors = {
-      MerchantStatisticMetricKey.orderCount: const Color(0xFFEAF2FF),
-      MerchantStatisticMetricKey.receivedAmount: const Color(0xFFFFF0EB),
-      MerchantStatisticMetricKey.memberCount: const Color(0xFFEAF8F1),
-      MerchantStatisticMetricKey.discountAmount: const Color(0xFFF1ECFF),
+    final bgColor = switch (metric.key) {
+      MerchantStatisticMetricKey.orderCount => const Color(0xFFEAF2FF),
+      MerchantStatisticMetricKey.receivedAmount => const Color(0xFFFFF0EB),
+      MerchantStatisticMetricKey.discountAmount => const Color(0xFFF1ECFF),
     };
-    final iconColors = {
-      MerchantStatisticMetricKey.orderCount: AppColors.primary,
-      MerchantStatisticMetricKey.receivedAmount: const Color(0xFFFF5B22),
-      MerchantStatisticMetricKey.memberCount: const Color(0xFF21C774),
-      MerchantStatisticMetricKey.discountAmount: const Color(0xFF7C4DFF),
+    final iconColor = switch (metric.key) {
+      MerchantStatisticMetricKey.orderCount => AppColors.primary,
+      MerchantStatisticMetricKey.receivedAmount => const Color(0xFFFF5B22),
+      MerchantStatisticMetricKey.discountAmount => const Color(0xFF7C4DFF),
     };
 
     return Container(
@@ -444,12 +370,12 @@ class _DetailRow extends StatelessWidget {
             height: 44.r,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: bgColors[metric.titleKey],
+              color: bgColor,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
-              IconData(metric.iconCodePoint, fontFamily: 'MaterialIcons'),
-              color: iconColors[metric.titleKey],
+              IconData(metric.icon, fontFamily: 'MaterialIcons'),
+              color: iconColor,
               size: 24.sp,
             ),
           ),
@@ -459,7 +385,7 @@ class _DetailRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _metricTitle(context, metric.titleKey),
+                  _metricTitle(context, metric.key),
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
@@ -483,7 +409,7 @@ class _DetailRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                metric.value,
+                metric.displayValue,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w900,
@@ -492,7 +418,7 @@ class _DetailRow extends StatelessWidget {
               ),
               SizedBox(height: 5.h),
               Text(
-                '${metric.changeText} ${metric.increased ? '↗' : '↘'}',
+                _growthText(metric),
                 style: TextStyle(
                   color: metric.increased
                       ? const Color(0xFFFF2F3A)
@@ -503,201 +429,15 @@ class _DetailRow extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: 10.w),
-          Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
         ],
       ),
     );
   }
 }
 
-class _ChannelCard extends StatelessWidget {
-  const _ChannelCard({required this.controller});
 
-  final MerchantStatisticsController controller;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 20.h),
-      decoration: _cardDecoration,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(context.l10n.channelRatio, style: _sectionTitleStyle),
-              const Spacer(),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF3F6FB),
-                  borderRadius: BorderRadius.circular(99.r),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      context.l10n.receivedAmountYuan,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_down_rounded, size: 18.sp),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 18.h),
-          ...controller.channels.map((item) => _ChannelProgress(item: item)),
-        ],
-      ),
-    );
-  }
-}
 
-class _ChannelProgress extends StatelessWidget {
-  const _ChannelProgress({required this.item});
-
-  final MerchantChannelRatio item;
-
-  @override
-  Widget build(BuildContext context) {
-    final ratio = (item.value / 100).clamp(0.0, 1.0);
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: 14.h),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                _channelTitle(context, item.nameKey),
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '${item.value.toStringAsFixed(0)}%',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(99.r),
-            child: LinearProgressIndicator(
-              value: ratio,
-              minHeight: 8.h,
-              backgroundColor: const Color(0xFFEAF0F8),
-              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MerchantBottomNav extends StatelessWidget {
-  const _MerchantBottomNav();
-
-  @override
-  Widget build(BuildContext context) {
-    final items = [
-      _BottomNavItem(
-        icon: Icons.home_outlined,
-        label: context.l10n.merchantHome,
-        onTap: () => Get.offNamed(Pages.merchantDashboard),
-      ),
-      _BottomNavItem(
-        icon: Icons.receipt_long_outlined,
-        label: context.l10n.entryRecords,
-        onTap: () => Get.toNamed(Pages.entryRecordsPage),
-      ),
-      _BottomNavItem(
-        icon: Icons.bar_chart_rounded,
-        label: context.l10n.dataStatistics,
-        selected: true,
-        onTap: () {},
-      ),
-      _BottomNavItem(
-        icon: Icons.settings_outlined,
-        label: context.l10n.merchantSettings,
-        onTap: () {},
-      ),
-    ];
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 20,
-            offset: Offset(0, -8.h),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: items.map((item) => Expanded(child: item)).toList(),
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomNavItem extends StatelessWidget {
-  const _BottomNavItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.selected = false,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : const Color(0xFF667085);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14.r),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 26.sp),
-            SizedBox(height: 4.h),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 12.sp,
-                fontWeight: selected ? FontWeight.w900 : FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _TrendChartPainter extends CustomPainter {
   _TrendChartPainter({required this.points, required this.color});
@@ -715,10 +455,9 @@ class _TrendChartPainter extends CustomPainter {
     final chartBottom = size.height - 36.h;
     final chartWidth = chartRight - chartLeft;
     final chartHeight = chartBottom - chartTop;
-    final maxValue = math.max(
-      80.0,
-      points.map((e) => e.value).reduce(math.max),
-    );
+    final maxPointValue = points.map((e) => e.value).reduce(math.max);
+    final maxValue = math.max(1.0, maxPointValue);
+    final gridMax = _niceGridMax(maxValue);
 
     final gridPaint = Paint()
       ..color = const Color(0xFFE8EDF5)
@@ -727,12 +466,13 @@ class _TrendChartPainter extends CustomPainter {
       ..color = const Color(0xFFDCE3EF)
       ..strokeWidth = 1.1;
 
-    for (final value in [0, 20, 40, 60, 80]) {
-      final y = chartBottom - chartHeight * (value / 80);
+    for (int i = 0; i <= 4; i++) {
+      final value = gridMax * i / 4;
+      final y = chartBottom - chartHeight * (value / gridMax);
       canvas.drawLine(Offset(chartLeft, y), Offset(chartRight, y), gridPaint);
       _drawText(
         canvas,
-        value.toString(),
+        value.toStringAsFixed(0),
         Offset(8.w, y - 8.h),
         const Color(0xFF7B8497),
         12.sp,
@@ -750,15 +490,17 @@ class _TrendChartPainter extends CustomPainter {
       axisPaint,
     );
 
+    final spots = <Offset>[];
     final path = Path();
     final fillPath = Path();
-    final spots = <Offset>[];
 
     for (int i = 0; i < points.length; i++) {
-      final x = chartLeft + chartWidth * (i / (points.length - 1));
-      final y = chartBottom - chartHeight * (points[i].value / maxValue);
+      final denominator = math.max(1, points.length - 1);
+      final x = chartLeft + chartWidth * (i / denominator);
+      final y = chartBottom - chartHeight * (points[i].value / gridMax);
       final spot = Offset(x, y);
       spots.add(spot);
+
       if (i == 0) {
         path.moveTo(x, y);
         fillPath.moveTo(x, chartBottom);
@@ -768,6 +510,7 @@ class _TrendChartPainter extends CustomPainter {
         fillPath.lineTo(x, y);
       }
     }
+
     fillPath.lineTo(spots.last.dx, chartBottom);
     fillPath.close();
 
@@ -806,8 +549,8 @@ class _TrendChartPainter extends CustomPainter {
       );
       _drawText(
         canvas,
-        points[i].value.toStringAsFixed(0),
-        Offset(spot.dx - 10.w, spot.dy - 27.h),
+        _formatChartValue(points[i].value),
+        Offset(spot.dx - 12.w, spot.dy - 27.h),
         const Color(0xFF6B7280),
         12.sp,
       );
@@ -822,19 +565,39 @@ class _TrendChartPainter extends CustomPainter {
     }
 
     final last = spots.last;
+    final labelText = _formatChartValue(points.last.value);
+    final labelWidth = math.max(42.w, labelText.length * 8.w);
     final labelRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(last.dx - 20.w, last.dy - 48.h, 42.w, 30.h),
+      Rect.fromLTWH(last.dx - labelWidth / 2, last.dy - 48.h, labelWidth, 30.h),
       Radius.circular(6.r),
     );
     canvas.drawRRect(labelRect, Paint()..color = color);
     _drawText(
       canvas,
-      points.last.value.toStringAsFixed(0),
-      Offset(last.dx - 9.w, last.dy - 42.h),
+      labelText,
+      Offset(last.dx - labelWidth / 2 + 8.w, last.dy - 42.h),
       Colors.white,
       13.sp,
       weight: FontWeight.w800,
     );
+  }
+
+  double _niceGridMax(double value) {
+    if (value <= 10) return 10;
+    final exponent = math.pow(10, value.toStringAsFixed(0).length - 1);
+    final normalized = value / exponent;
+    final rounded = normalized <= 2
+        ? 2
+        : normalized <= 5
+        ? 5
+        : 10;
+    return rounded * exponent.toDouble();
+  }
+
+  String _formatChartValue(double value) {
+    if (value >= 10000) return '${(value / 10000).toStringAsFixed(1)}w';
+    if (value >= 1000) return '${(value / 1000).toStringAsFixed(1)}k';
+    return value.toStringAsFixed(0);
   }
 
   void _drawText(
@@ -862,27 +625,19 @@ class _TrendChartPainter extends CustomPainter {
 }
 
 String _metricTitle(BuildContext context, MerchantStatisticMetricKey key) {
-  switch (key) {
-    case MerchantStatisticMetricKey.orderCount:
-      return context.l10n.monthOrderCount;
-    case MerchantStatisticMetricKey.receivedAmount:
-      return context.l10n.monthReceivedAmount;
-    case MerchantStatisticMetricKey.memberCount:
-      return context.l10n.memberCount;
-    case MerchantStatisticMetricKey.discountAmount:
-      return context.l10n.discountAmountYuan;
-  }
+  return switch (key) {
+    MerchantStatisticMetricKey.orderCount => context.l10n.monthOrderCount,
+    MerchantStatisticMetricKey.receivedAmount =>
+      context.l10n.monthReceivedAmount,
+    MerchantStatisticMetricKey.discountAmount =>
+      context.l10n.discountAmountYuan,
+  };
 }
 
-String _channelTitle(BuildContext context, MerchantStatisticsChannelKey key) {
-  switch (key) {
-    case MerchantStatisticsChannelKey.storeVerification:
-      return context.l10n.storeVerificationChannel;
-    case MerchantStatisticsChannelKey.memberReservation:
-      return context.l10n.memberReservationChannel;
-    case MerchantStatisticsChannelKey.activityConversion:
-      return context.l10n.activityConversionChannel;
-  }
+String _growthText(MerchantStatisticMetric metric) {
+  final text = metric.normalizedGrowthDesc;
+  if (text == '-') return text;
+  return '$text ${metric.increased ? '↗' : '↘'}';
 }
 
 String _monthText(BuildContext context, DateTime date) {
@@ -897,6 +652,12 @@ String _monthText(BuildContext context, DateTime date) {
       return '${date.year}年$month月';
   }
 }
+
+final _titleStyle = TextStyle(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w900,
+  color: AppColors.textPrimary,
+);
 
 BoxDecoration get _cardDecoration => BoxDecoration(
   color: Colors.white,
